@@ -4,9 +4,9 @@
   "description": "",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rbkmoney/damsel.git"
+    "url": "git+https://github.com/valitydev/damsel.git"
   },
   "author": "rbkmoney",
-  "license": "",
+  "license": "Apache-2.0",
   "private": true
 }
