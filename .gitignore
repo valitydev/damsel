@@ -8,11 +8,8 @@
 /_build/
 *.sublime-workspace
 
-# wercker
-/_builds/
-/_cache/
-/_projects/
-/_steps/
-/_temp/
+# erlang
+/src/*.erl
+/include/*.hrl
 
 *.iml
