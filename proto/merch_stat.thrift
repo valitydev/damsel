@@ -6,7 +6,7 @@ include "base.thrift"
 include "domain.thrift"
 include "geo_ip.thrift"
 
-namespace java com.rbkmoney.damsel.merch_stat
+namespace java dev.vality.damsel.merch_stat
 namespace erlang merchstat
 
 /**

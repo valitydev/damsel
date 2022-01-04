@@ -4,7 +4,7 @@
 
 include "msgpack.thrift"
 
-namespace java com.rbkmoney.damsel.context
+namespace java dev.vality.damsel.context
 namespace erlang ctx
 
 // Types
@@ -12,7 +12,7 @@ namespace erlang ctx
 /**
  * Пространство имён, отделяющее конексты одного сервиса.
  *
- * Например, `com.rbkmoney.capi`.
+ * Например, `dev.vality.capi`.
  */
 typedef string                  Namespace
 

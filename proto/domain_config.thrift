@@ -5,7 +5,7 @@
 
 include "domain.thrift"
 
-namespace java com.rbkmoney.damsel.domain_config
+namespace java dev.vality.damsel.domain_config
 namespace erl domain
 
 /**

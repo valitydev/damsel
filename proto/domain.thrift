@@ -6,7 +6,7 @@ include "base.thrift"
 include "msgpack.thrift"
 include "json.thrift"
 
-namespace java com.rbkmoney.damsel.domain
+namespace java dev.vality.damsel.domain
 namespace erlang domain
 
 typedef i64        DataRevision
@@ -323,7 +323,6 @@ struct InvoicePaymentChargedBack {}
 
 /**
  * Шаблон инвойса.
- * Согласно https://github.com/rbkmoney/coredocs/blob/0a5ae1a79f977be3134c3b22028631da5225d407/docs/domain/entities/invoice.md#шаблон-инвойса
  */
 
 typedef base.ID InvoiceTemplateID
@@ -3198,7 +3197,7 @@ struct IdentityProvider {
  * - all field types must be unique,
  * - all corresponding field names in both unions must match.
  *
- * Otherwise [dmt_core](https://github.com/rbkmoney/dmt_core)'s
+ * Otherwise [dmt_core](https://github.com/valitydev/dmt_core)'s
  * integrity verification mechanism would break.
  */
 

@@ -1,7 +1,7 @@
 include "base.thrift"
 include "domain.thrift"
 
-namespace java com.rbkmoney.damsel.proxy_inspector
+namespace java dev.vality.damsel.proxy_inspector
 namespace erlang proxy_inspector
 
 /**

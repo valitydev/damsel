@@ -1,7 +1,7 @@
 include "base.thrift"
 include "domain.thrift"
 
-namespace java com.rbkmoney.damsel.withdrawals.domain
+namespace java dev.vality.damsel.withdrawals.domain
 namespace erlang wthdm
 
 /// Domain

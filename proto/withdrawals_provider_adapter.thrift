@@ -3,7 +3,7 @@ include "msgpack.thrift"
 include "domain.thrift"
 include "withdrawals_domain.thrift"
 
-namespace java com.rbkmoney.damsel.withdrawals.provider_adapter
+namespace java dev.vality.damsel.withdrawals.provider_adapter
 namespace erlang wthadpt
 
 typedef domain.Failure Failure

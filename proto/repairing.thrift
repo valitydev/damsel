@@ -2,7 +2,7 @@
  * Определения для задач "починки" различных машин.
  */
 
-namespace java com.rbkmoney.damsel.repairing
+namespace java dev.vality.damsel.repairing
 namespace erlang repair
 
 include "base.thrift"

@@ -2,7 +2,7 @@
     include "base.thrift"
     include "payment_processing.thrift"
 
-    namespace java com.rbkmoney.damsel.walker
+    namespace java dev.vality.damsel.walker
     namespace erlang walker
 
     typedef i64 ClaimID

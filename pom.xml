@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.rbkmoney</groupId>
-        <artifactId>parent</artifactId>
-        <version>1.0.5</version>
+        <groupId>dev.vality</groupId>
+        <artifactId>library-parent-pom</artifactId>
+        <version>1.0.0</version>
     </parent>
 
     <artifactId>damsel</artifactId>
@@ -16,19 +16,19 @@
 
     <name>Damsel</name>
     <description>Generates jar artifact containing compiled thrift classes based on generated thrift IDL files</description>
-    <url>https://github.com/rbkmoney/damsel.git</url>
+    <url>https://github.com/valitydev/damsel.git</url>
 
     <developers>
         <developer>
-            <organization>RBK.money</organization>
-            <organizationUrl>https://rbk.money</organizationUrl>
+            <organization>Vality</organization>
+            <organizationUrl>https://github.com/valitydev</organizationUrl>
         </developer>
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/rbkmoney/damsel.git</connection>
-        <developerConnection>scm:git:ssh://github.com/rbkmoney/damsel.git</developerConnection>
-        <url>https://github.com/rbkmoney/damsel/tree/master</url>
+        <connection>scm:git:git://github.com/valitydev/damsel.git</connection>
+        <developerConnection>scm:git:ssh://github.com/valitydev/damsel.git</developerConnection>
+        <url>https://github.com/valitydev/damsel/tree/master</url>
     </scm>
 
     <properties>
@@ -37,7 +37,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.rbkmoney.woody</groupId>
+            <groupId>dev.vality.woody</groupId>
             <artifactId>woody-thrift</artifactId>
             <version>[1.1.21,)</version>
             <scope>provided</scope>
@@ -89,8 +89,8 @@
                         <configuration>
                             <relocations>
                                 <relocation>
-                                    <pattern>com.rbkmoney.damsel</pattern>
-                                    <shadedPattern>com.rbkmoney.damsel.v${commit.number}</shadedPattern>
+                                    <pattern>dev.vality.damsel</pattern>
+                                    <shadedPattern>dev.vality.damsel.v${commit.number}</shadedPattern>
                                 </relocation>
                             </relocations>
                             <shadedArtifactAttached>true</shadedArtifactAttached>

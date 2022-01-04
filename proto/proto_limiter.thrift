@@ -1,7 +1,7 @@
 include "base.thrift"
 include "domain.thrift"
 
-namespace java com.rbkmoney.damsel.proto_limiter
+namespace java dev.vality.damsel.proto_limiter
 namespace erlang proto_limiter
 
 /**

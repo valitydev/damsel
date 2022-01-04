@@ -1,4 +1,4 @@
-namespace java com.rbkmoney.damsel.user_interaction
+namespace java dev.vality.damsel.user_interaction
 include "base.thrift"
 
 /**

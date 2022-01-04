@@ -1,6 +1,6 @@
 include "domain_config.thrift"
 
-namespace java com.rbkmoney.damsel.papidmt
+namespace java dev.vality.damsel.papidmt
 namespace erlang papidmt
 
 struct HistoryWrapper {

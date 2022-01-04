@@ -1,7 +1,7 @@
 include "base.thrift"
 include "domain.thrift"
 
-namespace java com.rbkmoney.damsel.message_sender
+namespace java dev.vality.damsel.message_sender
 namespace erlang message_sender
 
 struct MessageAttachment{

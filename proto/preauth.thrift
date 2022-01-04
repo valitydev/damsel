@@ -1,6 +1,6 @@
 include "base.thrift"
 
-namespace java com.rbkmoney.damsel.preauth
+namespace java dev.vality.damsel.preauth
 namespace erlang preauth
 
 union Status {

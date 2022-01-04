@@ -1,5 +1,5 @@
 namespace erlang msgpack
-namespace java com.rbkmoney.damsel.msgpack
+namespace java dev.vality.damsel.msgpack
 
 /**
  * Значение в msgpack, согласно [спецификации](https://github.com/msgpack/msgpack/blob/master/spec.md).

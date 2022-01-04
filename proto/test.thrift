@@ -4,7 +4,7 @@
 
 include "base.thrift"
 
-namespace java com.rbkmoney.damsel.test
+namespace java dev.vality.damsel.test
 
 struct Shout {
     1: required string contents
