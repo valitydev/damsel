@@ -1,4 +1,4 @@
-namespace java com.rbkmoney.damsel.withdrawals.errors
+namespace java dev.vality.damsel.withdrawals.errors
 namespace erlang wtherr
 
 union WithdrawalFailure {

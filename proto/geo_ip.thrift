@@ -1,7 +1,7 @@
 include "base.thrift"
 include "domain.thrift"
 
-namespace java com.rbkmoney.damsel.geo_ip
+namespace java dev.vality.damsel.geo_ip
 namespace erlang geo_ip
 
 /**

@@ -1,4 +1,4 @@
-namespace java com.rbkmoney.damsel.payment_processing.errors
+namespace java dev.vality.damsel.payment_processing.errors
 namespace erlang payprocerr
 
 /**

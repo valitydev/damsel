@@ -1,7 +1,7 @@
 include "base.thrift"
 include "domain.thrift"
 
-namespace java com.rbkmoney.damsel.payment_tool_provider
+namespace java dev.vality.damsel.payment_tool_provider
 namespace erlang paytoolprv
 
 /**

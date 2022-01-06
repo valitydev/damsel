@@ -1,4 +1,4 @@
-namespace java com.rbkmoney.damsel.claim_management
+namespace java dev.vality.damsel.claim_management
 namespace erlang claim_management
 
 include "base.thrift"

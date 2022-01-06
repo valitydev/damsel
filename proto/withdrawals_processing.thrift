@@ -3,7 +3,7 @@ include "msgpack.thrift"
 include "domain.thrift"
 include "withdrawals_domain.thrift"
 
-namespace java com.rbkmoney.damsel.withdrawals.processing
+namespace java dev.vality.damsel.withdrawals.processing
 namespace erlang wthproc
 
 /// Processing

@@ -1,12 +1,10 @@
 include "base.thrift"
 include "domain.thrift"
 
-namespace java com.rbkmoney.damsel.proto_limiter
+namespace java dev.vality.damsel.proto_limiter
 namespace erlang proto_limiter
 
 /**
-* Протокол разрабатывался в рамках https://rbkmoney.atlassian.net/browse/MSPF-626
-* как временное решение для закрытия задачи https://rbkmoney.atlassian.net/browse/MSPF-623
 * Описание сущностей лимитов является частью микросервиса proto-limiter
 */
 

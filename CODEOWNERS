@@ -1,6 +1,6 @@
-/proto/ @rbkmoney/erlang @rbkmoney/java @rbkmoney/frontend
-/rebar.* @rbkmoney/erlang
-/src/ @rbkmoney/erlang
-/pom.xml @rbkmoney/java
-/package-lock.json @rbkmoney/frontend
-/package.json @rbkmoney/frontend
+/proto/ @valitydev/erlang @valitydev/java @valitydev/frontend
+/rebar.* @valitydev/erlang
+/src/ @valitydev/erlang
+/pom.xml @valitydev/java
+/package-lock.json @valitydev/frontend
+/package.json @valitydev/frontend

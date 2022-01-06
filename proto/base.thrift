@@ -2,7 +2,7 @@
  * Базовые, наиболее общие определения
  */
 
-namespace java com.rbkmoney.damsel.base
+namespace java dev.vality.damsel.base
 
 /** Идентификатор */
 typedef string ID

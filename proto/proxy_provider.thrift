@@ -3,7 +3,7 @@ include "domain.thrift"
 include "user_interaction.thrift"
 include "timeout_behaviour.thrift"
 
-namespace java com.rbkmoney.damsel.proxy_provider
+namespace java dev.vality.damsel.proxy_provider
 namespace erlang prxprv
 
 /**

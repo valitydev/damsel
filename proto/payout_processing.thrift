@@ -2,7 +2,7 @@ include "base.thrift"
 include "domain.thrift"
 include "msgpack.thrift"
 
-namespace java com.rbkmoney.damsel.payout_processing
+namespace java dev.vality.damsel.payout_processing
 namespace erlang payout_processing
 
 typedef base.ID PayoutID
