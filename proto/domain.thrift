@@ -1959,6 +1959,27 @@ struct PaymentServiceRef {
 struct PaymentService {
   1: required string name
   2: optional string description
+
+  /**
+   * Локальное, известное пользователям название платёжного сервиса:
+   * платёжной системы, банка, провайдера кошельков, и т.д.
+   * Например: "VISA"
+   */
+  3: optional string brand_name
+
+  /**
+   * Метаданные, разделённые по пространствам имён.
+   * Введены для аннотирования платёжных сервисов произвольными данными,
+   * необходимыми в частности для логики презентации.
+   * Например:
+   * {"dev.vality.checkout": {
+   *   "brandLogo": {"banner": "/assets/brands/blarg.svg"},
+   *   "localization": {
+   *     "name": {"ja_JP": "ヱヴァンゲリヲン"}  
+   *   }
+   * }}
+   */
+  4: optional map<string, json.Value> metadata
 }
 
 typedef string DigitalWalletID
