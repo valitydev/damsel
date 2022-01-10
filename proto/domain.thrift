@@ -1956,16 +1956,32 @@ struct PaymentServiceRef {
     1: required string id
 }
 
+typedef string PaymentServiceCategory
+
+// DISCUSS
+// Тут, на уровне общего протокола, эти константы конечно немного не в тему.
+// Но куда их класть тогда не понятно.
+const PaymentServiceCategory NETBANKING = "netbanking"
+const PaymentServiceCategory UPI = "upi"
+
 struct PaymentService {
   1: required string name
   2: optional string description
+
+  /**
+   * Категория платёжного сервиса.
+   * Открытое множество, конкретные значения согласовываются:
+   *  - на уровне констант в протоколе (см. выше),
+   *  - вне протокола, на уровне конкретных интеграций.
+   */
+  3: optional PaymentServiceCategory category
 
   /**
    * Локальное, известное пользователям название платёжного сервиса:
    * платёжной системы, банка, провайдера кошельков, и т.д.
    * Например: "VISA"
    */
-  3: optional string brand_name
+  4: optional string brand_name
 
   /**
    * Метаданные, разделённые по пространствам имён.
@@ -1979,7 +1995,7 @@ struct PaymentService {
    *   }
    * }}
    */
-  4: optional map<string, json.Value> metadata
+  5: optional map<string, json.Value> metadata
 }
 
 typedef string DigitalWalletID
