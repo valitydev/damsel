@@ -1958,12 +1958,6 @@ struct PaymentServiceRef {
 
 typedef string PaymentServiceCategory
 
-// DISCUSS
-// Тут, на уровне общего протокола, эти константы конечно немного не в тему.
-// Но куда их класть тогда не понятно.
-const PaymentServiceCategory NETBANKING = "netbanking"
-const PaymentServiceCategory UPI = "upi"
-
 struct PaymentService {
   1: required string name
   2: optional string description
@@ -1971,7 +1965,7 @@ struct PaymentService {
   /**
    * Категория платёжного сервиса.
    * Открытое множество, конкретные значения согласовываются:
-   *  - на уровне констант в протоколе (см. выше),
+   *  - на уровне констант в протоколе,
    *  - вне протокола, на уровне конкретных интеграций.
    */
   3: optional PaymentServiceCategory category
