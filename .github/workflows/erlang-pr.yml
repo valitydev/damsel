@@ -13,7 +13,7 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      - uses: valitydev/action-setup-thrift@b457b89c7e1e960ea354f510bce69a725d16c556
+      - uses: valitydev/action-setup-thrift@405d5465945a936e16c7ea826f6fced2d8b6848a
         with:
           thrift-version: '0.14.2'
 
