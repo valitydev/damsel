@@ -1956,9 +1956,40 @@ struct PaymentServiceRef {
     1: required string id
 }
 
+typedef string PaymentServiceCategory
+
 struct PaymentService {
   1: required string name
   2: optional string description
+
+  /**
+   * Категория платёжного сервиса.
+   * Открытое множество, конкретные значения согласовываются:
+   *  - на уровне констант в протоколе,
+   *  - вне протокола, на уровне конкретных интеграций.
+   */
+  3: optional PaymentServiceCategory category
+
+  /**
+   * Локальное, известное пользователям название платёжного сервиса:
+   * платёжной системы, банка, провайдера кошельков, и т.д.
+   * Например: "VISA"
+   */
+  4: optional string brand_name
+
+  /**
+   * Метаданные, разделённые по пространствам имён.
+   * Введены для аннотирования платёжных сервисов произвольными данными,
+   * необходимыми в частности для логики презентации.
+   * Например:
+   * {"dev.vality.checkout": {
+   *   "brandLogo": {"banner": "/assets/brands/blarg.svg"},
+   *   "localization": {
+   *     "name": {"ja_JP": "ヱヴァンゲリヲン"}  
+   *   }
+   * }}
+   */
+  5: optional map<string, json.Value> metadata
 }
 
 typedef string DigitalWalletID
