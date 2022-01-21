@@ -1933,6 +1933,20 @@ struct MobilePhone {
 struct PaymentTerminal {
     2: optional PaymentServiceRef payment_service
 
+    /**
+     * Метаданные, разделённые по пространствам имён.
+     * Могут заполняться произвольными значениями, например согласно какой-нибудь
+     * схеме данных, заданной в `PaymentService.metadata`, которая обозначает
+     * платёжный инструмент, не вписывающийся в текущую модель `PaymentTool`:
+     * {"dev.vality.paymentResource": {
+     *   "type": "BankAccountRUS",
+     *   "accountNumber": "40817810500000000035",
+     *   "bankBIC": "044525716",
+     *   ...
+     * }}
+     */
+    3: optional map<string, json.Value> metadata
+
     /** Deprecated **/
     1: optional LegacyTerminalPaymentProvider terminal_type_deprecated
 }
