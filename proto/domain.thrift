@@ -1723,6 +1723,7 @@ enum TokenizationMethod {
 }
 
 union PaymentMethod {
+   13: GenericPaymentMethod generic
     9: PaymentServiceRef payment_terminal
    10: PaymentServiceRef digital_wallet
    12: CryptoCurrencyRef crypto_currency
@@ -1736,6 +1737,12 @@ union PaymentMethod {
     5: LegacyBankCardPaymentSystem empty_cvv_bank_card_deprecated
     6: LegacyCryptoCurrency crypto_currency_deprecated
     7: LegacyMobileOperator mobile_deprecated
+}
+
+typedef string GenericPaymentMethodID
+
+struct GenericPaymentMethod {
+    1: required GenericPaymentMethodID id
 }
 
 struct BankCardPaymentMethod {
@@ -1812,6 +1819,7 @@ typedef base.ID CustomerBindingID
 typedef base.ID RecurrentPaymentToolID
 
 union PaymentTool {
+    7: GenericPaymentTool generic
     1: BankCard bank_card
     2: PaymentTerminal payment_terminal
     3: DigitalWallet digital_wallet
@@ -1820,6 +1828,31 @@ union PaymentTool {
 
     // Deprecated
     4: LegacyCryptoCurrency crypto_currency_deprecated
+}
+
+struct GenericPaymentTool {
+
+    1: required GenericPaymentMethodID method
+
+    /**
+     * Сервис, обслуживающий данный платёжный инструмент.
+     * На данный момент соответствует значению, указанному в `PaymentMethodDefinition`.
+     */
+    2: optional PaymentServiceRef provider
+
+    /**
+     * Данные платёжного инструмента, определённые в соответствии со схемой в
+     * `PaymentMethodDefinition`.
+     * Например:
+     * ```
+     * Content {
+     *   type = 'application/schema-instance+json; schema=https://api.vality.dev/schemas/payment-methods/v2/BankAccountRUS'
+     *   data = '{"accountNumber":"40817810500000000035", "bankBIC":"044525716"}'
+     * }
+     * ```
+     */
+    3: optional base.Content data
+
 }
 
 struct DisposablePaymentResource {
@@ -2069,6 +2102,43 @@ struct PaymentMethodRef { 1: required PaymentMethod id }
 struct PaymentMethodDefinition {
     1: required string name
     2: required string description
+
+    /**
+     * Категория платёжных инструментов.
+     * Например: `online-banking`.
+     * Открытое множество, конкретные значения согласовываются:
+     *  - на уровне констант в протоколе,
+     *  - вне протокола, на уровне конкретных интеграций.
+     * 
+     * Категория, заданная на уровне `PaymentService` по идее должна быть
+     * упразднена в пользу значения, задаваемого здесь.
+     */
+    3: optional PaymentServiceCategory category
+
+    /**
+     * Сервис, обслуживающий любые инструменты платежа с этим методом.
+     */
+    4: optional PaymentServiceRef provider
+
+    /**
+     * Схема данных любого платёжного инструмента в рамках данного метода.
+     * Соответствующие этой схеме данные платёжного инструмента попадают в
+     * поле `data` модели `GenericPaymentTool`.
+     * Важно: должно быть задано для методов, определённых как `GenericPaymentMethod`.
+     */
+    5: optional PaymentMethodSchema schema
+
+}
+
+union PaymentMethodSchema {
+    /**
+     * JSON Schema.
+     * Может быть использована для задания схем, определённых вовне, например:
+     * ```
+     * {"$ref": "https://api.vality.dev/schemas/payment-methods/v2/BankAccountRUS"}
+     * ```
+     */
+    1: json.Object json
 }
 
 union PaymentMethodSelector {
@@ -2711,6 +2781,9 @@ union PaymentToolCondition {
     2: PaymentTerminalCondition payment_terminal
     4: CryptoCurrencyCondition crypto_currency
     5: MobileCommerceCondition mobile_commerce
+    // generic conditions
+    6: GenericPaymentMethod payment_method_is
+    7: PaymentServiceRef payment_service_is
 }
 
 struct BankCardCondition {
