@@ -1284,6 +1284,7 @@ struct WithdrawalServiceTerms {
     2: optional CashLimitSelector cash_limit
     3: optional CashFlowSelector cash_flow
     4: optional AttemptLimitSelector attempt_limit
+    5: optional PaymentMethodSelector methods
 }
 
 /** W2W service terms **/
