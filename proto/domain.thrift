@@ -1739,10 +1739,12 @@ union PaymentMethod {
     7: LegacyMobileOperator mobile_deprecated
 }
 
-typedef string GenericPaymentMethodID
-
 struct GenericPaymentMethod {
-    1: required GenericPaymentMethodID id
+    /**
+     * Сервис, обслуживающий данный платёжный инструмент.
+     * Например: `{"id": "BankTransfersRUS"}`
+     */
+    1: required PaymentServiceRef payment_service
 }
 
 struct BankCardPaymentMethod {
@@ -1832,13 +1834,11 @@ union PaymentTool {
 
 struct GenericPaymentTool {
 
-    1: required GenericPaymentMethodID method
-
     /**
      * Сервис, обслуживающий данный платёжный инструмент.
-     * На данный момент соответствует значению, указанному в `PaymentMethodDefinition`.
+     * Должен соответствовать значению, указанному в `GenericPaymentMethod`.
      */
-    2: optional PaymentServiceRef provider
+    1: required PaymentServiceRef payment_service
 
     /**
      * Данные платёжного инструмента, определённые в соответствии со схемой в
@@ -1851,7 +1851,7 @@ struct GenericPaymentTool {
      * }
      * ```
      */
-    3: optional base.Content data
+    2: optional base.Content data
 
 }
 
@@ -2102,32 +2102,6 @@ struct PaymentMethodRef { 1: required PaymentMethod id }
 struct PaymentMethodDefinition {
     1: required string name
     2: required string description
-
-    /**
-     * Категория платёжных инструментов.
-     * Например: `online-banking`.
-     * Открытое множество, конкретные значения согласовываются:
-     *  - на уровне констант в протоколе,
-     *  - вне протокола, на уровне конкретных интеграций.
-     * 
-     * Категория, заданная на уровне `PaymentService` по идее должна быть
-     * упразднена в пользу значения, задаваемого здесь.
-     */
-    3: optional PaymentServiceCategory category
-
-    /**
-     * Сервис, обслуживающий любые инструменты платежа с этим методом.
-     */
-    4: optional PaymentServiceRef provider
-
-    /**
-     * Схема данных любого платёжного инструмента в рамках данного метода.
-     * Соответствующие этой схеме данные платёжного инструмента попадают в
-     * поле `data` модели `GenericPaymentTool`.
-     * Важно: должно быть задано для методов, определённых как `GenericPaymentMethod`.
-     */
-    5: optional PaymentMethodSchema schema
-
 }
 
 union PaymentMethodSchema {
@@ -2781,9 +2755,7 @@ union PaymentToolCondition {
     2: PaymentTerminalCondition payment_terminal
     4: CryptoCurrencyCondition crypto_currency
     5: MobileCommerceCondition mobile_commerce
-    // generic conditions
-    6: GenericPaymentMethod payment_method_is
-    7: PaymentServiceRef payment_service_is
+    6: GenericPaymentToolCondition generic
 }
 
 struct BankCardCondition {
@@ -2847,6 +2819,10 @@ union MobileCommerceConditionDefinition {
     2: MobileOperatorRef operator_is
     /** Deprecated **/
     1: LegacyMobileOperator operator_is_deprecated
+}
+
+union GenericPaymentToolCondition {
+    1: PaymentServiceRef payment_service_is
 }
 
 struct PartyCondition {
