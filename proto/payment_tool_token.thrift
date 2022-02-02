@@ -18,11 +18,16 @@ struct PaymentToolToken {
     Данные платежного токена
 */
 union PaymentToolTokenPayload {
+    6: GenericToolPayload generic_payload
     1: BankCardPayload bank_card_payload
     2: PaymentTerminalPayload payment_terminal_payload
     3: DigitalWalletPayload digital_wallet_payload
     4: CryptoCurrencyPayload crypto_currency_payload
     5: MobileCommercePayload mobile_commerce_payload
+}
+
+struct GenericToolPayload {
+    1: required domain.GenericPaymentTool payment_tool
 }
 
 struct BankCardPayload {

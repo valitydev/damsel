@@ -96,6 +96,7 @@ struct Withdrawal {
     7: optional base.ID session_id
     2: required Cash body
     3: required Destination destination
+    8: optional domain.PaymentService payment_service
     4: optional Identity sender
     5: optional Identity receiver
     6: optional Quote quote

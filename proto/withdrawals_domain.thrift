@@ -18,6 +18,7 @@ union Destination {
     1: domain.BankCard bank_card
     2: domain.CryptoWallet crypto_wallet
     3: domain.DigitalWallet digital_wallet
+    4: domain.GenericPaymentTool generic
 }
 
 struct Identity {
