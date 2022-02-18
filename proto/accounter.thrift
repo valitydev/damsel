@@ -122,4 +122,6 @@ service Accounter {
     PostingPlan GetPlan(1: PlanID id) throws (1: PlanNotFound e1)
     Account GetAccountByID(1: AccountID id) throws (1:AccountNotFound ex)
     AccountID CreateAccount(1: AccountPrototype prototype)
+    domain.Amount GetAccountAvailableAmount(1: AccountID id, 2: base.Timestamp time)
+        throws (1: AccountNotFound ex)
 }
