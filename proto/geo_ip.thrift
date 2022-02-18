@@ -34,15 +34,6 @@ struct SubdivisionInfo{
 }
 
 /**
-* Информация о данном GeoID
-**/
-struct GeoIDInfo{
-   2: required string country_name;
-   3: optional set<SubdivisionInfo> subdivisions;
-   4: optional string city_name;
-}
-
-/**
 * Интерфейс Geo Service для клиентов - "Columbus"
 */
 service GeoIpService {
@@ -57,27 +48,6 @@ service GeoIpService {
     *  то же что и GetLocation, но для списка IP адресов
     **/
     map <domain.IPAddress, LocationInfo> GetLocations (1: set <domain.IPAddress> ip) throws (1: base.InvalidRequest ex1)
-
-    /**
-    * Возвращает структуру с названием места на указанном языке
-    * geo_ids - список geo-id по которым нужно получить информацию.
-    * lang - язык ответа. Например: "RU", "ENG"
-    *
-    * если по данному geo-id нужная детализация не обнаружена, соответствующее поле в возвращаемой структуре останется не заполненным
-    * если в результате по данному geo-id не обнаружено никаких данных, он не попадает в возвращаемый результат
-    * если язык не поддерживается -> InvalidRequest
-    **/
-    map <GeoID, GeoIDInfo> GetLocationInfo (1: set<GeoID> geo_ids, 2: string lang) throws (1: base.InvalidRequest ex1)
-
-    /**
-    * Возвращает наименование географического объекта по указанному geoID.
-    * При передаче geoID страны - название страны
-    * При передаче geoID региона - название региона
-    * При передаче geoID города - название города
-    * и т.д.
-    * Если передан неизвестный geoID, он не попадет в возвращаемый результат
-    **/
-    map <GeoID, string> GetLocationName (1: set<GeoID> geo_ids, 2: string lang) throws (1: base.InvalidRequest ex1)
 
     /**
     * Возвращает iso code страны местоположения по IP
