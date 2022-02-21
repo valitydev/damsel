@@ -69,14 +69,18 @@ typedef base.Tag CallbackTag
 
 /**
  * Требование приостановить сессию взаимодействия, с продолжением по факту прихода обратного
- * запроса (callback), либо выполняет один из указаных вариантов timeout_behaviour.
+ * запроса (далее: callback), либо выполняет один из указаных вариантов timeout_behaviour.
  * Если не указан timeout_behaviour, сессия завершается с неуспешным завершением
  * по факту истечения заданного времени ожидания.
  */
 struct SuspendIntent {
     /**
-     * Ассоциация, по которой обработчик обратного запроса сможет идентифицировать сессию
-     * взаимодействия с третьей стороной, чтобы продолжить по ней взаимодействие.
+     * Ассоциация (далее: tag), по которой обработчик callback сможет идентифицировать сессию
+     * взаимодействия с провайдером, чтобы продолжить по ней взаимодействие. Для этого адаптер
+     * должен будет вызвать `ProcessPaymentCallback` в сервисе процессинга.
+     *
+     * В рамках одной сессии взаимодействия адаптер может переиспользовать один и тот же tag
+     * сколько угодно раз.
      */
     1: required CallbackTag tag
 
@@ -276,8 +280,18 @@ struct PaymentCallbackResult {
 }
 
 struct PaymentCallbackProxyResult {
-    // TODO temporary crutch, remove it as soon as possible
-    // An `undefined` means that the suspend will be kept untouched
+    /**
+     * Требование адаптера к процессингу по дальнейшему взаимодействию с провайдером.
+     *
+     * Если задано, то процессинг считает callback с данным tag'ом _обработанным_, и все
+     * последующие вызовы `ProcessPaymentCallback` будут отклонены с ошибкой. Но с одним исключением:
+     * если адаптер здесь переиспользует тот же tag в рамках требования suspend, тогда с точки
+     * зрения процессинга это будет требование ожидания _нового_ обратного запроса, просто с тем
+     * же tag'ом.
+     *
+     * Если значение не задано, то callback считается по-прежнему _необработанным_, адаптер
+     * может повторно вызвать `ProcessPaymentCallback` с тем же tag'ом.
+     */
     1: optional Intent                 intent
     2: optional ProxyState             next_state
     3: optional domain.TransactionInfo trx
@@ -318,15 +332,14 @@ exception PaymentNotFound {}
 service ProviderProxyHost {
 
     /**
-     * Запрос к процессингу на обработку обратного вызова от провайдера
-     * в рамках взаимодействия по платежу.
+     * Запрос к процессингу на обработку callback от провайдера в рамках взаимодействия по платежу.
      */
     CallbackResponse ProcessPaymentCallback (1: CallbackTag tag, 2: Callback callback)
         throws (1: base.InvalidRequest ex1)
 
     /**
-     * Запрос к процессингу на обработку обратного вызова от провайдера
-     * в рамках взаимодействия по получению многоразового токена.
+     * Запрос к процессингу на обработку callback от провайдера в рамках взаимодействия по
+     * получению многоразового токена.
      */
     CallbackResponse ProcessRecurrentTokenCallback (1: CallbackTag tag, 2: Callback callback)
         throws (1: base.InvalidRequest ex1)
