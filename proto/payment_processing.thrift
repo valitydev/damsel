@@ -2770,9 +2770,8 @@ service PartyManagement {
         )
 
     ProviderTerminal ComputeProviderTerminal (
-        1: UserInfo user
-        2: domain.TerminalRef terminal_ref
-        3: domain.DataRevision domain_revision
+        1: domain.TerminalRef terminal_ref
+        2: domain.DataRevision domain_revision
     )
         throws (
             1: InvalidUser ex1
