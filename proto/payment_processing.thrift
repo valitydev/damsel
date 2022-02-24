@@ -2424,6 +2424,13 @@ struct ShopContract {
     3: optional domain.PartyContractor contractor
 }
 
+struct ProviderTerminal {
+    1: required string name
+    2: optional string description
+    3: required domain.ProviderRef provider_ref
+    4: required domain.ProxyDefinition proxy
+}
+
 // Exceptions
 
 exception PartyExists {}
@@ -2749,6 +2756,16 @@ service PartyManagement {
             2: ProviderNotFound ex2,
             3: TerminalNotFound ex3,
             4: ProvisionTermSetUndefined ex4
+        )
+
+    ProviderTerminal ComputeProviderTerminal (
+        1: UserInfo user
+        2: domain.TerminalRef terminal_ref
+        3: domain.DataRevision domain_revision
+    )
+        throws (
+            1: InvalidUser ex1
+            2: TerminalNotFound ex2
         )
 
     /* Globals */
