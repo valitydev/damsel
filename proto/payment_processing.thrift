@@ -2427,7 +2427,18 @@ struct ShopContract {
 struct ProviderTerminal {
     1: required string name
     2: optional string description
+
+    /**
+     * Ссылка на провайдера, который предоставляет данный терминал.
+     */
     3: required domain.ProviderRef provider_ref
+
+    /**
+     * Данные для обращения к адаптеру по данному терминалу.
+     * Взаимодействие с провайдером нужно производить, обращаясь к адаптеру по
+     * указанному `url`, передавая указанные `options` в рамках соответсвующего
+     * протокола.
+     */
     4: required domain.ProxyDefinition proxy
 }
 
