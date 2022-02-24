@@ -28,8 +28,8 @@ jobs:
         id: commit_info
       - name: Build package
         run: >
-          mvn --batch-mode 
-            -Dcommit.number=${{ steps.commit_info.outputs.COMMIT_NUMBER }}
-            -Drevision="1.${{ steps.commit_info.outputs.COMMIT_NUMBER }}-${{ steps.commit_info.outputs.SHA_7 }}"
-            clean
-            compile -f pom.xml
+          mvn --batch-mode
+          -Dcommit.number=${{ steps.commit_info.outputs.COMMIT_NUMBER }}
+          -Drevision="1.${{ steps.commit_info.outputs.COMMIT_NUMBER }}-${{ steps.commit_info.outputs.SHA_7 }}"
+          clean
+          compile -f pom.xml

@@ -30,4 +30,4 @@ jobs:
           deploy-secret-key-password: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
           maven-args: >
             -Dcommit.number=${{ steps.commit_info.outputs.COMMIT_NUMBER }}
-            -Drevision="1.${{ steps.commit_info.outputs.COMMIT_NUMBER }}-${{ steps.commit_info.outputs.SHA_7 }}"'
+            -Drevision="1.${{ steps.commit_info.outputs.COMMIT_NUMBER }}-${{ steps.commit_info.outputs.SHA_7 }}"
