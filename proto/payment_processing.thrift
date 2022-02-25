@@ -2424,14 +2424,21 @@ struct ShopContract {
     3: optional domain.PartyContractor contractor
 }
 
+struct ProviderDetails {
+    1: required domain.ProviderRef ref
+    2: required string name
+    3: optional string description
+}
+
 struct ProviderTerminal {
-    1: required string name
-    2: optional string description
+    1: required domain.TerminalRef ref
+    2: required string name
+    3: optional string description
 
     /**
-     * Ссылка на провайдера, который предоставляет данный терминал.
+     * Данные провайдера, который предоставляет данный терминал.
      */
-    3: required domain.ProviderRef provider_ref
+    4: required ProviderDetails provider
 
     /**
      * Данные для обращения к адаптеру по данному терминалу.
@@ -2439,12 +2446,12 @@ struct ProviderTerminal {
      * указанному `url`, передавая указанные `options` в рамках соответсвующего
      * протокола.
      */
-    4: required domain.ProxyDefinition proxy
+    5: required domain.ProxyDefinition proxy
 
     /**
      * Результирующие условия обслуживания по данному терминалу.
      */
-    5: optional domain.ProvisionTermSet terms
+    6: optional domain.ProvisionTermSet terms
 }
 
 // Exceptions
