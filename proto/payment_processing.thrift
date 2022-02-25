@@ -2440,6 +2440,11 @@ struct ProviderTerminal {
      * протокола.
      */
     4: required domain.ProxyDefinition proxy
+
+    /**
+     * Результирующие условия обслуживания по данному терминалу.
+     */
+    5: optional domain.ProvisionTermSet terms
 }
 
 // Exceptions
@@ -2769,9 +2774,16 @@ service PartyManagement {
             4: ProvisionTermSetUndefined ex4
         )
 
+    /**
+     * Вычислить данные терминала провайдера.
+     *
+     * Аргумент `varset` может быть неопределён или содержать пустую структуру,
+     * в этом случае расчёт результрующих provision terms не производится.
+     */
     ProviderTerminal ComputeProviderTerminal (
         1: domain.TerminalRef terminal_ref
         2: domain.DataRevision domain_revision
+        3: Varset varset
     )
         throws (
             1: InvalidUser ex1
