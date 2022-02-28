@@ -13,9 +13,9 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      - uses: valitydev/action-setup-thrift@v0.0.5
+      - uses: valitydev/action-setup-thrift@v0.0.6
 
-      - uses: erlef/setup-beam@v1.10
+      - uses: erlef/setup-beam@v1.11
         id: beam
         with:
           otp-version: '24'
