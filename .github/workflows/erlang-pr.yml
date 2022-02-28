@@ -1,25 +1,24 @@
-name: Erlang
+name: Erlang build
+
 on:
   pull_request:
-    branches: ['*']
-  push:
-    branches: [master]
+    branches:
+      - "*"
 
 jobs:
   build:
     name: Build and verify
     runs-on: ubuntu-latest
     steps:
-
       - uses: actions/checkout@v2
 
-      - uses: valitydev/action-setup-thrift@v0.0.5
+      - uses: valitydev/action-setup-thrift@v1
 
-      - uses: erlef/setup-beam@v1.10
+      - uses: erlef/setup-beam@v1
         id: beam
         with:
-          otp-version: '24'
-          rebar3-version: '3.18'
+          otp-version: "24"
+          rebar3-version: "3.18"
 
       - name: Restore PLT cache
         uses: actions/cache@v2
