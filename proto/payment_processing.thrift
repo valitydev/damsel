@@ -2424,6 +2424,36 @@ struct ShopContract {
     3: optional domain.PartyContractor contractor
 }
 
+struct ProviderDetails {
+    1: required domain.ProviderRef ref
+    2: required string name
+    3: optional string description
+}
+
+struct ProviderTerminal {
+    1: required domain.TerminalRef ref
+    2: required string name
+    3: optional string description
+
+    /**
+     * Данные провайдера, который предоставляет данный терминал.
+     */
+    4: required ProviderDetails provider
+
+    /**
+     * Данные для обращения к адаптеру по данному терминалу.
+     * Взаимодействие с провайдером нужно производить, обращаясь к адаптеру по
+     * указанному `url`, передавая указанные `options` в рамках соответсвующего
+     * протокола.
+     */
+    5: required domain.ProxyDefinition proxy
+
+    /**
+     * Результирующие условия обслуживания по данному терминалу.
+     */
+    6: optional domain.ProvisionTermSet terms
+}
+
 // Exceptions
 
 exception PartyExists {}
@@ -2749,6 +2779,21 @@ service PartyManagement {
             2: ProviderNotFound ex2,
             3: TerminalNotFound ex3,
             4: ProvisionTermSetUndefined ex4
+        )
+
+    /**
+     * Вычислить данные терминала провайдера.
+     *
+     * Аргумент `varset` может быть неопределён или содержать пустую структуру,
+     * в этом случае расчёт результрующих provision terms не производится.
+     */
+    ProviderTerminal ComputeProviderTerminal (
+        1: domain.TerminalRef terminal_ref
+        2: domain.DataRevision domain_revision
+        3: Varset varset
+    )
+        throws (
+            2: TerminalNotFound ex2
         )
 
     /* Globals */
