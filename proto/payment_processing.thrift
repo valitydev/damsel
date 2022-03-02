@@ -2793,7 +2793,6 @@ service PartyManagement {
         3: Varset varset
     )
         throws (
-            1: InvalidUser ex1
             2: TerminalNotFound ex2
         )
 
