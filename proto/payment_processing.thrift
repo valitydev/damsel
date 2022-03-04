@@ -2784,8 +2784,8 @@ service PartyManagement {
     /**
      * Вычислить данные терминала провайдера.
      *
-     * Аргумент `varset` может быть неопределён или содержать пустую структуру,
-     * в этом случае расчёт результрующих provision terms не производится.
+     * Аргумент `varset` может быть неопределён, в этом случае расчёт результрующих
+     * provision terms не производится, и в ответе они будут отсутствовать.
      */
     ProviderTerminal ComputeProviderTerminal (
         1: domain.TerminalRef terminal_ref
