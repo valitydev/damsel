@@ -2569,64 +2569,64 @@ exception RuleSetNotFound {}
 
 // Service
 
+// @NOTE: Argument and exception tags start with 2 for historical reasons
+
 service PartyManagement {
 
     /* Party */
 
-    void Create (1: UserInfo user, 2: PartyID party_id, 3: PartyParams params)
-        throws (1: InvalidUser ex1, 2: PartyExists ex2)
+    void Create (2: PartyID party_id, 3: PartyParams params)
+        throws (2: PartyExists ex2)
 
-    domain.Party Get (1: UserInfo user, 2: PartyID party_id)
-        throws (1: InvalidUser ex1, 2: PartyNotFound ex2)
+    domain.Party Get (2: PartyID party_id)
+        throws (2: PartyNotFound ex2)
 
-    PartyRevision GetRevision (1: UserInfo user, 2: PartyID party_id)
-        throws (1: InvalidUser ex1, 2: PartyNotFound ex2)
+    PartyRevision GetRevision (2: PartyID party_id)
+        throws (2: PartyNotFound ex2)
 
-    domain.Party Checkout (1: UserInfo user, 2: PartyID party_id, 3: PartyRevisionParam revision)
-        throws (1: InvalidUser ex1, 2: PartyNotFound ex2, 3: InvalidPartyRevision ex3)
+    domain.Party Checkout (2: PartyID party_id, 3: PartyRevisionParam revision)
+        throws (2: PartyNotFound ex2, 3: InvalidPartyRevision ex3)
 
-    void Suspend (1: UserInfo user, 2: PartyID party_id)
-        throws (1: InvalidUser ex1, 2: PartyNotFound ex2, 3: InvalidPartyStatus ex3)
+    void Suspend (2: PartyID party_id)
+        throws (2: PartyNotFound ex2, 3: InvalidPartyStatus ex3)
 
-    void Activate (1: UserInfo user, 2: PartyID party_id)
-        throws (1: InvalidUser ex1, 2: PartyNotFound ex2, 3: InvalidPartyStatus ex3)
+    void Activate (2: PartyID party_id)
+        throws (2: PartyNotFound ex2, 3: InvalidPartyStatus ex3)
 
-    void Block (1: UserInfo user, 2: PartyID party_id, 3: string reason)
-        throws (1: InvalidUser ex1, 2: PartyNotFound ex2, 3: InvalidPartyStatus ex3)
+    void Block (2: PartyID party_id, 3: string reason)
+        throws (2: PartyNotFound ex2, 3: InvalidPartyStatus ex3)
 
-    void Unblock (1: UserInfo user, 2: PartyID party_id, 3: string reason)
-        throws (1: InvalidUser ex1, 2: PartyNotFound ex2, 3: InvalidPartyStatus ex3)
+    void Unblock (2: PartyID party_id, 3: string reason)
+        throws (2: PartyNotFound ex2, 3: InvalidPartyStatus ex3)
 
     /* Party Status */
 
-    domain.PartyStatus GetStatus (1: UserInfo user, 2: PartyID party_id)
-        throws (1: InvalidUser ex1, 2: PartyNotFound ex2)
+    domain.PartyStatus GetStatus (2: PartyID party_id)
+        throws (2: PartyNotFound ex2)
 
     /* Party Meta */
 
-    domain.PartyMeta GetMeta (1: UserInfo user, 2: PartyID party_id)
-        throws (1: InvalidUser ex1, 2: PartyNotFound ex2)
+    domain.PartyMeta GetMeta (2: PartyID party_id)
+        throws (2: PartyNotFound ex2)
 
-    domain.PartyMetaData GetMetaData (1: UserInfo user, 2: PartyID party_id, 3: domain.PartyMetaNamespace ns)
-        throws (1: InvalidUser ex1, 2: PartyNotFound ex2, 3: PartyMetaNamespaceNotFound ex3)
+    domain.PartyMetaData GetMetaData (2: PartyID party_id, 3: domain.PartyMetaNamespace ns)
+        throws (2: PartyNotFound ex2, 3: PartyMetaNamespaceNotFound ex3)
 
-    void SetMetaData (1: UserInfo user, 2: PartyID party_id, 3: domain.PartyMetaNamespace ns, 4: domain.PartyMetaData data)
-        throws (1: InvalidUser ex1, 2: PartyNotFound ex2)
+    void SetMetaData (2: PartyID party_id, 3: domain.PartyMetaNamespace ns, 4: domain.PartyMetaData data)
+        throws (2: PartyNotFound ex2)
 
-    void RemoveMetaData (1: UserInfo user, 2: PartyID party_id, 3: domain.PartyMetaNamespace ns)
-        throws (1: InvalidUser ex1, 2: PartyNotFound ex2, 3: PartyMetaNamespaceNotFound ex3)
+    void RemoveMetaData (2: PartyID party_id, 3: domain.PartyMetaNamespace ns)
+        throws (2: PartyNotFound ex2, 3: PartyMetaNamespaceNotFound ex3)
 
     /* Contract */
 
-    domain.Contract GetContract (1: UserInfo user, 2: PartyID party_id, 3: ContractID contract_id)
+    domain.Contract GetContract (2: PartyID party_id, 3: ContractID contract_id)
         throws (
-            1: InvalidUser ex1,
             2: PartyNotFound ex2,
             3: ContractNotFound ex3
         )
 
     domain.TermSet ComputeContractTerms (
-        1: UserInfo user,
         2: PartyID party_id,
         3: ContractID contract_id,
         4: base.Timestamp timestamp
@@ -2635,7 +2635,6 @@ service PartyManagement {
         7: ComputeContractTermsVarset varset
     )
         throws (
-            1: InvalidUser ex1,
             2: PartyNotFound ex2,
             3: PartyNotExistsYet ex3
             4: ContractNotFound ex4
@@ -2643,26 +2642,25 @@ service PartyManagement {
 
     /* Shop */
 
-    domain.Shop GetShop (1: UserInfo user, 2: PartyID party_id, 3: ShopID id)
-        throws (1: InvalidUser ex1, 2: PartyNotFound ex2, 3: ShopNotFound ex3)
+    domain.Shop GetShop (2: PartyID party_id, 3: ShopID id)
+        throws (2: PartyNotFound ex2, 3: ShopNotFound ex3)
 
-    ShopContract GetShopContract(1: UserInfo user, 2: PartyID party_id, 3: ShopID id)
-        throws (1: InvalidUser ex1, 2: PartyNotFound ex2, 3: ShopNotFound ex3, 4: ContractNotFound ex4)
+    ShopContract GetShopContract(2: PartyID party_id, 3: ShopID id)
+        throws (2: PartyNotFound ex2, 3: ShopNotFound ex3, 4: ContractNotFound ex4)
 
-    void SuspendShop (1: UserInfo user, 2: PartyID party_id, 3: ShopID id)
-        throws (1: InvalidUser ex1, 2: PartyNotFound ex2, 3: ShopNotFound ex3, 4: InvalidShopStatus ex4)
+    void SuspendShop (2: PartyID party_id, 3: ShopID id)
+        throws (2: PartyNotFound ex2, 3: ShopNotFound ex3, 4: InvalidShopStatus ex4)
 
-    void ActivateShop (1: UserInfo user, 2: PartyID party_id, 3: ShopID id)
-        throws (1: InvalidUser ex1, 2: PartyNotFound ex2, 3: ShopNotFound ex3, 4: InvalidShopStatus ex4)
+    void ActivateShop (2: PartyID party_id, 3: ShopID id)
+        throws (2: PartyNotFound ex2, 3: ShopNotFound ex3, 4: InvalidShopStatus ex4)
 
-    void BlockShop (1: UserInfo user, 2: PartyID party_id, 3: ShopID id, 4: string reason)
-        throws (1: InvalidUser ex1, 2: PartyNotFound ex2, 3: ShopNotFound ex3, 4: InvalidShopStatus ex4)
+    void BlockShop (2: PartyID party_id, 3: ShopID id, 4: string reason)
+        throws (2: PartyNotFound ex2, 3: ShopNotFound ex3, 4: InvalidShopStatus ex4)
 
-    void UnblockShop (1: UserInfo user, 2: PartyID party_id, 3: ShopID id, 4: string reason)
-        throws (1: InvalidUser ex1, 2: PartyNotFound ex2, 3: ShopNotFound ex3, 4: InvalidShopStatus ex4)
+    void UnblockShop (2: PartyID party_id, 3: ShopID id, 4: string reason)
+        throws (2: PartyNotFound ex2, 3: ShopNotFound ex3, 4: InvalidShopStatus ex4)
 
     domain.TermSet ComputeShopTerms (
-        1: UserInfo user,
         2: PartyID party_id,
         3: ShopID id,
         4: base.Timestamp timestamp
@@ -2670,7 +2668,6 @@ service PartyManagement {
         6: ComputeShopTermsVarset varset
     )
         throws (
-            1: InvalidUser ex1,
             2: PartyNotFound ex2,
             3: PartyNotExistsYet ex3,
             4: ShopNotFound ex4
@@ -2678,9 +2675,8 @@ service PartyManagement {
 
     /* Claim */
 
-    Claim CreateClaim (1: UserInfo user, 2: PartyID party_id, 3: PartyChangeset changeset)
+    Claim CreateClaim (2: PartyID party_id, 3: PartyChangeset changeset)
         throws (
-            1: InvalidUser ex1,
             2: PartyNotFound ex2,
             3: InvalidPartyStatus ex3,
             4: ChangesetConflict ex4,
@@ -2688,15 +2684,14 @@ service PartyManagement {
             6: base.InvalidRequest ex6
         )
 
-    Claim GetClaim (1: UserInfo user, 2: PartyID party_id, 3: ClaimID id)
-        throws (1: InvalidUser ex1, 2: PartyNotFound ex2, 3: ClaimNotFound ex3)
+    Claim GetClaim (2: PartyID party_id, 3: ClaimID id)
+        throws (2: PartyNotFound ex2, 3: ClaimNotFound ex3)
 
-    list<Claim> GetClaims (1: UserInfo user, 2: PartyID party_id)
-        throws (1: InvalidUser ex1, 2: PartyNotFound ex2)
+    list<Claim> GetClaims (2: PartyID party_id)
+        throws (2: PartyNotFound ex2)
 
-    void AcceptClaim (1: UserInfo user, 2: PartyID party_id, 3: ClaimID id, 4: ClaimRevision revision)
+    void AcceptClaim (2: PartyID party_id, 3: ClaimID id, 4: ClaimRevision revision)
         throws (
-            1: InvalidUser ex1,
             2: PartyNotFound ex2,
             3: ClaimNotFound ex3,
             4: InvalidClaimStatus ex4,
@@ -2704,9 +2699,8 @@ service PartyManagement {
             6: InvalidChangeset ex6
         )
 
-    void UpdateClaim (1: UserInfo user, 2: PartyID party_id, 3: ClaimID id, 4: ClaimRevision revision, 5: PartyChangeset changeset)
+    void UpdateClaim (2: PartyID party_id, 3: ClaimID id, 4: ClaimRevision revision, 5: PartyChangeset changeset)
         throws (
-            1: InvalidUser ex1,
             2: PartyNotFound ex2,
             3: InvalidPartyStatus ex3,
             4: ClaimNotFound ex4,
@@ -2717,18 +2711,16 @@ service PartyManagement {
             9: base.InvalidRequest ex9
         )
 
-    void DenyClaim (1: UserInfo user, 2: PartyID party_id, 3: ClaimID id, 4: ClaimRevision revision, 5: string reason)
+    void DenyClaim (2: PartyID party_id, 3: ClaimID id, 4: ClaimRevision revision, 5: string reason)
         throws (
-            1: InvalidUser ex1,
             2: PartyNotFound ex2,
             3: ClaimNotFound ex3,
             4: InvalidClaimStatus ex4,
             5: InvalidClaimRevision ex5
         )
 
-    void RevokeClaim (1: UserInfo user, 2: PartyID party_id, 3: ClaimID id, 4: ClaimRevision revision, 5: string reason)
+    void RevokeClaim (2: PartyID party_id, 3: ClaimID id, 4: ClaimRevision revision, 5: string reason)
         throws (
-            1: InvalidUser ex1,
             2: PartyNotFound ex2,
             3: InvalidPartyStatus ex3,
             4: ClaimNotFound ex4,
@@ -2738,9 +2730,8 @@ service PartyManagement {
 
     /* Event polling */
 
-    Events GetEvents (1: UserInfo user, 2: PartyID party_id, 3: EventRange range)
+    Events GetEvents (2: PartyID party_id, 3: EventRange range)
         throws (
-            1: InvalidUser ex1,
             2: PartyNotFound ex2,
             3: EventNotFound ex3,
             4: base.InvalidRequest ex4
@@ -2748,34 +2739,30 @@ service PartyManagement {
 
     /* Accounts */
 
-    domain.ShopAccount GetShopAccount (1: UserInfo user, 2: PartyID party_id, 3: ShopID shop_id)
-        throws (1: InvalidUser ex1, 2: PartyNotFound ex2, 3: ShopNotFound ex3, 4: ShopAccountNotFound ex4)
+    domain.ShopAccount GetShopAccount (2: PartyID party_id, 3: ShopID shop_id)
+        throws (2: PartyNotFound ex2, 3: ShopNotFound ex3, 4: ShopAccountNotFound ex4)
 
-    AccountState GetAccountState (1: UserInfo user, 2: PartyID party_id, 3: domain.AccountID account_id)
-        throws (1: InvalidUser ex1, 2: PartyNotFound ex2, 3: AccountNotFound ex3)
+    AccountState GetAccountState (2: PartyID party_id, 3: domain.AccountID account_id)
+        throws (2: PartyNotFound ex2, 3: AccountNotFound ex3)
 
     /* Provider */
 
     domain.Provider ComputeProvider (
-        1: UserInfo user,
         2: domain.ProviderRef provider_ref,
         3: domain.DataRevision domain_revision,
         4: Varset varset
     )
         throws (
-            1: InvalidUser ex1,
             2: ProviderNotFound ex2
         )
 
     domain.ProvisionTermSet ComputeProviderTerminalTerms (
-        1: UserInfo user,
         2: domain.ProviderRef provider_ref,
         3: domain.TerminalRef terminal_ref,
         4: domain.DataRevision domain_revision,
         5: Varset varset
     )
         throws (
-            1: InvalidUser ex1,
             2: ProviderNotFound ex2,
             3: TerminalNotFound ex3,
             4: ProvisionTermSetUndefined ex4
@@ -2799,12 +2786,10 @@ service PartyManagement {
     /* Globals */
 
     domain.Globals ComputeGlobals (
-        1: UserInfo user,
         3: domain.DataRevision domain_revision,
         4: Varset varset
     )
         throws (
-            1: InvalidUser ex1,
             2: GlobalsNotFound ex2
         )
 
@@ -2812,53 +2797,45 @@ service PartyManagement {
 
     // Deprecated, will be replaced by ComputeRoutingRuleset
     domain.RoutingRuleset ComputePaymentRoutingRuleset (
-        1: UserInfo user,
         2: domain.RoutingRulesetRef ruleset_ref,
         3: domain.DataRevision domain_revision,
         4: Varset varset
     )
         throws (
-            1: InvalidUser ex1,
             2: RuleSetNotFound ex2
         )
 
     domain.RoutingRuleset ComputeRoutingRuleset (
-        1: UserInfo user,
         2: domain.RoutingRulesetRef ruleset_ref,
         3: domain.DataRevision domain_revision,
         4: Varset varset
     )
         throws (
-            1: InvalidUser ex1,
             2: RuleSetNotFound ex2
         )
 
     /* Payment institutions */
 
     domain.TermSet ComputePaymentInstitutionTerms (
-        1: UserInfo user,
         3: PaymentInstitutionRef ref,
         4: Varset varset
     )
         throws (1: InvalidUser ex1, 2: PartyNotFound ex2, 3: PaymentInstitutionNotFound ex3)
 
     domain.PaymentInstitution ComputePaymentInstitution (
-        1: UserInfo user,
         2: PaymentInstitutionRef ref,
         3: domain.DataRevision domain_revision,
         4: Varset varset
     )
         throws (
-            1: InvalidUser ex1,
             2: PartyNotFound ex2,
             3: PaymentInstitutionNotFound ex3
         )
 
     /* Payouts */
     /* TODO looks like adhoc. Rework after feedback. Or not. */
-    domain.FinalCashFlow ComputePayoutCashFlow (1: UserInfo user, 2: PartyID party_id, 3: PayoutParams params)
+    domain.FinalCashFlow ComputePayoutCashFlow (2: PartyID party_id, 3: PayoutParams params)
         throws (
-            1: InvalidUser ex1,
             2: PartyNotFound ex2,
             3: PartyNotExistsYet ex3,
             4: ShopNotFound ex4,
