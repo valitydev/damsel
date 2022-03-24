@@ -1,12 +1,26 @@
 {
-  "name": "damsel",
+  "name": "@vality/domain-proto",
   "version": "1.0.0",
-  "description": "",
+  "scripts": {
+    "codegen": "thrift-codegen"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/valitydev/damsel.git"
   },
-  "author": "rbkmoney",
   "license": "Apache-2.0",
-  "private": true
+  "homepage": "https://github.com/valitydev/damsel#readme",
+  "files": [
+    "lib/**/*.{js,d.ts,json}",
+    "**/*.thrift"
+  ],
+  "main": "./lib/domain.js",
+  "types": "./lib/domain.d.ts",
+  "devDependencies": {
+    "@vality/thrift-codegen": "0.1.1-c81b4b7.0"
+  }
 }

@@ -13,3 +13,7 @@
 /include/*.hrl
 
 *.iml
+
+# frontend
+node_modules
+lib
