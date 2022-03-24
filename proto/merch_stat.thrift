@@ -169,7 +169,10 @@ enum CryptoCurrency {
 }
 
 struct PaymentTerminal {
-    1: required TerminalPaymentProvider terminal_type
+    2: optional domain.PaymentServiceRef payment_service
+
+    /** Deprecated */
+    1: optional TerminalPaymentProvider terminal_type_deprecated
 }
 
 enum TerminalPaymentProvider {
