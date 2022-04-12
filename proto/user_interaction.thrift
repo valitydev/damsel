@@ -19,6 +19,13 @@ struct QrCode {
     1: required binary payload
 }
 
+struct TextMessage {
+    /** Содержимое сообщения */
+    1: required string payload
+    /** Язык разметки для интерпретации содержимого сообщения */
+    2: required base.MarkupLanguage markup_language
+}
+
 struct CryptoCash {
     1: required base.Rational crypto_amount
     2: required CryptoCurrencySymbolicCode crypto_symbolic_code
@@ -66,6 +73,10 @@ struct QrCodeDisplayRequest {
     1: required QrCode qr_code
 }
 
+struct TextMessageDisplayRequest {
+    1: required TextMessage text_message
+}
+
 union UserInteraction {
     /**
      * Требование переадресовать user agent пользователя, в виде HTTP-запроса.
@@ -91,4 +102,9 @@ union UserInteraction {
      * Запрос на отображение пользователю QR-кода
      */
     4: QrCodeDisplayRequest qr_code_display_request
+
+    /**
+     * Запрос на отображение пользователю текстового сообщения
+     */
+    5: TextMessageDisplayRequest text_message_display_request
 }

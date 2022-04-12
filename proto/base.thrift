@@ -215,3 +215,11 @@ struct IntegerRange {
 /* Типы, используемые для идентфикации заявок */
 typedef i64 ClaimID
 typedef i32 ClaimRevision
+
+/**
+ * Язык разметки текста
+ */
+enum MarkupLanguage {
+    markdown
+    html
+}
