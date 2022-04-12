@@ -188,12 +188,18 @@ enum TerminalPaymentProvider {
 typedef string DigitalWalletID
 
 struct DigitalWallet {
-    1: required DigitalWalletProvider provider
-    2: required DigitalWalletID       id
+    3: optional domain.PaymentServiceRef     payment_service
+    2: required DigitalWalletID              id
+    // Deprecated
+    1: optional LegacyDigitalWalletProvider  provider_deprecated
 }
 
-enum DigitalWalletProvider {
+/** Deprecated **/
+enum LegacyDigitalWalletProvider {
     qiwi
+    rbkmoney
+    yandex_money
+    webmoney
 }
 
 /**
