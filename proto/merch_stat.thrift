@@ -194,8 +194,12 @@ struct DigitalWallet {
     1: optional LegacyDigitalWalletProvider  provider_deprecated
 }
 
-enum DigitalWalletProvider {
+/** Deprecated **/
+enum LegacyDigitalWalletProvider {
     qiwi
+    rbkmoney
+    yandex_money
+    webmoney
 }
 
 /**
