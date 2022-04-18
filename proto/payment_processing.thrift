@@ -12,28 +12,6 @@ include "msgpack.thrift"
 namespace java dev.vality.damsel.payment_processing
 namespace erlang payproc
 
-/* Interface clients */
-
-typedef base.ID UserID
-
-struct UserInfo {
-    1: required UserID id
-    2: required UserType type
-}
-
-/* Временная замена ролям пользователей для разграничения доступа в HG */
-union UserType {
-    1: InternalUser internal_user
-    2: ExternalUser external_user
-    3: ServiceUser  service_user
-}
-
-struct InternalUser {}
-
-struct ExternalUser {}
-
-struct ServiceUser {}
-
 /* Events */
 
 typedef list<Event> Events
@@ -914,7 +892,6 @@ union InvalidStatus {
     2: domain.Suspension suspension
 }
 
-exception InvalidUser {}
 exception InvoiceNotFound {}
 
 exception InvoiceAdjustmentNotFound {}
@@ -1040,11 +1017,12 @@ union FailedAllocationTransaction {
 
 exception AllocationNotFound {}
 
+// @NOTE: Argument and exception tags start with 2 for historical reasons
+
 service Invoicing {
 
-    Invoice Create (1: UserInfo user, 2: InvoiceParams params)
+    Invoice Create (2: InvoiceParams params)
         throws (
-            1: InvalidUser ex1,
             2: base.InvalidRequest ex2,
             3: PartyNotFound ex3,
             4: ShopNotFound ex4,
@@ -1057,9 +1035,8 @@ service Invoicing {
             11: AllocationInvalidTransaction ex11
         )
 
-    Invoice CreateWithTemplate (1: UserInfo user, 2: InvoiceWithTemplateParams params)
+    Invoice CreateWithTemplate (2: InvoiceWithTemplateParams params)
         throws (
-            1: InvalidUser ex1,
             2: base.InvalidRequest ex2,
             3: InvalidPartyStatus ex3,
             4: InvalidShopStatus ex4,
@@ -1069,27 +1046,23 @@ service Invoicing {
             8: InvoiceTermsViolated ex8
         )
 
-    Invoice Get (1: UserInfo user, 2: domain.InvoiceID id, 3: EventRange range)
+    Invoice Get (2: domain.InvoiceID id, 3: EventRange range)
         throws (
-            1: InvalidUser ex1,
             2: InvoiceNotFound ex2
         )
 
-    Events GetEvents (1: UserInfo user, 2: domain.InvoiceID id, 3: EventRange range)
+    Events GetEvents (2: domain.InvoiceID id, 3: EventRange range)
         throws (
-            1: InvalidUser ex1,
             2: InvoiceNotFound ex2,
             3: EventNotFound ex3,
             4: base.InvalidRequest ex4
         )
 
     InvoiceAdjustment CreateInvoiceAdjustment (
-        1: UserInfo user,
         2: domain.InvoiceID id,
         3: InvoiceAdjustmentParams params
     )
         throws (
-            1: InvalidUser ex1,
             2: InvoiceNotFound ex2,
             3: InvalidInvoiceStatus ex3,
             4: InvoiceAdjustmentPending ex4,
@@ -1100,35 +1073,29 @@ service Invoicing {
         )
 
     InvoiceAdjustment GetAdjustment (
-        1: UserInfo user,
         2: domain.InvoiceID id,
         3: domain.InvoiceAdjustmentID adjustment_id
     )
         throws (
-            1: InvalidUser ex1,
             2: InvoiceNotFound ex2,
             3: InvoiceAdjustmentNotFound ex3
         )
 
     void CaptureAdjustment (
-        1: UserInfo user,
         2: domain.InvoiceID id,
         3: domain.InvoiceAdjustmentID adjustment_id
     )
         throws (
-            1: InvalidUser ex1,
             2: InvoiceNotFound ex2,
             3: InvoiceAdjustmentNotFound ex3,
             4: InvalidInvoiceAdjustmentStatus ex4
         )
 
     void CancelAdjustment (
-        1: UserInfo user
         2: domain.InvoiceID id,
         3: domain.InvoiceAdjustmentID adjustment_id
     )
         throws (
-            1: InvalidUser ex1,
             2: InvoiceNotFound ex2,
             3: InvoiceAdjustmentNotFound ex3,
             4: InvalidInvoiceAdjustmentStatus ex4
@@ -1137,21 +1104,20 @@ service Invoicing {
     /* Terms */
 
     domain.TermSet ComputeTerms (
-        1: UserInfo user,
         2: domain.InvoiceID id
         3: PartyRevisionParam party_revision_param
     )
-        throws (1: InvalidUser ex1, 2: InvoiceNotFound ex2)
+        throws (
+            2: InvoiceNotFound ex2
+        )
 
     /* Payments */
 
     InvoicePayment StartPayment (
-        1: UserInfo user,
         2: domain.InvoiceID id,
         3: InvoicePaymentParams params
     )
         throws (
-            1: InvalidUser ex1,
             2: InvoiceNotFound ex2,
             3: InvalidInvoiceStatus ex3,
             4: InvoicePaymentPending ex4,
@@ -1165,24 +1131,20 @@ service Invoicing {
         )
 
     InvoicePayment GetPayment (
-        1: UserInfo user,
         2: domain.InvoiceID id,
         3: domain.InvoicePaymentID payment_id
     )
         throws (
-            1: InvalidUser ex1,
             2: InvoiceNotFound ex2,
             3: InvoicePaymentNotFound ex3
         )
 
     void CancelPayment (
-        1: UserInfo user,
         2: domain.InvoiceID id,
         3: domain.InvoicePaymentID payment_id
         4: string reason
     )
         throws (
-            1: InvalidUser ex1,
             2: InvoiceNotFound ex2,
             3: InvoicePaymentNotFound ex3,
             4: InvalidPaymentStatus ex4,
@@ -1193,13 +1155,11 @@ service Invoicing {
         )
 
     void CapturePayment (
-        1: UserInfo user,
         2: domain.InvoiceID id,
         3: domain.InvoicePaymentID payment_id
         4: InvoicePaymentCaptureParams params
     )
         throws (
-            1: InvalidUser ex1,
             2: InvoiceNotFound ex2,
             3: InvoicePaymentNotFound ex3,
             4: InvalidPaymentStatus ex4,
@@ -1215,13 +1175,11 @@ service Invoicing {
         )
 
     void CapturePaymentNew (
-        1: UserInfo user,
         2: domain.InvoiceID id,
         3: domain.InvoicePaymentID payment_id
         4: InvoicePaymentCaptureParams params
     )
         throws (
-            1: InvalidUser ex1,
             2: InvoiceNotFound ex2,
             3: InvoicePaymentNotFound ex3,
             4: InvalidPaymentStatus ex4,
@@ -1245,13 +1203,11 @@ service Invoicing {
      * создать невозможно.
      */
     InvoicePaymentAdjustment CreatePaymentAdjustment (
-        1: UserInfo user,
         2: domain.InvoiceID id,
         3: domain.InvoicePaymentID payment_id,
         4: InvoicePaymentAdjustmentParams params
     )
         throws (
-            1: InvalidUser ex1,
             2: InvoiceNotFound ex2,
             3: InvoicePaymentNotFound ex3,
             4: InvalidPaymentStatus ex4,
@@ -1262,26 +1218,22 @@ service Invoicing {
         )
 
     InvoicePaymentAdjustment GetPaymentAdjustment (
-        1: UserInfo user,
         2: domain.InvoiceID id,
         3: domain.InvoicePaymentID payment_id
         4: domain.InvoicePaymentAdjustmentID adjustment_id
     )
         throws (
-            1: InvalidUser ex1,
             2: InvoiceNotFound ex2,
             3: InvoicePaymentNotFound ex3,
             4: InvoicePaymentAdjustmentNotFound ex4
         )
 
     void CapturePaymentAdjustment (
-        1: UserInfo user,
         2: domain.InvoiceID id,
         3: domain.InvoicePaymentID payment_id
         4: domain.InvoicePaymentAdjustmentID adjustment_id
     )
         throws (
-            1: InvalidUser ex1,
             2: InvoiceNotFound ex2,
             3: InvoicePaymentNotFound ex3,
             4: InvoicePaymentAdjustmentNotFound ex4,
@@ -1289,13 +1241,11 @@ service Invoicing {
         )
 
     void CancelPaymentAdjustment (
-        1: UserInfo user
         2: domain.InvoiceID id,
         3: domain.InvoicePaymentID payment_id
         4: domain.InvoicePaymentAdjustmentID adjustment_id
     )
         throws (
-            1: InvalidUser ex1,
             2: InvoiceNotFound ex2,
             3: InvoicePaymentNotFound ex3,
             4: InvoicePaymentAdjustmentNotFound ex4,
@@ -1306,13 +1256,11 @@ service Invoicing {
      * Создать чарджбэк
      */
     domain.InvoicePaymentChargeback CreateChargeback (
-        1: UserInfo user
         2: domain.InvoiceID id,
         3: domain.InvoicePaymentID payment_id
         4: InvoicePaymentChargebackParams params
     )
         throws (
-            1:  InvalidUser ex1,
             2:  InvoiceNotFound ex2,
             3:  InvoicePaymentNotFound ex3,
             4:  InvalidPaymentStatus ex4,
@@ -1330,13 +1278,11 @@ service Invoicing {
      * Найти чарджбэк
      */
     domain.InvoicePaymentChargeback GetPaymentChargeback (
-        1: UserInfo user
         2: domain.InvoiceID id,
         3: domain.InvoicePaymentID payment_id
         4: domain.InvoicePaymentChargebackID chargeback_id
     )
         throws (
-            1: InvalidUser ex1,
             2: InvoiceNotFound ex2,
             3: InvoicePaymentNotFound ex3,
             4: InvoicePaymentChargebackNotFound ex4
@@ -1346,14 +1292,12 @@ service Invoicing {
      * Принять чарджбэк
      */
     void AcceptChargeback (
-        1: UserInfo user
         2: domain.InvoiceID id,
         3: domain.InvoicePaymentID payment_id
         4: domain.InvoicePaymentChargebackID chargeback_id
         5: InvoicePaymentChargebackAcceptParams params
     )
         throws (
-            1:  InvalidUser ex1,
             2:  InvoiceNotFound ex2,
             3:  InvoicePaymentNotFound ex3,
             4:  InvoicePaymentChargebackNotFound ex4
@@ -1368,14 +1312,12 @@ service Invoicing {
      * Отклонить чарджбэк
      */
     void RejectChargeback (
-        1: UserInfo user
         2: domain.InvoiceID id
         3: domain.InvoicePaymentID payment_id
         4: domain.InvoicePaymentChargebackID chargeback_id
         5: InvoicePaymentChargebackRejectParams params
     )
         throws (
-            1:  InvalidUser ex1,
             2:  InvoiceNotFound ex2,
             3:  InvoicePaymentNotFound ex3,
             4:  InvoicePaymentChargebackNotFound ex4
@@ -1390,14 +1332,12 @@ service Invoicing {
      * если покупатель не согласен с результатом и хочет его оспорить.
      */
     void ReopenChargeback (
-        1: UserInfo user
         2: domain.InvoiceID id
         3: domain.InvoicePaymentID payment_id
         4: domain.InvoicePaymentChargebackID chargeback_id
         5: InvoicePaymentChargebackReopenParams params
     )
         throws (
-            1:  InvalidUser ex1
             2:  InvoiceNotFound ex2
             3:  InvoicePaymentNotFound ex3
             4:  InvoicePaymentChargebackNotFound ex4
@@ -1414,14 +1354,12 @@ service Invoicing {
      * Отмена чарджбэка. Комиссия с мерчанта не взимается.
      */
     void CancelChargeback (
-        1: UserInfo user
         2: domain.InvoiceID id
         3: domain.InvoicePaymentID payment_id
         4: domain.InvoicePaymentChargebackID chargeback_id
         5: InvoicePaymentChargebackCancelParams params
     )
         throws (
-            1:  InvalidUser ex1
             2:  InvoiceNotFound ex2
             3:  InvoicePaymentNotFound ex3
             4:  InvoicePaymentChargebackNotFound ex4
@@ -1433,13 +1371,11 @@ service Invoicing {
      * Сделать возврат платежа.
      */
     domain.InvoicePaymentRefund RefundPayment (
-        1: UserInfo user
         2: domain.InvoiceID id,
         3: domain.InvoicePaymentID payment_id
         4: InvoicePaymentRefundParams params
     )
         throws (
-            1: InvalidUser ex1,
             2: InvoiceNotFound ex2,
             3: InvoicePaymentNotFound ex3,
             4: InvalidPaymentStatus ex4,
@@ -1463,13 +1399,11 @@ service Invoicing {
      * Сделать ручной возврат.
      */
     domain.InvoicePaymentRefund CreateManualRefund (
-        1: UserInfo user
         2: domain.InvoiceID id,
         3: domain.InvoicePaymentID payment_id
         4: InvoicePaymentRefundParams params
     )
         throws (
-            1: InvalidUser ex1,
             2: InvoiceNotFound ex2,
             3: InvoicePaymentNotFound ex3,
             4: InvalidPaymentStatus ex4,
@@ -1489,21 +1423,18 @@ service Invoicing {
         )
 
     domain.InvoicePaymentRefund GetPaymentRefund (
-        1: UserInfo user
         2: domain.InvoiceID id,
         3: domain.InvoicePaymentID payment_id
         4: domain.InvoicePaymentRefundID refund_id
     )
         throws (
-            1: InvalidUser ex1,
             2: InvoiceNotFound ex2,
             3: InvoicePaymentNotFound ex3,
             4: InvoicePaymentRefundNotFound ex4
         )
 
-    void Fulfill (1: UserInfo user, 2: domain.InvoiceID id, 3: string reason)
+    void Fulfill (2: domain.InvoiceID id, 3: string reason)
         throws (
-            1: InvalidUser ex1,
             2: InvoiceNotFound ex2,
             3: InvalidInvoiceStatus ex3,
             4: InvalidPartyStatus ex4,
@@ -1511,9 +1442,8 @@ service Invoicing {
             6: InvalidContractStatus ex6
         )
 
-    void Rescind (1: UserInfo user, 2: domain.InvoiceID id, 3: string reason)
+    void Rescind (2: domain.InvoiceID id, 3: string reason)
         throws (
-            1: InvalidUser ex1,
             2: InvoiceNotFound ex2,
             3: InvalidInvoiceStatus ex3,
             4: InvoicePaymentPending ex4,
@@ -1525,33 +1455,31 @@ service Invoicing {
     /* Ad-hoc repairs */
 
     void Repair (
-        1: UserInfo user,
         2: domain.InvoiceID id,
         3: list<InvoiceChange> changes,
         4: repairing.ComplexAction action,
         5: InvoiceRepairParams params
     )
         throws (
-            1: InvalidUser ex1,
             2: InvoiceNotFound ex2,
             3: base.InvalidRequest ex3
         )
 
     /* Invoice payments repairs */
 
-    void RepairWithScenario (1: UserInfo user, 2: domain.InvoiceID id, 3: InvoiceRepairScenario Scenario)
+    void RepairWithScenario (2: domain.InvoiceID id, 3: InvoiceRepairScenario Scenario)
         throws (
-            1: InvalidUser ex1,
             2: InvoiceNotFound ex2,
             3: base.InvalidRequest ex3
         )
 }
 
+// @NOTE: Argument and exception tags start with 2 for historical reasons
+
 service InvoiceTemplating {
 
-    domain.InvoiceTemplate Create (1: UserInfo user, 2: InvoiceTemplateCreateParams params)
+    domain.InvoiceTemplate Create (2: InvoiceTemplateCreateParams params)
         throws (
-            1: InvalidUser ex1,
             2: PartyNotFound ex2,
             3: InvalidPartyStatus ex3,
             4: ShopNotFound ex4,
@@ -1559,16 +1487,14 @@ service InvoiceTemplating {
             6: base.InvalidRequest ex6
         )
 
-    domain.InvoiceTemplate Get (1: UserInfo user, 2: domain.InvoiceTemplateID id)
+    domain.InvoiceTemplate Get (2: domain.InvoiceTemplateID id)
         throws (
-            1: InvalidUser ex1,
             2: InvoiceTemplateNotFound ex2,
             3: InvoiceTemplateRemoved ex3
         )
 
-    domain.InvoiceTemplate Update (1: UserInfo user, 2: domain.InvoiceTemplateID id, 3: InvoiceTemplateUpdateParams params)
+    domain.InvoiceTemplate Update (2: domain.InvoiceTemplateID id, 3: InvoiceTemplateUpdateParams params)
         throws (
-            1: InvalidUser ex1,
             2: InvoiceTemplateNotFound ex2,
             3: InvoiceTemplateRemoved ex3,
             4: InvalidPartyStatus ex4,
@@ -1576,9 +1502,8 @@ service InvoiceTemplating {
             6: base.InvalidRequest ex6
         )
 
-    void Delete (1: UserInfo user, 2: domain.InvoiceTemplateID id)
+    void Delete (2: domain.InvoiceTemplateID id)
         throws (
-            1: InvalidUser ex1,
             2: InvoiceTemplateNotFound ex2,
             3: InvoiceTemplateRemoved ex3,
             4: InvalidPartyStatus ex4,
@@ -1588,13 +1513,11 @@ service InvoiceTemplating {
     /* Terms */
 
     domain.TermSet ComputeTerms (
-        1: UserInfo user,
         2: domain.InvoiceTemplateID id,
         3: base.Timestamp timestamp,
         4: PartyRevisionParam party_revision_param
     )
         throws (
-            1: InvalidUser ex1,
             2: InvoiceTemplateNotFound ex2,
             3: InvoiceTemplateRemoved ex3,
             4: PartyNotExistsYet ex4
@@ -1764,7 +1687,6 @@ service CustomerManagement {
 
     Customer Create (1: CustomerParams params)
         throws (
-            1: InvalidUser           invalid_user
             2: InvalidPartyStatus    invalid_party_status
             3: InvalidShopStatus     invalid_shop_status
             4: ShopNotFound          shop_not_found
@@ -1774,13 +1696,11 @@ service CustomerManagement {
 
     Customer Get (1: CustomerID id, 2: EventRange range)
         throws (
-            1: InvalidUser      invalid_user
             2: CustomerNotFound not_found
         )
 
     void Delete (1: CustomerID id)
         throws (
-            1: InvalidUser           invalid_user
             2: CustomerNotFound      not_found
             3: InvalidPartyStatus    invalid_party_status
             4: InvalidShopStatus     invalid_shop_status
@@ -1788,7 +1708,6 @@ service CustomerManagement {
 
     CustomerBinding StartBinding (1: CustomerID customer_id, 2: CustomerBindingParams params)
         throws (
-            1: InvalidUser           invalid_user
             2: CustomerNotFound      customer_not_found
             3: InvalidPartyStatus    invalid_party_status
             4: InvalidShopStatus     invalid_shop_status
@@ -1798,14 +1717,12 @@ service CustomerManagement {
 
     CustomerBinding GetActiveBinding (1: CustomerID customer_id)
         throws (
-            1: InvalidUser           invalid_user
             2: CustomerNotFound      customer_not_found
             3: InvalidCustomerStatus invalid_customer_status
         )
 
     Events GetEvents (1: CustomerID customer_id, 2: EventRange range)
         throws (
-            1: InvalidUser      invalid_user
             2: CustomerNotFound customer_not_found
             3: EventNotFound    event_not_found
         )
@@ -1816,7 +1733,7 @@ service CustomerManagement {
         1: CustomerID customer_id,
         2: PartyRevisionParam party_revision_param
     )
-        throws (1: InvalidUser ex1, 2: CustomerNotFound ex2)
+        throws (2: CustomerNotFound ex2)
 
 }
 
@@ -1955,7 +1872,6 @@ exception InvalidRecurrentPaymentToolStatus {
 service RecurrentPaymentTools {
     RecurrentPaymentTool Create (1: RecurrentPaymentToolParams params)
         throws (
-            1: InvalidUser           invalid_user
             2: InvalidPartyStatus    invalid_party_status
             3: InvalidShopStatus     invalid_shop_status
             4: ShopNotFound          shop_not_found
@@ -1967,20 +1883,17 @@ service RecurrentPaymentTools {
 
     RecurrentPaymentTool Abandon (1: RecurrentPaymentToolID id)
         throws (
-            1: InvalidUser                       invalid_user
             2: RecurrentPaymentToolNotFound      rec_payment_tool_not_found
             3: InvalidRecurrentPaymentToolStatus invalid_rec_payment_tool_status
         )
 
     RecurrentPaymentTool Get (1: RecurrentPaymentToolID id)
         throws (
-            1: InvalidUser                  invalid_user
             2: RecurrentPaymentToolNotFound rec_payment_tool_not_found
         )
 
     RecurrentPaymentToolEvents GetEvents (1: RecurrentPaymentToolID id, 2: EventRange range)
         throws (
-            1: InvalidUser                  invalid_user
             2: RecurrentPaymentToolNotFound rec_payment_tool_not_found
             3: EventNotFound                event_not_found
         )
@@ -2820,7 +2733,7 @@ service PartyManagement {
         3: PaymentInstitutionRef ref,
         4: Varset varset
     )
-        throws (1: InvalidUser ex1, 2: PartyNotFound ex2, 3: PaymentInstitutionNotFound ex3)
+        throws (2: PartyNotFound ex2, 3: PaymentInstitutionNotFound ex3)
 
     domain.PaymentInstitution ComputePaymentInstitution (
         2: PaymentInstitutionRef ref,
