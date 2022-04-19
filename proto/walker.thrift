@@ -78,7 +78,8 @@
         3: optional string email
     }
 
-    typedef payment_processing.InvalidUser InvalidUser
+    exception InvalidUser {}
+
     typedef payment_processing.InvalidChangeset InvalidChangeset
     typedef payment_processing.PartyNotFound PartyNotFound
     typedef payment_processing.InvalidPartyStatus InvalidPartyStatus
