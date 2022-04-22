@@ -3203,23 +3203,6 @@ struct IdentityProvider {
     3: required ContractorIdentificationLevel contractor_level
 }
 
-/* Legacy placeholders.
- * Those designed to take place of deprecated domain objects in
- * unions below. Make sure that deprecated objects are
- * wire-compatible with them, as usual.
- */
-
-struct LegacyRef { 1: required ObjectID id }
-
-struct LegacyObjectData {
-    1: optional string name
-}
-
-struct LegacyObject {
-    1: required LegacyRef ref
-    2: required LegacyObjectData legacy
-}
-
 /* There are 2 requirements on Reference and DomainObject unions:
  * - all field types must be unique,
  * - all corresponding field names in both unions must match.
