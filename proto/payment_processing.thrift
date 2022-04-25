@@ -2708,16 +2708,6 @@ service PartyManagement {
 
     /* RuleSet */
 
-    // Deprecated, will be replaced by ComputeRoutingRuleset
-    domain.RoutingRuleset ComputePaymentRoutingRuleset (
-        2: domain.RoutingRulesetRef ruleset_ref,
-        3: domain.DataRevision domain_revision,
-        4: Varset varset
-    )
-        throws (
-            2: RuleSetNotFound ex2
-        )
-
     domain.RoutingRuleset ComputeRoutingRuleset (
         2: domain.RoutingRulesetRef ruleset_ref,
         3: domain.DataRevision domain_revision,

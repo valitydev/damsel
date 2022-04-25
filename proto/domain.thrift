@@ -2450,7 +2450,9 @@ struct Provider {
     5: optional string abs_account
     6: optional PaymentsProvisionTerms payment_terms
     8: optional RecurrentPaytoolsProvisionTerms recurrent_paytool_terms
-    4: optional TerminalSelector terminal
+
+    // Reserved
+    // 4
 }
 
 struct CashRegisterProviderRef { 1: required ObjectID id }
@@ -2480,18 +2482,6 @@ struct ProviderParameterString {}
 struct ProviderParameterInteger {}
 struct ProviderParameterUrl {}
 struct ProviderParameterPassword {}
-
-// WithdrawalProvider is deprecated, use Provider instead
-struct WithdrawalProviderRef { 1: required ObjectID id }
-struct WithdrawalProvider {
-    1: required string name
-    2: optional string description
-    3: required Proxy proxy
-    4: optional string identity
-    5: optional WithdrawalProvisionTerms withdrawal_terms
-    6: optional ProviderAccountSet accounts = {}
-    7: optional WithdrawalTerminalSelector terminal
-}
 
 struct ProvisionTermSet {
     1: optional PaymentsProvisionTerms payments
@@ -2604,16 +2594,6 @@ struct ProviderDecision {
     2: required ProviderSelector then_
 }
 
-union WithdrawalProviderSelector {
-    1: list<WithdrawalProviderDecision> decisions
-    2: set<WithdrawalProviderRef> value
-}
-
-struct WithdrawalProviderDecision {
-    1: required Predicate if_
-    2: required WithdrawalProviderSelector then_
-}
-
 /** Inspectors */
 
 struct InspectorRef { 1: required ObjectID id }
@@ -2679,33 +2659,6 @@ struct ProviderTerminalRef {
 
 struct TerminalRef {
     1: required ObjectID id
-}
-
-//
-
-// WithdrawalTerminalRef is deprecated, use TerminalRef instead
-struct WithdrawalTerminalRef {
-    1: required ObjectID id
-    2: optional i64 priority = 1000
-}
-
-// WithdrawalTerminal is deprecated, use Terminal instead
-struct WithdrawalTerminal {
-    1: required string name
-    2: optional string description
-    3: optional ProxyOptions options
-    4: optional WithdrawalProvisionTerms terms
-    5: optional WithdrawalProviderRef provider_ref
-}
-
-union WithdrawalTerminalSelector {
-    1: list<WithdrawalTerminalDecision> decisions
-    2: set<WithdrawalTerminalRef> value
-}
-
-struct WithdrawalTerminalDecision {
-    1: required Predicate if_
-    2: required WithdrawalTerminalSelector then_
 }
 
 /* Predicates / conditions */
@@ -2943,12 +2896,14 @@ struct PaymentInstitution {
     12: optional string identity
     16: optional RoutingRules payment_routing_rules
     19: optional RoutingRules withdrawal_routing_rules
-    17: optional ProviderSelector withdrawal_providers
     21: optional PaymentSystemSelector payment_system
 
     // Deprecated
-    13: optional WithdrawalProviderSelector withdrawal_providers_legacy
     5: optional ProviderSelector providers
+    
+    // Reserved
+    // 13
+    // 17
 }
 
 enum PaymentInstitutionRealm {
@@ -2994,36 +2949,6 @@ struct RoutingCandidate {
     4: optional i32 weight = CANDIDATE_WEIGHT
     5: optional i32 priority = CANDIDATE_PRIORITY
 }
-
-/* legacy */
-/* TODO rework (de)serializer to handle those cases more politely and then remove */
-
-struct PartyPrototypeRef { 1: required ObjectID id }
-
-struct PartyPrototype {}
-
-struct PartyPrototypeObject {
-    1: required PartyPrototypeRef ref
-    2: required PartyPrototype data
-}
-
-struct P2PInspectorRef { 1: required ObjectID id }
-
-struct P2PInspector {}
-
-struct P2PInspectorObject {
-    1: required P2PInspectorRef ref
-    2: required P2PInspector data
-}
-
-struct P2PProviderObject {
-    1: required P2PProviderRef ref
-    2: required P2PProvider data
-}
-
-struct P2PProviderRef { 1: required ObjectID id }
-
-struct P2PProvider {}
 
 /* Root config */
 
@@ -3124,19 +3049,9 @@ struct CashRegisterProviderObject {
     2: required CashRegisterProvider data
 }
 
-struct WithdrawalProviderObject {
-    1: required WithdrawalProviderRef ref
-    2: required WithdrawalProvider data
-}
-
 struct TerminalObject {
     1: required TerminalRef ref
     2: required Terminal data
-}
-
-struct WithdrawalTerminalObject {
-    1: required WithdrawalTerminalRef ref
-    2: required WithdrawalTerminal data
 }
 
 struct InspectorObject {
@@ -3315,10 +3230,8 @@ union Reference {
     16 : ExternalAccountSetRef      external_account_set
     9  : ProxyRef                   proxy
     11 : GlobalsRef                 globals
-    22 : WithdrawalProviderRef      withdrawal_provider
     23 : CashRegisterProviderRef    cash_register_provider
     26 : RoutingRulesetRef          routing_rules
-    27 : WithdrawalTerminalRef      withdrawal_terminal
     28 : BankCardCategoryRef        bank_card_category
     29 : CriterionRef               criterion
     32 : DocumentTypeRef            document_type
@@ -3342,10 +3255,12 @@ union Reference {
     12 : DummyRef                   dummy
     13 : DummyLinkRef               dummy_link
 
-    /* legacy */
-    10 : PartyPrototypeRef          party_prototype
-    24 : P2PProviderRef             p2p_provider
-    25 : P2PInspectorRef            p2p_inspector
+    // Reserved
+    // 10
+    // 22
+    // 27
+    // 24
+    // 25
 }
 
 union DomainObject {
@@ -3367,10 +3282,8 @@ union DomainObject {
     16 : ExternalAccountSetObject   external_account_set
     9  : ProxyObject                proxy
     11 : GlobalsObject              globals
-    22 : WithdrawalProviderObject   withdrawal_provider
     23 : CashRegisterProviderObject cash_register_provider
     26 : RoutingRulesObject         routing_rules
-    27 : WithdrawalTerminalObject   withdrawal_terminal
     28 : BankCardCategoryObject     bank_card_category
     29 : CriterionObject            criterion
     32 : DocumentTypeObject         document_type
@@ -3396,10 +3309,12 @@ union DomainObject {
     12 : DummyObject                dummy
     13 : DummyLinkObject            dummy_link
 
-    /* legacy */
-    10 : PartyPrototypeObject       party_prototype
-    24 : P2PProviderObject          p2p_provider
-    25 : P2PInspectorObject         p2p_inspector
+    // Reserved
+    // 10
+    // 22
+    // 27
+    // 24
+    // 25
 }
 
 /* Domain */
