@@ -4,7 +4,7 @@ include "domain.thrift"
 // moved to https://github.com/valitydev/columbus-proto
 
 namespace java dev.vality.damsel.columbus
-namespace erlang columbus
+namespace erlang dmsl.columbus
 
 /**
 * Идентификатор места по базе http://www.geonames.org/

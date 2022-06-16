@@ -3,7 +3,7 @@
     include "payment_processing.thrift"
 
     namespace java dev.vality.damsel.walker
-    namespace erlang walker
+    namespace erlang dmsl.walker
 
     typedef i64 ClaimID
     typedef domain.PartyID PartyID

@@ -7,7 +7,7 @@ include "domain.thrift"
 include "geo_ip.thrift"
 
 namespace java dev.vality.damsel.merch_stat
-namespace erlang merchstat
+namespace erlang dmsl.merchstat
 
 /**
  * Информация о платеже.

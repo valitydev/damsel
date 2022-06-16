@@ -10,7 +10,7 @@ include "repairing.thrift"
 include "msgpack.thrift"
 
 namespace java dev.vality.damsel.payment_processing
-namespace erlang payproc
+namespace erlang dmsl.payproc
 
 /* Events */
 

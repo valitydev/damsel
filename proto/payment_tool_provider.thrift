@@ -2,7 +2,7 @@ include "base.thrift"
 include "domain.thrift"
 
 namespace java dev.vality.damsel.payment_tool_provider
-namespace erlang paytoolprv
+namespace erlang dmsl.paytool_provider
 
 /**
     Атрибуты магазина в системе упакованные в идентификатор передаваемый провайдеру.

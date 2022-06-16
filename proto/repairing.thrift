@@ -3,7 +3,7 @@
  */
 
 namespace java dev.vality.damsel.repairing
-namespace erlang repair
+namespace erlang dmsl.repair
 
 include "base.thrift"
 

@@ -1,4 +1,4 @@
-namespace erlang json
+namespace erlang dmsl.json
 namespace java dev.vality.damsel.json
 
 /**

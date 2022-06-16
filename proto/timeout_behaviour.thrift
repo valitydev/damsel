@@ -1,5 +1,6 @@
-namespace erlang tmbhv
 namespace java dev.vality.damsel.timeout_behaviour
+namespace erlang dmsl.timeout_behaviour
+
 include "base.thrift"
 include "domain.thrift"
 

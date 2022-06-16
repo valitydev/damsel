@@ -4,7 +4,7 @@ include "domain.thrift"
 include "withdrawals_domain.thrift"
 
 namespace java dev.vality.damsel.withdrawals.provider_adapter
-namespace erlang wthadpt
+namespace erlang dmsl.wthd_provider
 
 typedef domain.Failure Failure
 

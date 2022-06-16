@@ -1,5 +1,5 @@
 namespace java dev.vality.damsel.payment_processing.errors
-namespace erlang payprocerr
+namespace erlang dmsl.payproc_error
 
 /**
  * TODO

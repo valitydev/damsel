@@ -7,7 +7,7 @@ include "msgpack.thrift"
 include "json.thrift"
 
 namespace java dev.vality.damsel.domain
-namespace erlang domain
+namespace erlang dmsl.domain
 
 typedef i64        DataRevision
 typedef i32        ObjectID
@@ -2639,16 +2639,6 @@ struct Terminal {
     16: optional MerchantID external_merchant_id
     /* Код классификации вида деятельности мерчанта. */
     17: optional MerchantCategoryCode mcc
-}
-
-union TerminalSelector {
-    1: list<TerminalDecision> decisions
-    2: set<ProviderTerminalRef> value
-}
-
-struct TerminalDecision {
-    1: required Predicate if_
-    2: required TerminalSelector then_
 }
 
 struct ProviderTerminalRef {

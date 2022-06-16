@@ -1,5 +1,5 @@
 namespace java dev.vality.damsel.withdrawals.errors
-namespace erlang wtherr
+namespace erlang dmsl.wthd_error
 
 union WithdrawalFailure {
     1: AuthorizationFailure authorization_failed

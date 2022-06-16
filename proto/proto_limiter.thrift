@@ -2,7 +2,7 @@ include "base.thrift"
 include "domain.thrift"
 
 namespace java dev.vality.damsel.proto_limiter
-namespace erlang proto_limiter
+namespace erlang dmsl.proto_limiter
 
 /**
 * Описание сущностей лимитов является частью микросервиса proto-limiter

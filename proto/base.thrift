@@ -3,6 +3,7 @@
  */
 
 namespace java dev.vality.damsel.base
+namespace erlang dmsl.base
 
 /** Идентификатор */
 typedef string ID

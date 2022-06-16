@@ -2,7 +2,7 @@ include "base.thrift"
 include "domain.thrift"
 
 namespace java dev.vality.damsel.withdrawals.domain
-namespace erlang wthdm
+namespace erlang dmsl.wthd_domain
 
 /// Domain
 

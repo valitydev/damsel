@@ -1,5 +1,7 @@
-namespace java dev.vality.damsel.user_interaction
 include "base.thrift"
+
+namespace java dev.vality.damsel.user_interaction
+namespace erlang dmsl.user_interaction
 
 /**
  * Строковый шаблон согласно [RFC6570](https://tools.ietf.org/html/rfc6570) Level 4.
