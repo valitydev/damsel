@@ -2,7 +2,7 @@ include "base.thrift"
 include "domain.thrift"
 
 namespace java dev.vality.damsel.message_sender
-namespace erlang message_sender
+namespace erlang dmsl.message_sender
 
 struct MessageAttachment{
     1: required string name

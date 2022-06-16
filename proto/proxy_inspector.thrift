@@ -2,7 +2,7 @@ include "base.thrift"
 include "domain.thrift"
 
 namespace java dev.vality.damsel.proxy_inspector
-namespace erlang proxy_inspector
+namespace erlang dmsl.proxy_inspector
 
 /**
  * Набор данных для взаимодействия с инспекторским прокси.

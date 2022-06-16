@@ -2,7 +2,7 @@ include "base.thrift"
 include "domain.thrift"
 
 namespace java dev.vality.damsel.webhooker
-namespace erlang webhooker
+namespace erlang dmsl.webhooker
 
 typedef string Url
 typedef string Key

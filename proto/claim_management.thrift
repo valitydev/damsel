@@ -1,5 +1,5 @@
 namespace java dev.vality.damsel.claim_management
-namespace erlang claim_management
+namespace erlang dmsl.claimmgmt
 
 include "base.thrift"
 include "domain.thrift"

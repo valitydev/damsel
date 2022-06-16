@@ -5,6 +5,7 @@
 include "base.thrift"
 
 namespace java dev.vality.damsel.test
+namespace erlang dmsl.test
 
 struct Shout {
     1: required string contents

@@ -4,7 +4,7 @@ include "domain.thrift"
 include "withdrawals_domain.thrift"
 
 namespace java dev.vality.damsel.withdrawals.processing
-namespace erlang wthproc
+namespace erlang dmsl.wthdproc
 
 /// Processing
 

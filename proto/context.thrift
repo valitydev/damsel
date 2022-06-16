@@ -2,10 +2,10 @@
  * Сервис для манипуляции непрозрачным контекстом объектов.
  */
 
-include "msgpack.thrift"
-
 namespace java dev.vality.damsel.context
-namespace erlang ctx
+namespace erlang dmsl.context
+
+include "msgpack.thrift"
 
 // Types
 

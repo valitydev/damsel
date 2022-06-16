@@ -2,7 +2,8 @@ include 'base.thrift'
 include 'domain.thrift'
 
 namespace java dev.vality.damsel.accounter
-namespace erlang accounter
+namespace erlang dmsl.accounter
+
 typedef base.ID PlanID
 typedef i64 BatchID
 typedef i64 AccountID

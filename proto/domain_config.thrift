@@ -6,7 +6,7 @@
 include "domain.thrift"
 
 namespace java dev.vality.damsel.domain_config
-namespace erl domain
+namespace erlang dmsl.domain_conf
 
 /**
  * Маркер вершины истории.

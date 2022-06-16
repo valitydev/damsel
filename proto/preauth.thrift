@@ -1,7 +1,7 @@
 include "base.thrift"
 
 namespace java dev.vality.damsel.preauth
-namespace erlang preauth
+namespace erlang dmsl.preauth
 
 union Status {
     1: Granted granted

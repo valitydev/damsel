@@ -4,7 +4,7 @@ include "user_interaction.thrift"
 include "timeout_behaviour.thrift"
 
 namespace java dev.vality.damsel.proxy_provider
-namespace erlang prxprv
+namespace erlang dmsl.proxy_provider
 
 /**
  * Непрозрачное для процессинга состояние адаптера, связанное с определённой сессией взаимодействия

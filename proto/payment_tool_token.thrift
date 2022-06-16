@@ -2,7 +2,7 @@ include "base.thrift"
 include "domain.thrift"
 
 namespace java dev.vality.damsel.payment_tool_token
-namespace erlang ptt
+namespace erlang dmsl.paytool_token
 
 /**
     Платежный токен, который передается плательщику. Платежный токен содержит

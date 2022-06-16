@@ -3,7 +3,7 @@ include "domain.thrift"
 include "msgpack.thrift"
 
 namespace java dev.vality.damsel.payout_processing
-namespace erlang payout_processing
+namespace erlang dmsl.payout_processing
 
 typedef base.ID PayoutID
 typedef list<Event> Events
