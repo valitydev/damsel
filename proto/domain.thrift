@@ -1730,7 +1730,6 @@ union PaymentMethod {
    12: CryptoCurrencyRef crypto_currency
    11: MobileOperatorRef mobile
     8: BankCardPaymentMethod bank_card
-    4: TokenizedBankCard tokenized_bank_card_deprecated
 }
 
 struct GenericPaymentMethod {
@@ -1746,12 +1745,6 @@ struct BankCardPaymentMethod {
     2: optional bool                  is_cvv_empty = false
     6: optional BankCardTokenServiceRef payment_token
     4: optional TokenizationMethod    tokenization_method
-}
-
-struct TokenizedBankCard {
-    4: optional PaymentSystemRef      payment_system
-    5: optional BankCardTokenServiceRef payment_token
-    3: optional TokenizationMethod    tokenization_method
 }
 
 struct PaymentSystemRef {
