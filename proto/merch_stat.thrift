@@ -120,8 +120,8 @@ union PaymentTool {
     1: BankCard bank_card
     2: PaymentTerminal payment_terminal
     3: DigitalWallet digital_wallet
-    6: CryptoCurrency crypto_currency
     5: MobileCommerce mobile_commerce
+    6: CryptoCurrency crypto_currency
 }
 
 struct MobileCommerce {
