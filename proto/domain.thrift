@@ -1254,13 +1254,6 @@ struct WalletServiceTerms {
     6: optional W2WServiceTerms w2w
 }
 
-enum CumulativeLimitPeriod {
-    today
-    this_week
-    this_month
-    this_year
-}
-
 /** Withdrawal service terms **/
 
 struct WithdrawalServiceTerms {
