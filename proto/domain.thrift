@@ -1800,7 +1800,6 @@ struct GenericPaymentTool {
      * ```
      */
     2: optional base.Content data
-
 }
 
 struct DisposablePaymentResource {
@@ -1901,6 +1900,9 @@ struct PaymentTerminal {
      * }}
      */
     3: optional map<string, json.Value> metadata
+
+    // Reserved
+    // 1
 }
 
 /**
@@ -1953,6 +1955,9 @@ struct DigitalWallet {
     4: optional PaymentServiceRef     payment_service
     2: required DigitalWalletID       id
     3: optional Token                 token
+
+    // Reserved
+    // 1
 }
 
 struct BankRef { 1: required ObjectID id }
@@ -3074,6 +3079,12 @@ union Reference {
     // 27
     // 24
     // 25
+    // 37
+    // 38
+    // 39
+    // 40
+    // 41
+    // 43
 }
 
 union DomainObject {
