@@ -120,21 +120,13 @@ union PaymentTool {
     1: BankCard bank_card
     2: PaymentTerminal payment_terminal
     3: DigitalWallet digital_wallet
-    4: CryptoCurrency crypto_currency
     5: MobileCommerce mobile_commerce
+    6: CryptoCurrency crypto_currency
 }
 
 struct MobileCommerce {
-    1: required MobileOperator operator
-    2: required MobilePhone    phone
-}
-
-enum MobileOperator {
-    mts      = 1
-    beeline  = 2
-    megafone = 3
-    tele2    = 4
-    yota     = 5
+    2: required MobilePhone phone
+    3: optional domain.MobileOperatorRef operator
 }
 
 /**
@@ -154,35 +146,14 @@ struct BankCard {
     3: required string bin
     4: required string masked_pan
     7: optional domain.BankCardTokenServiceRef payment_token
-    /** Deprecated **/
-    2: optional domain.LegacyBankCardPaymentSystem payment_system_deprecated
-    5: optional domain.LegacyBankCardTokenProvider token_provider_deprecated
 }
 
-enum CryptoCurrency {
-    bitcoin
-    litecoin
-    bitcoin_cash
-    ripple
-    ethereum
-    zcash
+struct CryptoCurrency {
+    2: optional domain.CryptoCurrencyRef crypto_currency
 }
 
 struct PaymentTerminal {
     2: optional domain.PaymentServiceRef payment_service
-
-    /** Deprecated */
-    1: optional TerminalPaymentProvider terminal_type_deprecated
-}
-
-enum TerminalPaymentProvider {
-    euroset
-    wechat
-    alipay
-    zotapay
-    qps
-    uzcard
-    rbs // Рунет Бизнес Системы
 }
 
 typedef string DigitalWalletID
@@ -190,16 +161,6 @@ typedef string DigitalWalletID
 struct DigitalWallet {
     3: optional domain.PaymentServiceRef     payment_service
     2: required DigitalWalletID              id
-    // Deprecated
-    1: optional LegacyDigitalWalletProvider  provider_deprecated
-}
-
-/** Deprecated **/
-enum LegacyDigitalWalletProvider {
-    qiwi
-    rbkmoney
-    yandex_money
-    webmoney
 }
 
 /**
