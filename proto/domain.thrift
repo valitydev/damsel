@@ -2540,7 +2540,7 @@ struct WithdrawalProvisionTerms {
     2: optional PayoutMethodSelector payout_methods
     3: optional CashLimitSelector cash_limit
     4: optional CashFlowSelector cash_flow
-    5: optional TurnoverLimitSelector turnover_limit
+    6: optional TurnoverLimitSelector turnover_limit
 }
 
 union CashValueSelector {
