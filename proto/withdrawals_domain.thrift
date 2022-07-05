@@ -8,6 +8,7 @@ namespace erlang dmsl.wthd_domain
 
 struct Withdrawal {
     1: required domain.Cash body
+    5: optional base.Timestamp created_at
     // Source ?
     2: required Destination destination
     3: optional Identity sender
@@ -23,6 +24,7 @@ union Destination {
 
 struct Identity {
     1: required base.ID id
+    4: optional domain.PartyID owner_id
     2: optional list<IdentityDocument> documents
     3: optional list<ContactDetail> contact
 }
