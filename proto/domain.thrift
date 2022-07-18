@@ -2799,27 +2799,27 @@ struct RoutingDelegate {
     3: required RoutingRulesetRef ruleset
 }
 
-enum RoutePinningCharacteristic {
-    is_recurrent
-    is_chargeback
-    domain_revision
+enum RoutingPinFeature {
     currency
-    payment_method
-    payout_method
     payment_tool
     wallet_id
     party_id
     shop_id
-    client_info
+    client_ip
+    merchant_provided_ip
+}
+
+struct RoutingPin {
+    1: required set<RoutingPinFeature> features
 }
 
 struct RoutingCandidate {
     1: optional string description
     2: required Predicate allowed
     3: required TerminalRef terminal
+    6: optional RoutingPin pins
     4: optional i32 weight = CANDIDATE_WEIGHT
     5: optional i32 priority = CANDIDATE_PRIORITY
-    6: optional list<RoutePinningCharacteristic> pinned_characteristics
 }
 
 /* Root config */
