@@ -2615,7 +2615,7 @@ union BankCardConditionDefinition {
     6: BankCardCategoryRef category_is
 
     // deprecated
-    1: LegacyBankCardPaymentSystem payment_system_is_deprecated
+    1: LegacyBankCardPaymentSystem payment_system_is
 }
 
 struct PaymentSystemCondition {
