@@ -2823,12 +2823,24 @@ struct RoutingDelegate {
     3: required RoutingRulesetRef ruleset
 }
 
+enum RoutingPinFeature {
+    currency
+    payment_tool
+    party_id
+    client_ip
+}
+
+struct RoutingPin {
+    1: required set<RoutingPinFeature> features
+}
+
 struct RoutingCandidate {
     1: optional string description
     2: required Predicate allowed
     3: required TerminalRef terminal
-    4: optional i32 weight = CANDIDATE_WEIGHT
     5: optional i32 priority = CANDIDATE_PRIORITY
+    6: optional RoutingPin pin
+    4: optional i32 weight = CANDIDATE_WEIGHT
 }
 
 /* Root config */
