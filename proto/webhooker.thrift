@@ -54,7 +54,7 @@ struct ClaimAccepted {}
 
 struct InvoiceEventFilter {
     1: required set<InvoiceEventType> types
-    2: optional domain.ShopID shop_id
+    2: required domain.ShopID shop_id
 }
 
 union InvoiceEventType {
@@ -65,7 +65,7 @@ union InvoiceEventType {
 
 struct InvoiceCreated {}
 struct InvoiceStatusChanged {
-    1: optional InvoiceStatus value
+    1: required InvoiceStatus value
 }
 
 union InvoiceStatus {
@@ -88,7 +88,7 @@ union InvoicePaymentEventType {
 
 struct InvoicePaymentCreated {}
 struct InvoicePaymentStatusChanged {
-    1: optional InvoicePaymentStatus value
+    1: required InvoicePaymentStatus value
 }
 
 union InvoicePaymentRefundChange {
@@ -129,7 +129,7 @@ struct InvoicePaymentRefundFailed {}
 
 struct CustomerEventFilter {
     1: required set<CustomerEventType> types
-    2: optional domain.ShopID shop_id
+    2: required domain.ShopID shop_id
 }
 
 union CustomerEventType {
