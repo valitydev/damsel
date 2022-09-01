@@ -2586,36 +2586,12 @@ struct BankCardCondition {
     3: optional BankCardConditionDefinition definition
 }
 
-// deprecated completely never use
-enum LegacyBankCardPaymentSystem {
-    visa
-    mastercard
-    visaelectron
-    maestro
-    forbrugsforeningen
-    dankort
-    amex
-    dinersclub
-    discover
-    unionpay
-    jcb
-    nspkmir
-    elo
-    rupay
-    ebt
-    dummy  // Несуществующая платежная система для использования в непродовом окружении
-    uzcard
-}
-
 union BankCardConditionDefinition {
     2: BankRef issuer_bank_is
     3: PaymentSystemCondition payment_system
     4: Residence issuer_country_is
     5: bool empty_cvv_is
     6: BankCardCategoryRef category_is
-
-    // deprecated
-    1: LegacyBankCardPaymentSystem payment_system_is
 }
 
 struct PaymentSystemCondition {
