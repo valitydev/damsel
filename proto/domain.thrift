@@ -2592,6 +2592,9 @@ union BankCardConditionDefinition {
     4: Residence issuer_country_is
     5: bool empty_cvv_is
     6: BankCardCategoryRef category_is
+
+    // Reserved
+    // 1
 }
 
 struct PaymentSystemCondition {
