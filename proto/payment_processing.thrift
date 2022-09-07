@@ -560,14 +560,15 @@ struct InvoicePaymentParams {
     7: optional base.Timestamp processing_deadline
 }
 
-struct FinnishedInvoicePaymentParams {
+struct RegisterInvoicePaymentParams {
     1: required PaymentResourcePayerParams payment_resource
     2: required domain.PaymentRoute route
-    3: required domain.InvoicePaymentStatus status
-    4: optional domain.InvoicePaymentID id
-    5: optional string external_id
-    6: optional domain.InvoicePaymentContext context
-    7: optional domain.TransactionInfo transaction_info
+    3: optional domain.InvoicePaymentID id
+    4: optional string external_id
+    5: optional domain.InvoicePaymentContext context
+    6: optional domain.TransactionInfo transaction_info
+    7: optional domain.RiskScore risk_score
+    8: optional base.Timestamp created_at
 }
 
 union PayerParams {
@@ -1140,9 +1141,9 @@ service Invoicing {
             11: InvoiceAdjustmentPending ex11
         )
 
-    InvoicePayment StartFinnishedPayment (
+    InvoicePayment RegisterPayment (
         2: domain.InvoiceID id,
-        3: FinnishedInvoicePaymentParams params
+        3: RegisterInvoicePaymentParams params
     )
         throws (
             1: InvoiceNotFound ex1,
@@ -1151,8 +1152,7 @@ service Invoicing {
             4: InvalidPartyStatus ex4,
             5: InvalidShopStatus ex5,
             6: InvalidContractStatus ex6,
-            7: OperationNotPermitted ex7,
-            8: InvoiceAdjustmentPending ex8
+            7: InvoiceAdjustmentPending ex8
         )
 
     InvoicePayment GetPayment (
