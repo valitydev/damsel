@@ -1680,6 +1680,11 @@ typedef base.ID TurnoverLimitID
 
 struct TurnoverLimit {
     1: required TurnoverLimitID id
+
+    /**
+     * Допустимая верхняя граница.
+     * Лимит считается исчерпанным, если значение _строго больше_ верхней границы.
+     */
     2: required Amount upper_boundary
 }
 
