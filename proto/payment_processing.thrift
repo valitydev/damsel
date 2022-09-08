@@ -561,9 +561,9 @@ struct InvoicePaymentParams {
 }
 
 struct RegisterInvoicePaymentParams {
-    1: required PaymentResourcePayerParams payment_resource
+    1: required PayerParams payer_params
     2: required domain.PaymentRoute route
-    3: required domain.PayerSessionInfo payer_session_info
+    3: optional domain.PayerSessionInfo payer_session_info
     4: optional domain.InvoicePaymentID id
     5: optional string external_id
     6: optional domain.InvoicePaymentContext context
