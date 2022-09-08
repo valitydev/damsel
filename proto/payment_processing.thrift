@@ -569,7 +569,7 @@ struct RegisterInvoicePaymentParams {
     6: optional domain.InvoicePaymentContext context
     7: optional domain.TransactionInfo transaction_info
     8: optional domain.RiskScore risk_score
-    9: optional base.Timestamp created_at
+    9: optional base.Timestamp occurred_at
 }
 
 union PayerParams {
