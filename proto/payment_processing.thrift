@@ -563,12 +563,13 @@ struct InvoicePaymentParams {
 struct RegisterInvoicePaymentParams {
     1: required PaymentResourcePayerParams payment_resource
     2: required domain.PaymentRoute route
-    3: optional domain.InvoicePaymentID id
-    4: optional string external_id
-    5: optional domain.InvoicePaymentContext context
-    6: optional domain.TransactionInfo transaction_info
-    7: optional domain.RiskScore risk_score
-    8: optional base.Timestamp created_at
+    3: required domain.PayerSessionInfo payer_session_info
+    4: optional domain.InvoicePaymentID id
+    5: optional string external_id
+    6: optional domain.InvoicePaymentContext context
+    7: optional domain.TransactionInfo transaction_info
+    8: optional domain.RiskScore risk_score
+    9: optional base.Timestamp created_at
 }
 
 union PayerParams {
