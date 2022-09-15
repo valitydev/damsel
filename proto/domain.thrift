@@ -590,6 +590,8 @@ struct InvoicePaymentAdjustmentStatusChange {
 union InvoicePaymentFlow {
     1: InvoicePaymentFlowInstant instant
     2: InvoicePaymentFlowHold hold
+    // Может появится только в результате Invoicing.RegisterPayment
+    3: InvoicePaymentFlowRegistered registered
 }
 
 struct InvoicePaymentFlowInstant   {}
@@ -598,6 +600,8 @@ struct InvoicePaymentFlowHold {
     1: required OnHoldExpiration on_hold_expiration
     2: required base.Timestamp held_until
 }
+
+struct InvoicePaymentFlowRegistered{}
 
 enum OnHoldExpiration {
     cancel
