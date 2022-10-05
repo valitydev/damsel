@@ -470,6 +470,8 @@ struct ClientInfo {
     1: optional IPAddress ip_address
     2: optional Fingerprint fingerprint
     3: optional string url
+    4: optional IPAddress peer_ip_address
+    5: optional IPAddress user_ip_address
 }
 
 struct PayerSessionInfo {
