@@ -612,8 +612,6 @@ struct InvoicePaymentFlowHold {
     2: required base.Timestamp held_until
 }
 
-struct InvoicePaymentFlowRegistered{}
-
 enum OnHoldExpiration {
     cancel
     capture
