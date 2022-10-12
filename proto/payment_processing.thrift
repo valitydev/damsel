@@ -1030,8 +1030,6 @@ union FailedAllocationTransaction {
 
 exception AllocationNotFound {}
 
-exception ProhibitedPaymentRegistrationOrigin {}
-
 // @NOTE: Argument and exception tags start with 2 for historical reasons
 
 service Invoicing {
@@ -1420,8 +1418,7 @@ service Invoicing {
             15: AllocationNotAllowed ex15,
             16: AllocationExceededPaymentAmount ex16,
             17: AllocationInvalidTransaction ex17,
-            18: AllocationNotFound ex18,
-            19: ProhibitedPaymentRegistrationOrigin ex19
+            18: AllocationNotFound ex18
         )
 
 
