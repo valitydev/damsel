@@ -323,14 +323,14 @@ struct InvoicePaymentFailed    { 1: required OperationFailure failure }
 struct InvoicePaymentChargedBack {}
 
 union InvoicePaymentRegistrationOrigin {
-    // Платеж совершенный с использованием данной платежной системы
-    1: InvoicePaymentInternallyRegistered internal
-    // Платеж совершенный без использования данной платежной системы
-    2: InvoicePaymentExternallyRegistered external
+    // Платеж совершенный мерачантом
+    1: InvoicePaymentMerchantRegistration merchant
+    // Платеж совершенный провайдером
+    2: InvoicePaymentProviderRegistration provider
 }
 
-struct InvoicePaymentInternallyRegistered {}
-struct InvoicePaymentExternallyRegistered {}
+struct InvoicePaymentMerchantRegistration {}
+struct InvoicePaymentProviderRegistration {}
 
 /**
  * Шаблон инвойса.
