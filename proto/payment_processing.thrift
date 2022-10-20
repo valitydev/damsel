@@ -1155,8 +1155,7 @@ service Invoicing {
             5: InvalidShopStatus ex5,
             6: InvalidContractStatus ex6,
             7: InvoiceAdjustmentPending ex8,
-            8: InvalidRecurrentParentPayment ex9,
-            9: InvalidRecurrentPaymentToolStatus ex10
+            8: InvalidRecurrentParentPayment ex9
         )
 
     InvoicePayment GetPayment (
