@@ -2387,7 +2387,6 @@ struct ProvisionTermSet {
 }
 
 struct PaymentsProvisionTerms {
-    11: optional Predicate allow
     1: optional CurrencySelector currencies
     2: optional CategorySelector categories
     3: optional PaymentMethodSelector payment_methods
@@ -2448,7 +2447,6 @@ struct WalletProvisionTerms {
 }
 
 struct WithdrawalProvisionTerms {
-    5: optional Predicate allow
     1: optional CurrencySelector currencies
     2: optional PayoutMethodSelector payout_methods
     3: optional CashLimitSelector cash_limit
