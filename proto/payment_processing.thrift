@@ -1657,7 +1657,7 @@ struct CustomerBindingFailed    { 1: required domain.OperationFailure failure }
 union CustomerBindingChangePayload {
     1: CustomerBindingStarted started
     2: CustomerBindingStatusChanged status_changed
-    3: CustomerBindingInteractionRequested interaction_requested
+    3: CustomerBindingInteractionChanged interaction_changed
 }
 
 /**
@@ -1675,8 +1675,13 @@ struct CustomerBindingStatusChanged {
     1: required CustomerBindingStatus status
 }
 
-struct CustomerBindingInteractionRequested {
+struct CustomerBindingInteractionChanged {
     1: required user_interaction.UserInteraction interaction
+    /**
+     * Статус взаимодействия.
+     * Если не указан, статус считается по умолчанию _requested_.
+     */
+    2: optional user_interaction.Status status
 }
 
 // Exceptions
