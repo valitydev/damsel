@@ -246,7 +246,7 @@ union SessionChangePayload {
     4: SessionActivated            session_activated
     5: SessionTransactionBound     session_transaction_bound
     6: SessionProxyStateChanged    session_proxy_state_changed
-    7: SessionInteractionRequested session_interaction_requested
+    7: SessionInteractionChanged   session_interaction_changed
 }
 
 struct SessionStarted {}
@@ -311,11 +311,16 @@ struct SessionProxyStateChanged {
 }
 
 /**
- * Событие о запросе взаимодействия с плательщиком.
+ * Событие о взаимодействии с плательщиком.
  */
-struct SessionInteractionRequested {
+struct SessionInteractionChanged {
     /** Необходимое взаимодействие */
     1: required user_interaction.UserInteraction interaction
+    /**
+     * Статус этого взаимодействия.
+     * Если не указан, статус считается по умолчанию _requested_.
+     */
+    2: optional user_interaction.Status status
 }
 
 /**
