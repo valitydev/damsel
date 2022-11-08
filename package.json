@@ -21,6 +21,6 @@
   "main": "./lib/domain.js",
   "types": "./lib/domain.d.ts",
   "devDependencies": {
-    "@vality/thrift-codegen": "0.1.1-c81b4b7.0"
+    "@vality/thrift-codegen": "1.1.1-4baa743.0"
   }
 }
