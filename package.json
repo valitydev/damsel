@@ -15,12 +15,10 @@
   "license": "Apache-2.0",
   "homepage": "https://github.com/valitydev/damsel#readme",
   "files": [
-    "lib/**/*.{js,d.ts,json}",
     "**/*.thrift"
   ],
-  "main": "./lib/domain.js",
-  "types": "./lib/domain.d.ts",
+  "main": "./dist/main.bundle.js",
   "devDependencies": {
-    "@vality/thrift-codegen": "1.1.1-4baa743.0"
+    "@vality/thrift-codegen": "^1.1.1-a5f644d.0"
   }
 }
