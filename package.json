@@ -15,6 +15,7 @@
   "license": "Apache-2.0",
   "homepage": "https://github.com/valitydev/damsel#readme",
   "files": [
+    "dist/**/*.{js,d.ts,json}",
     "**/*.thrift"
   ],
   "main": "./dist/main.bundle.js",
