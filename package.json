@@ -2,7 +2,7 @@
   "name": "@vality/domain-proto",
   "version": "1.0.0",
   "scripts": {
-    "codegen": "thrift-codegen"
+    "codegen": "thrift-codegen ./proto"
   },
   "publishConfig": {
     "access": "public",
@@ -14,7 +14,7 @@
   },
   "exports": {
     ".": "./dist/main.bundle.js",
-    "./metadata": "./dist/metadata.json",
+    "./metadata.json": "./dist/metadata.json",
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",
@@ -33,6 +33,6 @@
     }
   },
   "devDependencies": {
-    "@vality/thrift-codegen": "^1.1.1-a8257e5.0"
+    "@vality/thrift-codegen": "^1.1.1-fa85d3a.0"
   }
 }
