@@ -13,7 +13,7 @@
     "url": "git+https://github.com/valitydev/damsel.git"
   },
   "exports": {
-    ".": "./dist/main.bundle.js",
+    ".": "./dist/thrift-codegen.bundle.js",
     "./metadata.json": "./dist/metadata.json",
     "./package.json": "./package.json"
   },
@@ -23,8 +23,8 @@
     "dist/**/*.{js,d.ts,json}",
     "**/*.thrift"
   ],
-  "main": "./dist/main.bundle.js",
-  "types": "Repository.d.ts",
+  "main": "./dist/thrift-codegen.bundle.js",
+  "types": "index.d.ts",
   "typesVersions": {
     ">=4.6": {
       "*": [
@@ -33,6 +33,6 @@
     }
   },
   "devDependencies": {
-    "@vality/thrift-codegen": "^1.1.1-87f5bd1.0"
+    "@vality/thrift-codegen": "^1.1.1-70b36ea.0"
   }
 }
