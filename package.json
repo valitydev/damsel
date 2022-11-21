@@ -20,6 +20,6 @@
   ],
   "main": "./dist/main.bundle.js",
   "devDependencies": {
-    "@vality/thrift-codegen": "^1.1.1-109f356.0"
+    "@vality/thrift-codegen": "^1.1.1-4618276.0"
   }
 }
