@@ -2,7 +2,7 @@
   "name": "@vality/domain-proto",
   "version": "1.0.0",
   "scripts": {
-    "codegen": "thrift-codegen ./proto"
+    "codegen": "thrift-codegen --i ./proto --n domain_config"
   },
   "publishConfig": {
     "access": "public",
@@ -33,6 +33,6 @@
     }
   },
   "devDependencies": {
-    "@vality/thrift-codegen": "^1.1.1-70b36ea.0"
+    "@vality/thrift-codegen": "^1.1.1-82bc95d.0"
   }
 }
