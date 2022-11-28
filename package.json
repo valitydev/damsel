@@ -33,6 +33,6 @@
     }
   },
   "devDependencies": {
-    "@vality/thrift-codegen": "^1.1.1-6229042.0"
+    "@vality/thrift-codegen": "^1.1.1-7dcdda2.0"
   }
 }
