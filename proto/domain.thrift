@@ -2323,6 +2323,8 @@ struct AttemptLimit {
 
 struct ProviderRef { 1: required ObjectID id }
 
+typedef map<CurrencyRef, ProviderAccount> ProviderAccountSet
+
 struct Provider {
     1: required string name
     2: required string description
@@ -2454,8 +2456,6 @@ struct CashValueDecision {
     1: required Predicate if_
     2: required CashValueSelector then_
 }
-
-typedef map<CurrencyRef, ProviderAccount> ProviderAccountSet
 
 struct ProviderAccount {
     1: required AccountID settlement
