@@ -29,6 +29,20 @@ union OperationFailure {
     2: Failure          failure
 }
 
+/**
+ * Ошибка, сигнализирующая о том, что время ожидания третьей стороны в рамках сессии взаимодействия
+ * подошло к концу.
+ *
+ * [deprecated]
+ *
+ * TODO
+ * Эту ошибку порождает порождает в частности сам hellgate, без оглядки на адаптер, с которым он
+ * общается. Это приводит к потере информации: hellgate не знает, завершения чего именно он не
+ * дождался, об этом может сообщить только адаптер, отдав полноценную `Failure`. На самом деле
+ * у адаптера есть возможность сообщить детали ошибки и даже обработать таймаут (см.
+ * `TimeoutBehaviour`), надо по-хорошему заставить все адаптеры этой возможностью пользоваться и
+ * упразднить `OperationTimeout`.
+ */
 struct OperationTimeout {}
 
 /**
@@ -48,19 +62,19 @@ struct OperationTimeout {}
  *
  */
 struct Failure {
-    1: required FailureCode     code;
+    1: required FailureCode     code
 
-    2: optional FailureReason   reason;
-    3: optional SubFailure      sub;
+    2: optional FailureReason   reason
+    3: optional SubFailure      sub
 }
 
-typedef string FailureCode;
-typedef string FailureReason; // причина возникшей ошибки и пояснение откуда она взялась
+typedef string FailureCode
+typedef string FailureReason // причина возникшей ошибки и пояснение откуда она взялась
 
 // возможность делать коды ошибок иерархическими
 struct SubFailure {
-    1: required FailureCode  code;
-    2: optional SubFailure   sub;
+    1: required FailureCode  code
+    2: optional SubFailure   sub
 }
 
 /** Сумма в минимальных денежных единицах. */
@@ -82,6 +96,9 @@ typedef string URITemplate
 
 /* Contractor transactions */
 
+/**
+ * Данные транзакции контрагента (в частности, провайдера).
+ */
 struct TransactionInfo {
     1: required string id
     2: optional base.Timestamp timestamp
@@ -89,6 +106,13 @@ struct TransactionInfo {
     4: optional AdditionalTransactionInfo additional_info
 }
 
+/**
+ * Детали транзакции списания средств с банковской карты в онлайне.
+ *
+ * TODO
+ * Стойкой ощущение, что такие вещи не должны фигурировать на уровне `domain`, а пристёгиваться в
+ * виде непрозрачных данных на более высоком уровне.
+ */
 struct AdditionalTransactionInfo {
     1: optional string rrn // Retrieval Reference Number
     2: optional string approval_code // Authorization Approval Code
@@ -106,8 +130,8 @@ struct AdditionalTransactionInfo {
 }
 
 /**
-* Issuer Authentication Results Values
-**/
+ * Issuer Authentication Results Values
+ */
 enum ThreeDsVerification {
     authentication_successful // Y
     attempts_processing_performed // A
@@ -123,17 +147,52 @@ typedef base.ID InvoicePaymentID
 typedef base.ID InvoicePaymentChargebackID
 typedef base.ID InvoicePaymentRefundID
 typedef base.ID InvoicePaymentAdjustmentID
+
+/**
+ * Произвольные данные, которые клиент ассоциирует с инвойсом при его создании.
+ *
+ * NOTE
+ * Кажется, что `base.Content` − слишком общий тип для таких данных. Клиенты пользуются HTTP API и
+ * сохраняют здесь только JSON. При этом по-хорошему другим клиентам надо об этом помнить, потому
+ * что если кто-то сюда положит например `text/plain`, мы не сможем отдать это по HTTP API и
+ * сломаемся.
+ */
 typedef base.Content InvoiceContext
+
+/**
+ * Произвольные данные, которые клиент ассоциирует с платежом при его создании.
+ *
+ * NOTE
+ * Кажется, что `base.Content` − слишком общий тип для таких данных. Клиенты пользуются HTTP API и
+ * сохраняют здесь только JSON. При этом по-хорошему другим клиентам надо об этом помнить, потому
+ * что если кто-то сюда положит например `text/plain`, мы не сможем отдать это по HTTP API и
+ * сломаемся.
+ */
 typedef base.Content InvoicePaymentContext
+
 typedef base.Content InvoicePaymentChargebackContext
+
 typedef string PaymentSessionID
 typedef string Fingerprint
 typedef string IPAddress
 
+/**
+ * Инвойс.
+ * Набор товаров или услуг в магазине мерчанта с обозначенной ценой. Может быть оплачен только
+ * единоразово и полностью.
+ *
+ * NOTES
+ *
+ * Концептуально это по сути «недоплатёж» или (другими словами) шаблон платежа, который можно
+ * успешно оплатить только один раз. В предметной области Web APIs похожая концепция называется
+ * [PaymentRequest][1]. Соответственно, если выделять платежи в отдельные сущности, то по идее
+ * данные платежа = данные инвойса + данные плательщика.
+ *
+ * [1]: https://developer.mozilla.org/en-US/docs/Web/API/Payment_Request_API/Using_the_Payment_Request_API
+ */
 struct Invoice {
     1 : required InvoiceID id
     2 : required PartyID owner_id
-    13: optional PartyRevision party_revision
     3 : required ShopID shop_id
     4 : required base.Timestamp created_at
     6 : required InvoiceStatus status
@@ -151,7 +210,14 @@ struct InvoiceDetails {
     1: required string product
     2: optional string description
     3: optional InvoiceCart cart
-    /* Информация о банковском счете, к операциям с которым возможно относится данный инвойс */
+    /**
+     * Информация о банковском счете, к операциям с которым возможно относится данный инвойс
+     *
+     * TODO
+     * Стойкое ощущение, что такие вещи не должны фигурировать на уровне `domain`, а пристёгиваться в
+     * виде непрозрачных данных на более высоком уровне. Было бы неплохо выпилить эту штуку, если в
+     * бизнес-процессах, для которых мы её впопыхах завозили, сейчас нет потребности.
+     */
     4: optional InvoiceBankAccount bank_account
 }
 
@@ -277,9 +343,22 @@ struct AllocationTransactionDetails {
     1: optional InvoiceCart cart
 }
 
+/** Инвойс ещё не оплачен. */
 struct InvoiceUnpaid    {}
+
+/** Инвойс полностью оплачен. */
 struct InvoicePaid      {}
+
+/** Инвойс отменён (например, потому что вышло время ожидания оплаты). */
 struct InvoiceCancelled { 1: required string details }
+
+/**
+ * Инвойс погашен.
+ *
+ * TODO
+ * Кажется довольно бессмысленный статус, никто никогда не пользовался этим, чтобы отслеживать
+ * выполнение своих заказов после успешной оплаты, а больше это по задумке ни за чем и не нужно.
+ */
 struct InvoiceFulfilled { 1: required string details }
 
 union InvoiceStatus {
@@ -308,17 +387,50 @@ struct InvoicePayment {
 }
 
 struct InvoicePaymentPending   {}
+
+/**
+ * Платёж был обработан.
+ * Холдированные платежи находятся в этом статусе некоторое время до подтверждения или отмены.
+ */
 struct InvoicePaymentProcessed {}
+
+/**
+ * Платёж был подтверждён (в том числе частично).
+ * Холдированный платёж подтверждается мерчантом вручную либо автоматически по достижении
+ * `InvoicePaymentFlowHold.held_until`.
+ */
 struct InvoicePaymentCaptured  {
     1: optional string reason
     2: optional Cash cost
     3: optional InvoiceCart cart
     4: optional Allocation allocation
 }
+
+/**
+ * Платёж был захолдирован и впоследствии отменён мерчантом вручную либо автоматически по
+ * достижении `InvoicePaymentFlowHold.held_until`.
+ */
 struct InvoicePaymentCancelled { 1: optional string reason }
+
+/**
+ * Платёж был подтверждён и впоследствии полностью возвращён плательщику.
+ *
+ * NOTE
+ * Немного всратый статус, потому что платёж считается подтверждённым даже в случае частичного
+ * подтверждения, но не считается возвращённым в случае частичного возврата. В целом кажется не
+ * имеет смысла, лучше предоставить мерчанту информацию о том «насколько платёж возвращён».
+ */
 struct InvoicePaymentRefunded  {}
+
 struct InvoicePaymentFailed    { 1: required OperationFailure failure }
 
+/**
+ * Платёж был подтверждён и впоследствии оспорен, и в результате возвращён плательщику.
+ *
+ * NOTE
+ * Немного всратый статус, потому что платёж не попадает в статус charged back в случае частичных
+ * чарджбэков. В целом кажется не имеет смысла.
+ */
 struct InvoicePaymentChargedBack {}
 
 /**
@@ -327,6 +439,18 @@ struct InvoicePaymentChargedBack {}
 
 typedef base.ID InvoiceTemplateID
 
+/**
+ * Шаблон инвойса.
+ * На основе шаблона можно создать неограниченное количество инвойсов.
+ *
+ * NOTES
+ * Концептуально это вообще говоря просто шаблон платежа. Но так как на данный момент платежи в
+ * системе не могут существовать отдельно от инвойсов, приходится иметь шаблоны инвойсов.
+ * Соответственно, если бы платежи были полностью самостоятельными сущностями, можно было бы
+ * представить, что:
+ *  - Инвойс = шаблон платежа, который можно успешно оплатить только один раз.
+ *  - Шаблон инвойса = шаблон платежа.
+ */
 struct InvoiceTemplate {
     1:  required InvoiceTemplateID id
     2:  required PartyID owner_id
@@ -373,7 +497,12 @@ union InvoicePaymentStatus {
 }
 
 /**
- * Информация о клиенте, которую передал мерчант
+ * Информация о клиенте, которую передал мерчант.
+ *
+ * NOTE
+ * Опять же, это скорее информация о плательщике, а не об инвойсе. Но так как мерчант создаёт
+ * инвойсы в рамках интеграции с нами, это оказалось на уровне инвойса. Если бы мы называли инвойс
+ * «шаблоном платежа», это выглядело бы не так странно.
  */
 struct InvoiceClientInfo {
     2: optional ClientTrustLevel trust_level
@@ -489,19 +618,32 @@ struct RecurrentParentPayment {
 
 /* Adjustments */
 
+/**
+ * Корректировка инвойса.
+ * По сути только изменение статуса.
+ */
 struct InvoiceAdjustment {
     1: required InvoiceAdjustmentID id
     2: required string reason
     3: required base.Timestamp created_at
     4: required InvoiceAdjustmentStatus status
-    5: required DataRevision domain_revision
-    6: optional PartyRevision party_revision
     7: optional InvoiceAdjustmentState state
+
+    // deprecated (unused)
+    5: optional DataRevision domain_revision
 }
 
 struct InvoiceAdjustmentPending   {}
 struct InvoiceAdjustmentProcessed {}
 struct InvoiceAdjustmentCaptured  { 1: required base.Timestamp at }
+
+/**
+ * [deprecated]
+ *
+ * TODO
+ * Корректировки одностадийные, этот статус теперь не достижим. Скорее всего можно безболезненно
+ * удалить.
+ */
 struct InvoiceAdjustmentCancelled { 1: required base.Timestamp at }
 
 union InvoiceAdjustmentStatus {
@@ -545,6 +687,14 @@ struct InvoicePaymentAdjustment {
 struct InvoicePaymentAdjustmentPending   {}
 struct InvoicePaymentAdjustmentProcessed {}
 struct InvoicePaymentAdjustmentCaptured  { 1: required base.Timestamp at }
+
+/**
+ * [deprecated]
+ *
+ * TODO
+ * Корректировки одностадийные, этот статус теперь не достижим. Скорее всего можно безболезненно
+ * удалить.
+ */
 struct InvoicePaymentAdjustmentCancelled { 1: required base.Timestamp at }
 
 union InvoicePaymentAdjustmentStatus {
@@ -572,6 +722,9 @@ struct InvoicePaymentAdjustmentStatusChangeState {
 
 /**
  * Параметры поправки к платежу, используемые для пересчёта графа финансовых потоков.
+ *
+ * TODO
+ * Тут явно не хватает party revision в пару к domain revision.
  */
 struct InvoicePaymentAdjustmentCashFlow {
     /** Ревизия, относительно которой необходимо пересчитать граф финансовых потоков. */
