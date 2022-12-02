@@ -12,6 +12,7 @@ namespace erlang dmsl.domain
 typedef i64        DataRevision
 typedef i32        ObjectID
 typedef json.Value Metadata
+typedef base.TimeSpan LifetimeInterval
 
 const i32          CANDIDATE_WEIGHT = 0
 const i32          CANDIDATE_PRIORITY = 1000
@@ -110,7 +111,7 @@ struct TransactionInfo {
  * Детали транзакции списания средств с банковской карты в онлайне.
  *
  * TODO
- * Стойкой ощущение, что такие вещи не должны фигурировать на уровне `domain`, а пристёгиваться в
+ * Стойкое ощущение, что такие вещи не должны фигурировать на уровне `domain`, а пристёгиваться в
  * виде непрозрачных данных на более высоком уровне.
  */
 struct AdditionalTransactionInfo {
@@ -881,8 +882,17 @@ struct Blocked {
     2: required base.Timestamp since
 }
 
+/**
+ * Статус приостановки обслуживания.
+ *
+ * TODO
+ * Кажется, что от этого механизма можно избавиться, потому что не понятно, зачем этот механизм на
+ * столь таком низком уровне, если ситуации, с которыми мерчант может столкнуться, по идее решаются
+ * механизмом ротации и отзыва api-ключей.
+ */
 union Suspension {
     1: Active    active
+    /** Обслуживание приостановлено по инициативе участника */
     2: Suspended suspended
 }
 
@@ -903,6 +913,8 @@ typedef string PartyMetaNamespace
 typedef msgpack.Value PartyMetaData
 typedef map<PartyMetaNamespace, PartyMetaData> PartyMeta
 
+typedef base.ID WalletID
+
 /** Участник. */
 struct Party {
     1: required PartyID id
@@ -913,8 +925,10 @@ struct Party {
     9: required map<ContractorID, PartyContractor> contractors
     4: required map<ContractID, Contract> contracts
     5: required map<ShopID, Shop> shops
-    10: required map<WalletID, Wallet> wallets
     6: required PartyRevision revision
+
+    // deprecated
+    10: optional map<WalletID, base.Dummy> wallets = {}
 }
 
 /** Статусы участника **/
@@ -927,6 +941,15 @@ struct PartyStatus {
     4: required PartyRevision revision
 }
 
+/**
+ * Контактные данные участника.
+ *
+ * TODO
+ * На этом уровне выглядят по меньшей мере не к месту: эти данные берутся из данных пользователя,
+ * создающего участника, и поменять их на данный момент никак нельзя. По-хорошему надо разобраться
+ * с бизнес-процессами, которым действительно нужны контактные данные **участника** (а не,
+ * например, владельца), и либо упразднить, либо как-то систематизировать.
+ */
 struct PartyContactInfo {
     1: required string email
 }
@@ -963,35 +986,30 @@ struct ShopDetails {
     2: optional string description
 }
 
+/**
+ * Местоположение (в широком смысле) магазина.
+ *
+ * NOTES
+ * Вообще тут предполагалось, что мы сможем описывать местоположение физического магазина. Но это
+ * так никогда и не понадобилось. А если бы понадобилось, то это кажется не тот уровень, на котором
+ * нужно расписывать подобные данные.
+ */
 union ShopLocation {
     1: string url
 }
 
-/** RBKM Wallets **/
-
-typedef base.ID WalletID
-
-struct Wallet {
-    1: required WalletID id
-    2: optional string name
-    3: required base.Timestamp created_at
-    4: required Blocking blocking
-    5: required Suspension suspension
-    6: required ContractID contract
-    7: optional WalletAccount account
-}
-
-struct WalletAccount {
-    1: required CurrencyRef currency
-    2: required AccountID settlement
-
-    // TODO
-    // ?????
-    3: required AccountID payout
-}
-
 /* Инспекция платежа */
 
+/**
+ * Уровень риска операции (в частности, платежа).
+ * Всё, что ниже `fatal`, мы можем обслуживать. От уровня риска может зависеть результат роутинга,
+ * к тому же адаптер может принять собственные решения. Операция с уровнем риска `fatal` **не
+ * обслуживаются**.
+ *
+ * NOTES
+ * При необходимости можно добавлять дополнительные уровни, если вдруг этих трёх будет не хватать,
+ * именно поэтому их числовые значения разнесены так далеко друг от друга.
+ */
 enum RiskScore {
     low = 1
     high = 100
@@ -1012,7 +1030,14 @@ struct PartyContractor {
     4: required list<IdentityDocumentToken> identity_documents
 }
 
-/** Лицо, выступающее стороной договора. */
+/**
+ * Лицо, выступающее стороной договора.
+ *
+ * TODO
+ * Стойкое ощущение, что такие вещи не должны фигурировать на уровне `domain`, а пристёгиваться в
+ * виде непрозрачных данных на более высоком уровне. Ни один сервис в части онлайн-процессинга на
+ * эти данные в данный момент не смотрит, party-management их просто хранит и всё.
+ */
 union Contractor {
     2: RegisteredUser registered_user
     1: LegalEntity legal_entity
@@ -1088,14 +1113,29 @@ struct TradeBloc {
     2: optional string description
 }
 
+/**
+ * Степень «идентифицированности» контрагента.
+ * Чем более идентифицирован контрагент, тем больше у него возможностей с точки зрения системы
+ * и/или государственного регулятора.
+ *
+ * [deprecated]
+ *
+ * NOTES
+ * ...Но на самом деле может в будущем и пригодиться. Плюс довольно специфично для юрисдикции РФ,
+ * хоть и задано довольно абстрактно.
+ */
 enum ContractorIdentificationLevel {
     none = 100
     partial = 200
     full = 300
 }
 
-/** Банковский счёт. */
-
+/** Банковский счёт в банке РФ.
+ *
+ * TODO
+ * Стойкое ощущение, что такие вещи не должны фигурировать на этом уровне. Логичнее перенести эти
+ * модели в домен сервисов, занимающихся выплатами и/или KYC (как и данные и модели контрагентов).
+ */
 struct RussianBankAccount {
     1: required string account
     2: required string bank_name
@@ -1103,6 +1143,12 @@ struct RussianBankAccount {
     4: required string bank_bik
 }
 
+/** Международный банковский счёт.
+ *
+ * TODO
+ * Стойкое ощущение, что такие вещи не должны фигурировать на этом уровне. Логичнее перенести эти
+ * модели в домен сервисов, занимающихся выплатами и/или KYC (как и данные и модели контрагентов).
+ */
 struct InternationalBankAccount {
 
     // common
@@ -1171,8 +1217,21 @@ struct Contract {
     1: required ContractID id
     14: optional ContractorID contractor_id
     12: optional PaymentInstitutionRef payment_institution
+    /** Дата и время создания контракта */
     11: required base.Timestamp created_at
+    /**
+     * Дата и время начала действия контракта.
+     * Если не задано, считается равным времени создания. Фактически контракт может начать
+     * действовать _раньше_, чем он был создан, но это исключительно специфичная ситуация, которая
+     * на практике не встречается.
+     */
     4: optional base.Timestamp valid_since
+    /**
+     * Дата и время окончания действия контракта.
+     * После наступления этого момента времени **никакие операции по контракту не обслуживаются**.
+     * Может быть раньше, чем время создания или начала действия, хоть это и абсурдно, такой
+     * контракт считается истёкшим уже на момент создания.
+     */
     5: optional base.Timestamp valid_until
     6: required ContractStatus status
     7: required TermSetHierarchyRef terms
@@ -1187,13 +1246,28 @@ struct Contract {
     3: optional Contractor contractor
 }
 
-/** Юридическое соглашение */
+/**
+ * Юридическое соглашение.
+ *
+ * TODO
+ * Стойкое ощущение, что такие вещи не должны фигурировать на этом уровне. Логичнее перенести эти
+ * модели в домен сервисов, занимающихся выплатами / отчётами / KYC (как и данные и модели счетов
+ * / контрагентов).
+ */
 struct LegalAgreement {
     1: required base.Timestamp signed_at
     2: required string legal_agreement_id
     3: optional base.Timestamp valid_until
 }
 
+/**
+ * Настройки автоматической отчётности.
+ *
+ * TODO
+ * Очень специфичные для определённых бизнес-процессов данные. Стойкое ощущение, что такие вещи не
+ * должны фигурировать на этом уровне. Логичнее перенести эти модели в домен сервисов, занимающихся
+ * отчётами.
+ */
 struct ReportPreferences {
     1: optional ServiceAcceptanceActPreferences service_acceptance_act_preferences
 }
@@ -1227,6 +1301,14 @@ union ContractStatus {
 
 struct ContractActive {}
 struct ContractTerminated { 1: required base.Timestamp terminated_at }
+
+/**
+ * Срок действия контракта (`Contract.valid_until`) истёк.
+ *
+ * NOTES
+ * Кажется ни разу не попадались ситуации и бизнес-процессы, где протухающие контракты были бы
+ * вообще кому-то нужны.
+ */
 struct ContractExpired {}
 
 /* Categories */
@@ -1256,18 +1338,14 @@ struct ContractTemplate {
     3: required TermSetHierarchyRef terms
 }
 
+/**
+ * Время начала или окончания действия контракта или поправки, созданных по шаблону.
+ */
 union Lifetime {
+    /** Фиксированный момент времени. */
     1: base.Timestamp timestamp
+    /** Определённый промежуток времени, отсчитываемый от момента создания контракта. */
     2: LifetimeInterval interval
-}
-
-struct LifetimeInterval {
-    1: optional i16 years
-    2: optional i16 months
-    3: optional i16 days
-    4: optional i16 hours
-    5: optional i16 minutes
-    6: optional i16 seconds
 }
 
 union ContractTemplateSelector {
@@ -1283,6 +1361,13 @@ struct ContractTemplateDecision {
 /** Поправки к договору **/
 typedef base.ID ContractAdjustmentID
 
+/**
+ * Поправка к контракту.
+ * У контракта может быть неограниченное количество поправок. Поправка считается активной, если
+ * момент времени находится между `valid_since` (включительно) и `valid_until` (включительно).
+ * Условия контракта и всех активных поправок в порядке их создания склеиваются при расчёте
+ * условий.
+ */
 struct ContractAdjustment {
     1: required ContractAdjustmentID id
     5: required base.Timestamp created_at
@@ -1317,7 +1402,25 @@ struct TimedTermSet {
 struct TermSetHierarchy {
     3: optional string name
     4: optional string description
+
+    /**
+     * Родительские условия.
+     * Любые дополнительные условия, перечисленные в `term_sets`, применяются поверх родительских
+     * условий, если они заданы, и переопределяют их. По задумке служит для того, чтобы можно было
+     * одним движением руки атомарно корректировать условия для большого количества участников.
+     */
     1: optional TermSetHierarchyRef parent_terms
+
+    /**
+     * Наборы условий с временными интервалами их активности.
+     * У данной иерархии условий может быть **только один** активный набор условий − последний в
+     * списке из тех, которые активны на момент времени согласно их `action_time`.
+     *
+     * NOTE
+     * Вообще это было сделано для того, чтобы мы могли относительно безболезненно реализовать
+     * процессы вроде «поменять ставку нашим мерчантам 1 марта ровно в 00:00». Правда кажется этим
+     * никто никогда не пользовался.
+     */
     2: required list<TimedTermSet> term_sets
 }
 
@@ -2806,8 +2909,10 @@ struct PartyCondition {
 
 union PartyConditionDefinition {
     1: ShopID shop_is
-    2: WalletID wallet_is
     3: ContractID contract_is
+    
+    // deprecated
+    2: WalletID wallet_is
 }
 
 struct CriterionRef { 1: required ObjectID id }

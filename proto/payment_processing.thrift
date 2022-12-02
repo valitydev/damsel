@@ -146,7 +146,14 @@ struct InvoiceAdjustmentCreated {
 }
 
 /**
- * Событие об изменении статуса корректировки платежа
+ * Событие об изменении статуса корректировки инвойса
+ *
+ * TODO
+ * Самое странное на данный момент в событиях, связанных с корректировками (в частности, инвойсов),
+ * для меня это тот факт, что например успешное завершение корректировки смены статуса не порождает
+ * собственно событие изменения статуса (`InvoiceStatusChanged`). Мне кажется это неправильно,
+ * потому как клиенты, которые читают поток событий, должны теперь знать, что статус инвойса
+ * меняется не только по факту наступления события `InvoiceStatusChanged`, а вообще чёрт пойми как.
  */
 struct InvoiceAdjustmentStatusChanged {
     1: required domain.InvoiceAdjustmentStatus status
@@ -177,14 +184,6 @@ union InvoicePaymentChangePayload {
 struct InvoicePaymentStarted {
     /** Данные запущенного платежа. */
     1: required domain.InvoicePayment payment
-
-    /** deprecated */
-    /** Оценка риска платежа. */
-    4: optional domain.RiskScore risk_score
-    /** Выбранный маршрут обработки платежа. */
-    2: optional domain.PaymentRoute route
-    /** Данные финансового взаимодействия. */
-    3: optional domain.FinalCashFlow cash_flow
 }
 
 struct InvoicePaymentClockUpdate {
@@ -466,6 +465,14 @@ struct InvoicePaymentAdjustmentCreated {
 
 /**
  * Событие об изменении статуса корректировки платежа
+ *
+ * TODO
+ * Самое странное на данный момент в событиях, связанных с корректировками (в частности, платежей),
+ * для меня это тот факт, что например успешное завершение корректировки смены статуса не порождает
+ * собственно событие изменения статуса (`InvoicePaymentStatusChanged`). Мне кажется это
+ * неправильно, потому как клиенты, которые читают поток событий, должны теперь знать, что статус
+ * платежа меняется не только по факту прихода события `InvoicePaymentStatusChanged`, а вообще чёрт
+ * пойми как.
  */
 struct InvoicePaymentAdjustmentStatusChanged {
     1: required domain.InvoicePaymentAdjustmentStatus status
@@ -2231,14 +2238,10 @@ struct PayoutToolInfoChanged {
     2: required domain.PayoutToolInfo info
 }
 
+/* deprecated */
 struct WalletEffectUnit {
     1: required WalletID id
-    2: required WalletEffect effect
-}
-
-union WalletEffect {
-    1: domain.Wallet created
-    2: domain.WalletAccount account_created
+    2: required base.Dummy effect
 }
 
 /* deprecated */
