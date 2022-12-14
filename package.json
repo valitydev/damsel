@@ -1,8 +1,8 @@
 {
   "name": "@vality/domain-proto",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "scripts": {
-    "codegen": "thrift-codegen"
+    "codegen": "thrift-codegen --i ./proto --n domain_config domain --t domain_config domain --p /wachter"
   },
   "publishConfig": {
     "access": "public",
@@ -12,15 +12,27 @@
     "type": "git",
     "url": "git+https://github.com/valitydev/damsel.git"
   },
+  "exports": {
+    ".": "./dist/thrift-codegen.bundle.js",
+    "./metadata.json": "./dist/metadata.json",
+    "./package.json": "./package.json"
+  },
   "license": "Apache-2.0",
   "homepage": "https://github.com/valitydev/damsel#readme",
   "files": [
-    "lib/**/*.{js,d.ts,json}",
+    "dist/**/*.{js,d.ts,json}",
     "**/*.thrift"
   ],
-  "main": "./lib/domain.js",
-  "types": "./lib/domain.d.ts",
+  "main": "./dist/thrift-codegen.bundle.js",
+  "types": "index.d.ts",
+  "typesVersions": {
+    ">=4.6": {
+      "*": [
+        "dist/types/*"
+      ]
+    }
+  },
   "devDependencies": {
-    "@vality/thrift-codegen": "0.1.1-c81b4b7.0"
+    "@vality/thrift-codegen": "2.0.1-246fc01.0"
   }
 }
