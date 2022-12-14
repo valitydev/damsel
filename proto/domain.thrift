@@ -2323,6 +2323,8 @@ struct AttemptLimit {
 
 struct ProviderRef { 1: required ObjectID id }
 
+typedef map<CurrencyRef, ProviderAccount> ProviderAccountSet
+
 struct Provider {
     1: required string name
     2: required string description
@@ -2376,6 +2378,7 @@ struct ProvisionTermSet {
 }
 
 struct PaymentsProvisionTerms {
+    11: optional Predicate allow
     1: optional CurrencySelector currencies
     2: optional CategorySelector categories
     3: optional PaymentMethodSelector payment_methods
@@ -2436,6 +2439,7 @@ struct WalletProvisionTerms {
 }
 
 struct WithdrawalProvisionTerms {
+    5: optional Predicate allow
     1: optional CurrencySelector currencies
     2: optional PayoutMethodSelector payout_methods
     3: optional CashLimitSelector cash_limit
@@ -2452,8 +2456,6 @@ struct CashValueDecision {
     1: required Predicate if_
     2: required CashValueSelector then_
 }
-
-typedef map<CurrencyRef, ProviderAccount> ProviderAccountSet
 
 struct ProviderAccount {
     1: required AccountID settlement
