@@ -2,7 +2,7 @@
   "name": "@vality/domain-proto",
   "version": "2.0.0",
   "scripts": {
-    "codegen": "thrift-codegen --i ./proto --n domain_config domain claim_management payment_processing --t domain_config domain claim_management payment_processing --p /wachter"
+    "codegen": "thrift-codegen --i ./proto --n domain_config domain claim_management payment_processing"
   },
   "publishConfig": {
     "access": "public",
@@ -33,6 +33,6 @@
     }
   },
   "devDependencies": {
-    "@vality/thrift-codegen": "2.0.1-246fc01.0"
+    "@vality/thrift-codegen": "2.0.1-a8cdbd9.0"
   }
 }
