@@ -103,7 +103,7 @@ struct AdditionalTransactionInfo {
     11: optional string cavv_algorithm // Indicates algorithm used to generate CAVV
     12: optional ThreeDsVerification three_ds_verification
     13: optional string short_payment_id // ID for terminal payments
-    14: optional base.StringMap extra_payment_info // Additional payment information for merchant
+    14: optional base.StringMap extra_payment_info // Additional payment information for merchant, this data is sent in a webhook
 }
 
 /**
