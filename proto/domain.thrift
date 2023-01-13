@@ -306,6 +306,7 @@ struct InvoicePayment {
     18: optional bool make_recurrent
     19: optional string external_id
     20: optional base.Timestamp processing_deadline
+    22: optional InvoicePaymentRegistrationOrigin registration_origin
 }
 
 struct InvoicePaymentPending   {}
@@ -321,6 +322,16 @@ struct InvoicePaymentRefunded  {}
 struct InvoicePaymentFailed    { 1: required OperationFailure failure }
 
 struct InvoicePaymentChargedBack {}
+
+union InvoicePaymentRegistrationOrigin {
+    // Платеж совершенный мерачантом
+    1: InvoicePaymentMerchantRegistration merchant
+    // Платеж совершенный провайдером
+    2: InvoicePaymentProviderRegistration provider
+}
+
+struct InvoicePaymentMerchantRegistration {}
+struct InvoicePaymentProviderRegistration {}
 
 /**
  * Шаблон инвойса.

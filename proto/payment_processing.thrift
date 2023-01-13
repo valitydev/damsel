@@ -565,6 +565,19 @@ struct InvoicePaymentParams {
     7: optional base.Timestamp processing_deadline
 }
 
+struct RegisterInvoicePaymentParams {
+    1: required PayerParams payer_params
+    2: required domain.PaymentRoute route
+    3: required domain.TransactionInfo transaction_info
+    4: optional domain.Cash cost
+    5: optional domain.PayerSessionInfo payer_session_info
+    6: optional domain.InvoicePaymentID id
+    7: optional string external_id
+    8: optional domain.InvoicePaymentContext context
+    9: optional domain.RiskScore risk_score
+    10: optional base.Timestamp occurred_at
+}
+
 union PayerParams {
     1: PaymentResourcePayerParams payment_resource
     2: CustomerPayerParams        customer
@@ -1133,6 +1146,21 @@ service Invoicing {
             9: InvalidRecurrentParentPayment ex9,
             10: OperationNotPermitted ex10,
             11: InvoiceAdjustmentPending ex11
+        )
+
+    InvoicePayment RegisterPayment (
+        2: domain.InvoiceID id,
+        3: RegisterInvoicePaymentParams params
+    )
+        throws (
+            1: InvoiceNotFound ex1,
+            2: InvalidInvoiceStatus ex2,
+            3: base.InvalidRequest ex3,
+            4: InvalidPartyStatus ex4,
+            5: InvalidShopStatus ex5,
+            6: InvalidContractStatus ex6,
+            7: InvoiceAdjustmentPending ex8,
+            8: InvalidRecurrentParentPayment ex9
         )
 
     InvoicePayment GetPayment (
