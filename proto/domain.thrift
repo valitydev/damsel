@@ -103,6 +103,7 @@ struct AdditionalTransactionInfo {
     11: optional string cavv_algorithm // Indicates algorithm used to generate CAVV
     12: optional ThreeDsVerification three_ds_verification
     13: optional string short_payment_id // ID for terminal payments
+    14: optional base.StringMap extra_payment_info // Additional payment information for merchant, this data is sent in a webhook
 }
 
 /**
@@ -2334,6 +2335,8 @@ struct AttemptLimit {
 
 struct ProviderRef { 1: required ObjectID id }
 
+typedef map<CurrencyRef, ProviderAccount> ProviderAccountSet
+
 struct Provider {
     1: required string name
     2: required string description
@@ -2465,8 +2468,6 @@ struct CashValueDecision {
     1: required Predicate if_
     2: required CashValueSelector then_
 }
-
-typedef map<CurrencyRef, ProviderAccount> ProviderAccountSet
 
 struct ProviderAccount {
     1: required AccountID settlement
