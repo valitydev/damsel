@@ -14,6 +14,7 @@ typedef base.ID DocumentID
 typedef base.ID CommentID
 typedef base.ID UserID
 typedef base.ID CashRegisterID
+typedef base.ID IdentityID
 typedef i32 CashRegisterProviderID
 
 typedef string MetadataKey
@@ -404,6 +405,20 @@ union ClaimModificationChange {
     3: CommentModificationUnit comment_modification
 }
 
+struct IdentityCreation {
+    1: required domain.PartyID party_id
+    2: required string name
+    3: required string provider
+    4: optional Metadata metadata
+}
+
+struct WalletCreation {
+    1: required IdentityID identity_id
+    2: required string name
+    3: required domain.CurrencyRef currency
+    4: optional Metadata metadata
+}
+
 struct ModificationUnit {
     1: required ModificationID modification_id
     2: required base.Timestamp created_at
@@ -416,11 +431,15 @@ struct ModificationUnit {
 union Modification {
     1: PartyModification party_modification
     2: ClaimModification claim_modification
+    3: IdentityCreation identity_creation
+    4: WalletCreation wallet_creation
 }
 
 union ModificationChange {
     1: PartyModificationChange party_modification
     2: ClaimModificationChange claim_modification
+    3: IdentityCreation identity_creation
+    4: WalletCreation wallet_creation
 }
 
 struct Claim {
