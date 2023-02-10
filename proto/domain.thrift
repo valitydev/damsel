@@ -5,6 +5,7 @@
 include "base.thrift"
 include "msgpack.thrift"
 include "json.thrift"
+include "limiter_config.thrift"
 
 namespace java dev.vality.damsel.domain
 namespace erlang dmsl.domain
@@ -1690,16 +1691,22 @@ struct CashLimitDecision {
 
 /* Turnover limits */
 
-typedef base.ID TurnoverLimitID
+typedef limiter_config.LimitConfigID LimitConfigID
 
 struct TurnoverLimit {
-    1: required TurnoverLimitID id
+    1: required LimitConfigID id
 
     /**
      * Допустимая верхняя граница.
      * Лимит считается исчерпанным, если значение _строго больше_ верхней границы.
      */
     2: required Amount upper_boundary
+
+    /**
+     * Версия конфигурации, объект которой нужно брать для расчета лимитов с таким идентификатором.
+     * Обязательна после процесса миграции на конфигурацию лимитов через доминанту.
+     */
+    3: optional DataRevision domain_revision
 }
 
 union TurnoverLimitSelector {
@@ -3040,6 +3047,15 @@ struct IdentityProvider {
     3: required ContractorIdentificationLevel contractor_level
 }
 
+struct LimitConfigObject {
+    1: required LimitConfigRef ref
+    2: required limiter_config.LimitConfig data
+}
+
+struct LimitConfigRef {
+    1: required limiter_config.LimitConfigID id
+}
+
 /* There are 2 requirements on Reference and DomainObject unions:
  * - all field types must be unique,
  * - all corresponding field names in both unions must match.
@@ -3081,6 +3097,7 @@ union Reference {
     44 : CountryRef                 country
     45 : TradeBlocRef               trade_bloc
     46 : IdentityProviderRef        identity_provider
+    47 : LimitConfigRef             limit_config
 
     12 : DummyRef                   dummy
     13 : DummyLinkRef               dummy_link
@@ -3134,6 +3151,7 @@ union DomainObject {
     45 : TradeBlocObject            trade_bloc
 
     46 : IdentityProviderObject     identity_provider
+    47 : LimitConfigObject          limit_config
 
     12 : DummyObject                dummy
     13 : DummyLinkObject            dummy_link
