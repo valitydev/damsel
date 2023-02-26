@@ -42,6 +42,8 @@ union InvalidStatus {
 union InvalidChangesetReason {
     1: InvalidClaimChangesetReason invalid_claim_changeset
     2: InvalidPartyChangesetReason invalid_party_changeset
+    3: InvalidIdentityChangesetReason invalid_identity_changeset
+    4: InvalidNewWalletChangesetReason invalid_wallet_changeset
 }
 
 // TODO: Fill with claim modification errors
@@ -49,6 +51,31 @@ union InvalidClaimChangesetReason{}
 
 // Placeholder type for reasons without additional information
 struct InvalidClaimConcreteReason{}
+
+struct InvalidIdentityChangesetReason {
+    1: required IdentityID id
+    2: required InvalidIdentityReason reason
+}
+
+union InvalidIdentityReason {
+    1: InvalidClaimConcreteReason already_exists
+    2: InvalidClaimConcreteReason provider_not_found
+    3: InvalidClaimConcreteReason identity_class_not_found
+    4: InvalidClaimConcreteReason party_not_found
+    5: InvalidClaimConcreteReason party_inaccessible
+}
+
+struct InvalidNewWalletChangesetReason {
+    1: required WalletID id
+    2: required InvalidNewWalletReason reason
+}
+
+union InvalidNewWalletReason {
+    1: InvalidClaimConcreteReason already_exists
+    2: InvalidClaimConcreteReason identity_not_found
+    3: InvalidClaimConcreteReason currency_not_found
+    4: InvalidClaimConcreteReason party_inaccessible
+}
 
 union InvalidPartyChangesetReason {
     1: InvalidContract invalid_contract
