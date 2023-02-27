@@ -3053,7 +3053,7 @@ struct LimitConfigObject {
 }
 
 struct LimitConfigRef {
-    1: required limiter_config.LimitConfigID id
+    1: required LimitConfigID id
 }
 
 /* There are 2 requirements on Reference and DomainObject unions:
