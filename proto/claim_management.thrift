@@ -60,9 +60,8 @@ struct InvalidIdentityChangesetReason {
 union InvalidIdentityReason {
     1: InvalidClaimConcreteReason already_exists
     2: InvalidClaimConcreteReason provider_not_found
-    3: InvalidClaimConcreteReason identity_class_not_found
-    4: InvalidClaimConcreteReason party_not_found
-    5: InvalidClaimConcreteReason party_inaccessible
+    3: InvalidClaimConcreteReason party_not_found
+    4: InvalidClaimConcreteReason party_inaccessible
 }
 
 struct InvalidNewWalletChangesetReason {
@@ -74,7 +73,8 @@ union InvalidNewWalletReason {
     1: InvalidClaimConcreteReason already_exists
     2: InvalidClaimConcreteReason identity_not_found
     3: InvalidClaimConcreteReason currency_not_found
-    4: InvalidClaimConcreteReason party_inaccessible
+    4: InvalidClaimConcreteReason currency_not_allowed
+    5: InvalidClaimConcreteReason party_inaccessible
 }
 
 union InvalidPartyChangesetReason {
