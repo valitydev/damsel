@@ -14,6 +14,8 @@ typedef base.ID DocumentID
 typedef base.ID CommentID
 typedef base.ID UserID
 typedef base.ID CashRegisterID
+typedef base.ID IdentityID
+typedef base.ID WalletID
 typedef i32 CashRegisterProviderID
 
 typedef string MetadataKey
@@ -40,6 +42,8 @@ union InvalidStatus {
 union InvalidChangesetReason {
     1: InvalidClaimChangesetReason invalid_claim_changeset
     2: InvalidPartyChangesetReason invalid_party_changeset
+    3: InvalidIdentityChangesetReason invalid_identity_changeset
+    4: InvalidNewWalletChangesetReason invalid_wallet_changeset
 }
 
 // TODO: Fill with claim modification errors
@@ -47,6 +51,30 @@ union InvalidClaimChangesetReason{}
 
 // Placeholder type for reasons without additional information
 struct InvalidClaimConcreteReason{}
+
+struct InvalidIdentityChangesetReason {
+    1: required IdentityID id
+    2: required InvalidIdentityReason reason
+}
+
+union InvalidIdentityReason {
+    1: InvalidClaimConcreteReason already_exists
+    2: InvalidClaimConcreteReason provider_not_found
+    3: InvalidClaimConcreteReason party_inaccessible
+}
+
+struct InvalidNewWalletChangesetReason {
+    1: required WalletID id
+    2: required InvalidNewWalletReason reason
+}
+
+union InvalidNewWalletReason {
+    1: InvalidClaimConcreteReason already_exists
+    2: InvalidClaimConcreteReason identity_not_found
+    3: InvalidClaimConcreteReason currency_not_found
+    4: InvalidClaimConcreteReason currency_not_allowed
+    5: InvalidClaimConcreteReason party_inaccessible
+}
 
 union InvalidPartyChangesetReason {
     1: InvalidContract invalid_contract
@@ -392,6 +420,24 @@ union PartyModification {
     4: WalletModificationUnit wallet_modification
 }
 
+struct IdentityModificationUnit {
+    1: required IdentityID id
+    2: required IdentityModification modification
+}
+
+union IdentityModification {
+    1: IdentityParams creation
+}
+
+struct NewWalletModificationUnit {
+    1: required WalletID id
+    2: required NewWalletModification modification
+}
+
+union NewWalletModification {
+    1: NewWalletParams creation
+}
+
 union PartyModificationChange {
     1: ContractorModificationUnit contractor_modification
     2: ContractModificationUnit contract_modification
@@ -402,6 +448,20 @@ union ClaimModificationChange {
     1: DocumentModificationUnit document_modification
     2: FileModificationUnit file_modification
     3: CommentModificationUnit comment_modification
+}
+
+struct IdentityParams {
+    1: required domain.PartyID party_id
+    2: required string name
+    3: required string provider
+    4: optional Metadata metadata
+}
+
+struct NewWalletParams {
+    1: required IdentityID identity_id
+    2: required string name
+    3: required domain.CurrencyRef currency
+    4: optional Metadata metadata
 }
 
 struct ModificationUnit {
@@ -416,11 +476,15 @@ struct ModificationUnit {
 union Modification {
     1: PartyModification party_modification
     2: ClaimModification claim_modification
+    3: IdentityModificationUnit identity_modification
+    4: NewWalletModificationUnit wallet_modification
 }
 
 union ModificationChange {
     1: PartyModificationChange party_modification
     2: ClaimModificationChange claim_modification
+    3: IdentityModificationUnit identity_modification
+    4: NewWalletModificationUnit wallet_modification
 }
 
 struct Claim {
