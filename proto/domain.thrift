@@ -1199,6 +1199,7 @@ struct PaymentsServiceTerms {
      8: optional PaymentRefundsServiceTerms refunds
     10: optional PaymentChargebackServiceTerms chargebacks
     11: optional PaymentAllocationServiceTerms allocations
+    12: optional AttemptLimitSelector attempt_limit
 }
 
 struct PaymentHoldsServiceTerms {
@@ -1272,6 +1273,7 @@ struct WalletServiceTerms {
 /** Withdrawal service terms **/
 
 struct WithdrawalServiceTerms {
+
     1: optional CurrencySelector currencies
     2: optional CashLimitSelector cash_limit
     3: optional CashFlowSelector cash_flow
@@ -1945,7 +1947,7 @@ struct PaymentService {
    * {"dev.vality.checkout": {
    *   "brandLogo": {"banner": "/assets/brands/blarg.svg"},
    *   "localization": {
-   *     "name": {"ja_JP": "ヱヴァンゲリヲン"}  
+   *     "name": {"ja_JP": "ヱヴァンゲリヲン"}
    *   }
    * }}
    */
@@ -2786,7 +2788,7 @@ struct PaymentInstitution {
 
     // Deprecated
     5: optional ProviderSelector providers
-    
+
     // Reserved
     // 13
     // 17
