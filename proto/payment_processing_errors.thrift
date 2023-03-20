@@ -72,6 +72,7 @@ union PaymentFailure {
     2: PreAuthorizationFailure  preauthorization_failed
     3: AuthorizationFailure     authorization_failed
     4: NoRouteFoundFailure      no_route_found
+    5: RouteBlockedFailure      route_blocked
 }
 
 union RefundFailure {
@@ -129,6 +130,11 @@ union BankCardReject {
     5: GeneralFailure cvv_invalid
     // 6: GeneralFailure card_unsupported // на самом деле это нужно было роутить в другую сторону
     7: GeneralFailure issuer_not_found
+}
+
+union RouteBlockedFailure {
+    // TODO Какие конкретные причины нужно указать?
+    1: GeneralFailure unknown
 }
 
 union NoRouteFoundFailure {
