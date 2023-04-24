@@ -1691,6 +1691,12 @@ struct CashLimitDecision {
     2: required CashLimitSelector then_
 }
 
+/*  */
+
+struct CashWithNoRemainder {
+    1: required Cash dividing_cash
+}
+
 /* Turnover limits */
 
 typedef limiter_config.LimitConfigID LimitConfigID
@@ -2574,6 +2580,7 @@ union Condition {
     1: CategoryRef category_is
     2: CurrencyRef currency_is
     4: CashRange cost_in
+   11: CashWithNoRemainder cost_no_rem
     3: PaymentToolCondition payment_tool
     5: ShopLocation shop_location_is
     6: PartyCondition party
