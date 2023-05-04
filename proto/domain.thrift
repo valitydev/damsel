@@ -2574,6 +2574,7 @@ union Condition {
     1: CategoryRef category_is
     2: CurrencyRef currency_is
     4: CashRange cost_in
+   11: Cash cost_is_multiple_of
     3: PaymentToolCondition payment_tool
     5: ShopLocation shop_location_is
     6: PartyCondition party
