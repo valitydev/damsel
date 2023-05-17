@@ -1510,6 +1510,7 @@ service Invoicing {
         throws (
             2: InvoiceNotFound ex2,
             3: InvoicePaymentNotFound ex3
+            4: base.InvalidRequest ex4
         )
 }
 
