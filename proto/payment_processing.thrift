@@ -1505,6 +1505,12 @@ service Invoicing {
             2: InvoiceNotFound ex2,
             3: base.InvalidRequest ex3
         )
+
+    set<domain.TurnoverLimit> GetLimits (2: domain.InvoiceID id, 3: domain.InvoicePaymentID payment_id)
+        throws (
+            2: InvoiceNotFound ex2,
+            3: InvoicePaymentNotFound ex3
+        )
 }
 
 // @NOTE: Argument and exception tags start with 2 for historical reasons
