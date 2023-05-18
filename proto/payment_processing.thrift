@@ -890,6 +890,15 @@ struct InvoiceRepairParams {
     1: optional bool validate_transitions = true
 }
 
+/* Значение лимита. */
+struct TurnoverLimitValue {
+    1:  required domain.TurnoverLimit limit
+    2:  required domain.Amount value
+}
+
+typedef map<domain.PaymentRoute, list<TurnoverLimitValue>> RouteLimitContext
+
+
 // Exceptions
 
 // forward-declared
@@ -1506,7 +1515,7 @@ service Invoicing {
             3: base.InvalidRequest ex3
         )
 
-    list<domain.TurnoverLimit> GetLimits (2: domain.InvoiceID id, 3: domain.InvoicePaymentID payment_id)
+    RouteLimitContext GetLimits (2: domain.InvoiceID id, 3: domain.InvoicePaymentID payment_id)
         throws (
             2: InvoiceNotFound ex2,
             3: InvoicePaymentNotFound ex3
