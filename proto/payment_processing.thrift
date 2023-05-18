@@ -1515,11 +1515,11 @@ service Invoicing {
             3: base.InvalidRequest ex3
         )
 
-    RouteLimitContext GetLimits (2: domain.InvoiceID id, 3: domain.InvoicePaymentID payment_id)
+    RouteLimitContext GetLimits (1: domain.InvoiceID id, 2: domain.InvoicePaymentID payment_id)
         throws (
-            2: InvoiceNotFound ex2,
-            3: InvoicePaymentNotFound ex3
-            4: base.InvalidRequest ex4
+            1: InvoiceNotFound ex1,
+            2: InvoicePaymentNotFound ex2
+            3: base.InvalidRequest ex3
         )
 }
 
