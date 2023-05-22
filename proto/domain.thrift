@@ -2547,6 +2547,8 @@ struct Terminal {
     16: optional MerchantID external_merchant_id
     /* Код классификации вида деятельности мерчанта. */
     17: optional MerchantCategoryCode mcc
+    /* Настройка переопределения логики доступности маршрута */
+    18: optional RouteFaultDetectorOverrides route_fd_overrides
 }
 
 struct ProviderTerminalRef {
@@ -2557,6 +2559,10 @@ struct ProviderTerminalRef {
 
 struct TerminalRef {
     1: required ObjectID id
+}
+
+struct RouteFaultDetectorOverrides {
+    1: optional bool enabled
 }
 
 /* Predicates / conditions */
