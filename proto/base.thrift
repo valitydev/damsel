@@ -216,3 +216,6 @@ struct IntegerRange {
 /* Типы, используемые для идентфикации заявок */
 typedef i64 ClaimID
 typedef i32 ClaimRevision
+
+/** Пустая структура, для обратной совместимости */
+struct Dummy {}
