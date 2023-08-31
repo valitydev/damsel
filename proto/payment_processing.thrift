@@ -87,7 +87,6 @@ union InvoiceChange {
     1: InvoiceCreated          invoice_created
     2: InvoiceStatusChanged    invoice_status_changed
     3: InvoicePaymentChange    invoice_payment_change
-    4: InvoiceAdjustmentChange invoice_adjustment_change
 }
 
 union InvoiceTemplateChange {
@@ -119,37 +118,6 @@ struct InvoicePaymentChange {
     1: required domain.InvoicePaymentID id
     2: required InvoicePaymentChangePayload payload
     3: optional base.Timestamp occurred_at
-}
-
-/**
- * Событие, касающееся корректировки по инвойсу.
- */
-struct InvoiceAdjustmentChange {
-    1: required domain.InvoiceAdjustmentID id
-    2: required InvoiceAdjustmentChangePayload payload
-    3: optional base.Timestamp occurred_at
-}
-
-/**
- * Один из возможных вариантов события, порождённого корректировкой по инвойсу.
- */
-union InvoiceAdjustmentChangePayload {
-    1: InvoiceAdjustmentCreated       invoice_adjustment_created
-    2: InvoiceAdjustmentStatusChanged invoice_adjustment_status_changed
-}
-
-/**
- * Событие о создании корректировки инвойса
- */
-struct InvoiceAdjustmentCreated {
-    1: required domain.InvoiceAdjustment adjustment
-}
-
-/**
- * Событие об изменении статуса корректировки платежа
- */
-struct InvoiceAdjustmentStatusChanged {
-    1: required domain.InvoiceAdjustmentStatus status
 }
 
 /**
@@ -612,7 +580,6 @@ struct InvoicePaymentParamsFlowHold {
 struct Invoice {
     1: required domain.Invoice invoice
     2: required list<InvoicePayment> payments
-    3: optional list<InvoiceAdjustment> adjustments
 }
 
 struct InvoicePayment {
@@ -644,7 +611,6 @@ struct InvoiceRefundSession {
     1: optional domain.TransactionInfo transaction_info
 }
 
-typedef domain.InvoiceAdjustment InvoiceAdjustment
 typedef domain.InvoicePaymentAdjustment InvoicePaymentAdjustment
 
 struct InvoicePaymentChargeback {
@@ -810,23 +776,6 @@ struct InvoicePaymentCaptureData {
 }
 
 /**
- * Параметры создаваемой поправки к инвойсу.
- */
-struct InvoiceAdjustmentParams {
-    /** Причина, на основании которой создаётся поправка. */
-    1: required string reason
-    /** Сценарий создаваемой поправки. */
-    2: required InvoiceAdjustmentScenario scenario
-}
-
-/**
- * Сценарий поправки к инвойсу.
- */
-union InvoiceAdjustmentScenario {
-    1: domain.InvoiceAdjustmentStatusChange status_change
-}
-
-/**
  * Параметры создаваемой поправки к платежу.
  */
 struct InvoicePaymentAdjustmentParams {
@@ -920,15 +869,6 @@ union InvalidStatus {
 }
 
 exception InvoiceNotFound {}
-
-exception InvoiceAdjustmentNotFound {}
-exception InvoiceAdjustmentPending {
-    1: required domain.InvoiceAdjustmentID id
-}
-exception InvoiceAdjustmentStatusUnacceptable {}
-exception InvalidInvoiceAdjustmentStatus {
-    1: required domain.InvoiceAdjustmentStatus status
-}
 
 exception InvoicePaymentNotFound {}
 exception InvoicePaymentRefundNotFound {}
@@ -1085,49 +1025,6 @@ service Invoicing {
             4: base.InvalidRequest ex4
         )
 
-    InvoiceAdjustment CreateInvoiceAdjustment (
-        2: domain.InvoiceID id,
-        3: InvoiceAdjustmentParams params
-    )
-        throws (
-            2: InvoiceNotFound ex2,
-            3: InvalidInvoiceStatus ex3,
-            4: InvoiceAdjustmentPending ex4,
-            5: InvoiceAdjustmentStatusUnacceptable ex5,
-            6: InvoiceAlreadyHasStatus ex6,
-            7: base.InvalidRequest ex7,
-            8: InvoicePaymentPending ex8
-        )
-
-    InvoiceAdjustment GetAdjustment (
-        2: domain.InvoiceID id,
-        3: domain.InvoiceAdjustmentID adjustment_id
-    )
-        throws (
-            2: InvoiceNotFound ex2,
-            3: InvoiceAdjustmentNotFound ex3
-        )
-
-    void CaptureAdjustment (
-        2: domain.InvoiceID id,
-        3: domain.InvoiceAdjustmentID adjustment_id
-    )
-        throws (
-            2: InvoiceNotFound ex2,
-            3: InvoiceAdjustmentNotFound ex3,
-            4: InvalidInvoiceAdjustmentStatus ex4
-        )
-
-    void CancelAdjustment (
-        2: domain.InvoiceID id,
-        3: domain.InvoiceAdjustmentID adjustment_id
-    )
-        throws (
-            2: InvoiceNotFound ex2,
-            3: InvoiceAdjustmentNotFound ex3,
-            4: InvalidInvoiceAdjustmentStatus ex4
-        )
-
     /* Terms */
 
     domain.TermSet ComputeTerms (
@@ -1153,8 +1050,7 @@ service Invoicing {
             7: InvalidShopStatus ex7,
             8: InvalidContractStatus ex8,
             9: InvalidRecurrentParentPayment ex9,
-            10: OperationNotPermitted ex10,
-            11: InvoiceAdjustmentPending ex11
+            10: OperationNotPermitted ex10
         )
 
     InvoicePayment RegisterPayment (
@@ -1168,7 +1064,6 @@ service Invoicing {
             4: InvalidPartyStatus ex4,
             5: InvalidShopStatus ex5,
             6: InvalidContractStatus ex6,
-            7: InvoiceAdjustmentPending ex8,
             8: InvalidRecurrentParentPayment ex9
         )
 
