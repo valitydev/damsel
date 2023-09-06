@@ -1918,7 +1918,7 @@ struct DigitalWallet {
     4: optional PaymentServiceRef     payment_service
     2: required DigitalWalletID       id
     3: optional Token                 token
-    5: optional string                accountName
+    5: optional string                account_name
 
     // Reserved
     // 1
