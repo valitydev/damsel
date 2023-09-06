@@ -23,6 +23,13 @@ const i32          CANDIDATE_PRIORITY = 1000
 struct ContactInfo {
     1: optional string phone_number
     2: optional string email
+    3: optional string first_name
+    4: optional string last_name
+    5: optional string country
+    6: optional string state
+    7: optional string city
+    8: optional string address
+    9: optional string zip_code
 }
 
 union OperationFailure {
@@ -1918,7 +1925,7 @@ struct DigitalWallet {
     4: optional PaymentServiceRef     payment_service
     2: required DigitalWalletID       id
     3: optional Token                 token
-    5: optional string                accountName
+    5: optional string                account_name
 
     // Reserved
     // 1
