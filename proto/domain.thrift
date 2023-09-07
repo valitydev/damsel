@@ -29,7 +29,7 @@ struct ContactInfo {
     6: optional string state
     7: optional string city
     8: optional string address
-    9: optional string zip_code
+    9: optional string postal_code
 }
 
 union OperationFailure {
