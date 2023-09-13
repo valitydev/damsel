@@ -2428,6 +2428,7 @@ struct WalletProvisionTerms {
 
 struct WithdrawalProvisionTerms {
     5: optional Predicate allow
+    7: optional Predicate global_allow
     1: optional CurrencySelector currencies
     2: optional PayoutMethodSelector payout_methods
     3: optional CashLimitSelector cash_limit
