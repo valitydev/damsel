@@ -2366,6 +2366,7 @@ struct ProvisionTermSet {
 
 struct PaymentsProvisionTerms {
     11: optional Predicate allow
+    14: optional Predicate global_allow
     1: optional CurrencySelector currencies
     2: optional CategorySelector categories
     3: optional PaymentMethodSelector payment_methods
