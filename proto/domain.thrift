@@ -2312,6 +2312,17 @@ struct ProviderRef { 1: required ObjectID id }
 
 typedef map<CurrencyRef, ProviderAccount> ProviderAccountSet
 
+struct CascadeUIExistance {}
+
+struct CascadeProviderError {
+    1: required string error_signature
+}
+
+union CascadeBehaviour {
+    1: CascadeUIExistance user_interaction_exists
+    2: CascadeProviderError provider_error
+}
+
 struct Provider {
     1: required string name
     2: required string description
@@ -2320,6 +2331,8 @@ struct Provider {
     7: optional ProviderAccountSet accounts = {}
     10: optional ProvisionTermSet terms
     11: optional list<ProviderParameter> params_schema
+    // Default behaviour is CascadeUIExistance
+    12: optional CascadeBehaviour cascade_behaviour
 
     // Deprecated
     5: optional string abs_account
