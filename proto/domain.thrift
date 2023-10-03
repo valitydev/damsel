@@ -2318,9 +2318,10 @@ struct CascadeOnMappedErrors {
     1: required set<string> error_signature
 }
 
-union CascadeBehaviour {
-    1: CascadeWhenNoUI no_user_interaction
-    2: CascadeOnMappedErrors mapped_errors
+// Empty struct means that Cascade is disabled
+struct CascadeBehaviour {
+    1: optional CascadeWhenNoUI no_user_interaction
+    2: optional CascadeOnMappedErrors mapped_errors
 }
 
 struct Provider {
@@ -2331,7 +2332,7 @@ struct Provider {
     7: optional ProviderAccountSet accounts = {}
     10: optional ProvisionTermSet terms
     11: optional list<ProviderParameter> params_schema
-    // Default behaviour is CascadeUIExistance
+    // Default behaviour is CascadeWhenNoUI
     12: optional CascadeBehaviour cascade_behaviour
 
     // Deprecated
