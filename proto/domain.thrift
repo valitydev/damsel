@@ -2312,10 +2312,10 @@ struct ProviderRef { 1: required ObjectID id }
 
 typedef map<CurrencyRef, ProviderAccount> ProviderAccountSet
 
-struct CascadeUIExistance {}
+struct CascadeWhenNoUI {}
 
-struct CascadeProviderError {
-    1: required string error_signature
+struct CascadeOnMappedErrors {
+    1: required set<string> error_signature
 }
 
 union CascadeBehaviour {
