@@ -2319,8 +2319,8 @@ struct CascadeProviderError {
 }
 
 union CascadeBehaviour {
-    1: CascadeUIExistance user_interaction_exists
-    2: CascadeProviderError provider_error
+    1: CascadeWhenNoUI no_user_interaction
+    2: CascadeOnMappedErrors mapped_errors
 }
 
 struct Provider {
