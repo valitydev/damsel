@@ -2312,6 +2312,18 @@ struct ProviderRef { 1: required ObjectID id }
 
 typedef map<CurrencyRef, ProviderAccount> ProviderAccountSet
 
+struct CascadeWhenNoUI {}
+
+struct CascadeOnMappedErrors {
+    1: required set<string> error_signatures
+}
+
+// Empty struct means that Cascade is disabled
+struct CascadeBehaviour {
+    1: optional CascadeWhenNoUI no_user_interaction
+    2: optional CascadeOnMappedErrors mapped_errors
+}
+
 struct Provider {
     1: required string name
     2: required string description
@@ -2320,6 +2332,8 @@ struct Provider {
     7: optional ProviderAccountSet accounts = {}
     10: optional ProvisionTermSet terms
     11: optional list<ProviderParameter> params_schema
+    // Default behaviour is CascadeWhenNoUI
+    12: optional CascadeBehaviour cascade_behaviour
 
     // Deprecated
     5: optional string abs_account
