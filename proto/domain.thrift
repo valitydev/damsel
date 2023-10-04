@@ -2315,7 +2315,7 @@ typedef map<CurrencyRef, ProviderAccount> ProviderAccountSet
 struct CascadeWhenNoUI {}
 
 struct CascadeOnMappedErrors {
-    1: required set<string> error_signature
+    1: required set<string> error_signatures
 }
 
 // Empty struct means that Cascade is disabled
