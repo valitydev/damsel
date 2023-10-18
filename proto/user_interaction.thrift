@@ -68,7 +68,7 @@ struct QrCodeDisplayRequest {
     1: required QrCode qr_code
 }
 
-struct ExtendApiRequest {
+struct ApiExtensionRequest {
     1: required string api_type
 }
 
@@ -101,7 +101,7 @@ union UserInteraction {
     /**
      * Запрос на использование расширенной версии API
      */
-    5: ExtendApiRequest extend_api_request
+    5: ApiExtensionRequest api_extension_request
 }
 
 union Status {
