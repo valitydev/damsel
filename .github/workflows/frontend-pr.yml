@@ -19,3 +19,6 @@ jobs:
       - run: npm i # protocols don't always update the package-lock.json, so installing from package.json
       - name: Codegen
         run: npm run codegen
+      - uses: valitydev/action-frontend/publish@v1
+        with:
+          npm-token: ${{ secrets.NPM_TOKEN }}
