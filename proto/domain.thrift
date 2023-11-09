@@ -554,6 +554,11 @@ struct InvoicePaymentAdjustmentStatusChangeState {
 struct InvoicePaymentAdjustmentCashFlow {
     /** Ревизия, относительно которой необходимо пересчитать граф финансовых потоков. */
     1: optional DataRevision domain_revision
+    /**
+     * Сумма, относительно которой необходимо пересчитать
+     * граф финансовых потоков.
+     */
+    2: optional Amount new_amount
 }
 
 /**
