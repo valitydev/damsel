@@ -68,6 +68,10 @@ struct QrCodeDisplayRequest {
     1: required QrCode qr_code
 }
 
+struct ApiExtensionRequest {
+    1: required string api_type
+}
+
 union UserInteraction {
     /**
      * Требование переадресовать user agent пользователя, в виде HTTP-запроса.
@@ -93,6 +97,11 @@ union UserInteraction {
      * Запрос на отображение пользователю QR-кода
      */
     4: QrCodeDisplayRequest qr_code_display_request
+
+    /**
+     * Запрос на использование расширенной версии API
+     */
+    5: ApiExtensionRequest api_extension_request
 }
 
 union Status {

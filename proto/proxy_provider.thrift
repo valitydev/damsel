@@ -48,6 +48,11 @@ union FinishStatus {
 struct Success {
     /** Токен для последующих взаимодействий. */
     1: optional domain.Token token
+    /**
+     * Измененная сумма операции.
+     * Используется для согласования, если провайдер посчитал сумму по другому.
+     */
+    2: optional Cash changed_cost
 }
 
 /**

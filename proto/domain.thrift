@@ -303,6 +303,7 @@ struct InvoicePayment {
     3:  required InvoicePaymentStatus status
     6:  optional InvoicePaymentContext context
     8:  required Cash cost
+    23: optional Cash changed_cost
     10: required DataRevision domain_revision
     13: required InvoicePaymentFlow flow
     14: required Payer payer

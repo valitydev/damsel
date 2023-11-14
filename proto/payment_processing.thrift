@@ -137,6 +137,7 @@ union InvoicePaymentChangePayload {
     13: InvoicePaymentChargebackChange      invoice_payment_chargeback_change
     14: InvoicePaymentRollbackStarted       invoice_payment_rollback_started
     15: InvoicePaymentClockUpdate           invoice_payment_clock_update
+    16: InvoicePaymentCashChanged           invoice_payment_cash_changed
 }
 
 /**
@@ -153,6 +154,11 @@ struct InvoicePaymentStarted {
     2: optional domain.PaymentRoute route
     /** Данные финансового взаимодействия. */
     3: optional domain.FinalCashFlow cash_flow
+}
+
+struct InvoicePaymentCashChanged {
+    1: required domain.Cash old_cash
+    2: required domain.Cash new_cash
 }
 
 struct InvoicePaymentClockUpdate {
