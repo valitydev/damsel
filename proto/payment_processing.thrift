@@ -14,28 +14,17 @@ namespace erlang dmsl.payproc
 
 /* Analytics */
 
-struct InvoicePaymentFullID {
-    1: required domain.InvoiceID invoice_id
-    2: required domain.InvoicePaymentID payment_id
-}
-
-union EntityWithChosenRoute {
-    1: InvoicePaymentFullID invoice_payment
-}
-
-struct ExplanationForChosenRoute {
-    1: optional InvoicePaymentExplanation invoice_payment
-}
-
 struct InvoicePaymentExplanation {
     1: optional list<InvoicePaymentRouteExplanation> explained_routes
+    2: optional Varset used_varset
 }
 
 struct InvoicePaymentRouteExplanation {
     1: required domain.PaymentRoute route
     2: required bool is_chosen
     3: optional domain.PaymentRouteScores scores
-    4: optional string rejection_description
+    4: optional list<TurnoverLimitValue> limits
+    5: optional string rejection_description
 }
 
 /* Events */
@@ -211,6 +200,8 @@ struct InvoicePaymentRouteChanged {
     1: required domain.PaymentRoute route
     2: optional set<domain.PaymentRoute> candidates
     3: optional map<domain.PaymentRoute, domain.PaymentRouteScores> scores
+    4: optional RouteLimitContext limits
+    5: optional Varset vs
 }
 
 /**
@@ -901,7 +892,6 @@ union InvalidStatus {
     2: domain.Suspension suspension
 }
 
-exception EntityNotFound {}
 exception RouteNotChosen {}
 
 exception InvoiceNotFound {}
@@ -1063,10 +1053,14 @@ service Invoicing {
 
     /* Аnalytics */
 
-    ExplanationForChosenRoute GetExplanationForChosenRoute (1: EntityWithChosenRoute entity)
+    InvoicePaymentExplanation GetExplanationForChosenRoute (
+        1: domain.InvoiceID invoice_id,
+        2: domain.InvoicePaymentID payment_id
+    )
         throws (
-            1: EntityNotFound ex1,
-            2: RouteNotChosen ex2
+            1: InvoiceNotFound ex1,
+            2: InvoicePaymentNotFound ex2,
+            3: RouteNotChosen ex3
         )
 
     /* Terms */
