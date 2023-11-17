@@ -12,6 +12,32 @@ include "msgpack.thrift"
 namespace java dev.vality.damsel.payment_processing
 namespace erlang dmsl.payproc
 
+/* Analytics */
+
+struct InvoicePaymentFullID {
+    1: required domain.InvoiceID invoice_id
+    2: required domain.InvoicePaymentID payment_id
+}
+
+union EntityWithChosenRoute {
+    1: InvoicePaymentFullID invoice_payment
+}
+
+struct ExplanationForChosenRoute {
+    1: optional InvoicePaymentExplanation invoice_payment
+}
+
+struct InvoicePaymentExplanation {
+    1: optional list<InvoicePaymentRouteExplanation> explained_routes
+}
+
+struct InvoicePaymentRouteExplanation {
+    1: required domain.PaymentRoute route
+    2: required bool is_chosen
+    3: optional domain.PaymentRouteScores scores
+    4: optional string rejection_description
+}
+
 /* Events */
 
 typedef list<Event> Events
@@ -184,6 +210,7 @@ struct InvoicePaymentRouteChanged {
     /** Выбранный маршрут обработки платежа. */
     1: required domain.PaymentRoute route
     2: optional set<domain.PaymentRoute> candidates
+    3: optional map<domain.PaymentRoute, domain.PaymentRouteScores> scores
 }
 
 /**
@@ -874,6 +901,9 @@ union InvalidStatus {
     2: domain.Suspension suspension
 }
 
+exception EntityNotFound {}
+exception RouteNotChosen {}
+
 exception InvoiceNotFound {}
 
 exception InvoicePaymentNotFound {}
@@ -1029,6 +1059,14 @@ service Invoicing {
             2: InvoiceNotFound ex2,
             3: EventNotFound ex3,
             4: base.InvalidRequest ex4
+        )
+
+    /* Аnalytics */
+
+    ExplanationForChosenRoute GetExplanationForChosenRoute (1: EntityWithChosenRoute entity)
+        throws (
+            1: EntityNotFound ex1,
+            2: RouteNotChosen ex2
         )
 
     /* Terms */

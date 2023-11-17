@@ -502,6 +502,16 @@ struct PaymentRoute {
     2: required TerminalRef terminal
 }
 
+struct PaymentRouteScores {
+    1: optional int32 availability_condition
+    2: optional int32 conversion_condition
+    3: optional int32 terminal_priority_rating
+    4: optional int32 route_pin
+    5: optional int32 random_condition
+    6: optional double availability
+    7: optional double conversion
+}
+
 struct RecurrentParentPayment {
     1: required InvoiceID invoice_id
     2: required InvoicePaymentID payment_id
