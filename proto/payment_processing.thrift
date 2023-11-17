@@ -201,7 +201,6 @@ struct InvoicePaymentRouteChanged {
     2: optional set<domain.PaymentRoute> candidates
     3: optional map<domain.PaymentRoute, domain.PaymentRouteScores> scores
     4: optional RouteLimitContext limits
-    5: optional Varset vs
 }
 
 /**
