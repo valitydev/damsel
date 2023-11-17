@@ -503,11 +503,11 @@ struct PaymentRoute {
 }
 
 struct PaymentRouteScores {
-    1: optional int32 availability_condition
-    2: optional int32 conversion_condition
-    3: optional int32 terminal_priority_rating
-    4: optional int32 route_pin
-    5: optional int32 random_condition
+    1: optional i32 availability_condition
+    2: optional i32 conversion_condition
+    3: optional i32 terminal_priority_rating
+    4: optional i32 route_pin
+    5: optional i32 random_condition
     6: optional double availability
     7: optional double conversion
 }
