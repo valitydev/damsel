@@ -136,6 +136,27 @@ union NoRouteFoundFailure {
     1: GeneralFailure unknown
     2: GeneralFailure risk_score_is_too_high
     3: GeneralFailure forbidden
+    // Маршруты-кандидаты были отвергнуты по тем или иным причинам.
+    // Поскольку в ходе просева списка доступных маршрутов они отвергаются на
+    // разных этапах по разным причинам, то в случае фейла система фиксирует
+    // последнюю причину, непосредственно приведшую к этому фейлу.
+    4: RoutesRejected rejected
+}
+
+union RoutesRejected {
+    // Кандидатов не осталось на этапе вычисления рулсетов согласно политикам
+    // маршрутизации соответствующего PaymentInstitution
+    1: GeneralFailure prohibitions
+    // Ни по одному из оставшихся маршрутов не удалось произвести учёт в
+    // лимитере
+    2: GeneralFailure limit_hold
+    // Отвергнуты из-за превышения лимита
+    3: GeneralFailure limit_overflow
+    // Провайдер не доступен согласно полученной стате от FaultDetector'а
+    4: GeneralFailure provider_availability
+    // Согласно той же статистике конверсия провайдера упала ниже критического
+    // порога и потому соответствующий маршрут/маршруты были отвергнуты
+    5: GeneralFailure provider_conversion
 }
 
 union TermsViolated {
