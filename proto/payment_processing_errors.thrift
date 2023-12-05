@@ -151,8 +151,8 @@ union RoutesRejected {
     1: GeneralFailure limit_hold
     // Отвергнуты из-за превышения лимита
     2: GeneralFailure limit_overflow
-    // Провайдер не доступен согласно полученной стате от FaultDetector'а
-    3: GeneralFailure provider_availability
+    // Адаптер не доступен согласно полученной стате от FaultDetector'а
+    3: GeneralFailure adapter_availability
     // Согласно той же статистике конверсия провайдера упала ниже критического
     // порога и потому соответствующий маршрут/маршруты были отвергнуты
     4: GeneralFailure provider_conversion
