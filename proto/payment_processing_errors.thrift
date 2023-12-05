@@ -147,15 +147,18 @@ union NoRouteFoundFailure {
 
 union RoutesRejected {
     // Ни по одному из оставшихся маршрутов не удалось произвести учёт в
-    // лимитере
-    1: GeneralFailure limit_hold
+    // лимитере; это значит что либо используется неправильная валюта для
+    // лимита, неправильный платёжный инструмент или передаётся неправильный
+    // контекст -- мисконфигурация лимита либо условий приведших к
+    // использованию маршрута с такими лимитами
+    1: GeneralFailure limit_misconfiguration
     // Отвергнуты из-за превышения лимита
     2: GeneralFailure limit_overflow
     // Адаптер не доступен согласно полученной стате от FaultDetector'а
-    3: GeneralFailure adapter_availability
+    3: GeneralFailure adapter_unavailable
     // Согласно той же статистике конверсия провайдера упала ниже критического
     // порога и потому соответствующий маршрут/маршруты были отвергнуты
-    4: GeneralFailure provider_conversion
+    4: GeneralFailure provider_conversion_is_too_low
 }
 
 union TermsViolated {
