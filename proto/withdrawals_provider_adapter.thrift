@@ -121,6 +121,7 @@ struct GetQuoteParams {
      * Сумма в одной из валют обмена
      */
     4: required Cash exchange_cash
+    5: optional Destination destination
 }
 
 union QuoteFailure {
