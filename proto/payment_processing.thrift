@@ -1052,7 +1052,7 @@ service Invoicing {
 
     /* Аnalytics */
 
-    InvoicePaymentExplanation GetExplanationForChosenRoute (
+    InvoicePaymentExplanation ExplainRoute (
         1: domain.InvoiceID invoice_id,
         2: domain.InvoicePaymentID payment_id
     )
