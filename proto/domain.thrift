@@ -2358,6 +2358,8 @@ struct Provider {
     11: optional list<ProviderParameter> params_schema
     // Default behaviour is CascadeWhenNoUI
     12: optional CascadeBehaviour cascade_behaviour
+    /* Настройка переопределения логики доступности маршрута */
+    13: optional RouteFaultDetectorOverrides route_fd_overrides
 
     // Deprecated
     5: optional string abs_account
