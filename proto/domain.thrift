@@ -2863,6 +2863,8 @@ struct RoutingCandidate {
     5: optional i32 priority = CANDIDATE_PRIORITY
     6: optional RoutingPin pin
     4: optional i32 weight = CANDIDATE_WEIGHT
+    // If is_enabled = nil, then it is considered true
+    7: optional bool is_enabled
 }
 
 /* Root config */
