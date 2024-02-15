@@ -2863,7 +2863,17 @@ struct RoutingCandidate {
     5: optional i32 priority = CANDIDATE_PRIORITY
     6: optional RoutingPin pin
     4: optional i32 weight = CANDIDATE_WEIGHT
+    // By default cascade is enabled for RoutingCandidate if cascade_status is nil
+    7: optional RoutingCandidateCascade cascade_status
 }
+
+union RoutingCandidateCascade {
+    1: RoutingCandidateCascadeEnabled enabled
+    2: RoutingCandidateCascadeDisabled disabled
+}
+
+struct RoutingCandidateCascadeEnabled {}
+struct RoutingCandidateCascadeDisabled {}
 
 /* Root config */
 
