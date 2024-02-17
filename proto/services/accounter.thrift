@@ -1,5 +1,5 @@
-include 'base.thrift'
-include 'domain.thrift'
+include "../base.thrift"
+include "../domain.thrift"
 
 namespace java dev.vality.damsel.accounter
 namespace erlang dmsl.accounter
