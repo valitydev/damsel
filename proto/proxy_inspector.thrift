@@ -5,6 +5,7 @@ namespace java dev.vality.damsel.proxy_inspector
 namespace erlang dmsl.proxy_inspector
 
 typedef string ID
+typedef string Value
 
 /**
  * Набор данных для взаимодействия с инспекторским прокси.
