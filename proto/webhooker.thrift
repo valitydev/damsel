@@ -1,5 +1,6 @@
 include "base.thrift"
 include "domain.thrift"
+include "user_interaction.thrift"
 
 namespace java dev.vality.damsel.webhooker
 namespace erlang dmsl.webhooker
