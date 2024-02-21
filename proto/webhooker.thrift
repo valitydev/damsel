@@ -84,6 +84,7 @@ union InvoicePaymentEventType {
     1: InvoicePaymentCreated created
     2: InvoicePaymentStatusChanged status_changed
     3: InvoicePaymentRefundChange invoice_payment_refund_change
+    4: InvoicePaymentUserInteractionChange user_interaction
 }
 
 struct InvoicePaymentCreated {}
@@ -99,6 +100,11 @@ union InvoicePaymentRefundChange {
 struct InvoicePaymentRefundCreated {}
 struct InvoicePaymentRefundStatusChanged {
     1: required InvoicePaymentRefundStatus value
+}
+
+struct InvoicePaymentUserInteractionChange {
+    1: required user_interaction.UserInteraction user_interaction
+    2: required user_interaction.Status status
 }
 
 union InvoicePaymentStatus {
