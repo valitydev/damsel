@@ -1,6 +1,5 @@
 include "base.thrift"
 include "domain.thrift"
-include "user_interaction.thrift"
 
 namespace java dev.vality.damsel.webhooker
 namespace erlang dmsl.webhooker
@@ -104,8 +103,12 @@ struct InvoicePaymentRefundStatusChanged {
 }
 
 struct InvoicePaymentUserInteractionChange {
-    1: required user_interaction.UserInteraction user_interaction
-    2: required user_interaction.Status status
+    1: required UserInteractionStatus status
+}
+
+union UserInteractionStatus {
+    1: UserInteractionStatusRequested requested
+    2: UserInteractionStatusCompleted completed
 }
 
 union InvoicePaymentStatus {
