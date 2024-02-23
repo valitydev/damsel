@@ -111,6 +111,9 @@ union UserInteractionStatus {
     2: UserInteractionStatusCompleted completed
 }
 
+struct UserInteractionStatusRequested {}
+struct UserInteractionStatusCompleted {}
+
 union InvoicePaymentStatus {
     1: InvoicePaymentPending pending
     4: InvoicePaymentProcessed processed
