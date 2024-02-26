@@ -4,12 +4,29 @@ include "domain.thrift"
 namespace java dev.vality.damsel.proxy_inspector
 namespace erlang dmsl.proxy_inspector
 
+typedef string ID
+typedef string Value
+
 /**
  * Набор данных для взаимодействия с инспекторским прокси.
  */
 struct Context {
     1: required PaymentInfo payment
     2: optional domain.ProxyOptions options = {}
+}
+
+/**
+ * Набор данных для проверки в черных списках.
+ */
+struct BlackListContext {
+    // ID первого уровня (party_id или provider_id)
+    1: optional ID first_id
+    // ID второго уровня (shop_id или terminal_id)
+    2: optional ID second_id
+    // Название проверяемого поля (CARD_TOKEN, EMAIL ...)
+    3: required string field_name
+    // Значение в списке
+    4: required Value value
 }
 
 /**
@@ -52,5 +69,11 @@ struct Invoice {
 
 service InspectorProxy {
     domain.RiskScore InspectPayment (1: Context context)
+        throws (1: base.InvalidRequest ex1)
+
+    /**
+    * Проверяет существование в черном списке
+    **/
+    bool isExistInBlackList(1: BlackListContext context)
         throws (1: base.InvalidRequest ex1)
 }
