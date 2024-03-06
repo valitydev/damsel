@@ -789,6 +789,7 @@ struct Shop {
     7: required ContractID contract_id
     8: optional PayoutToolID payout_tool_id
    12: optional BusinessScheduleRef payout_schedule
+   13: optional TurnoverLimitSelector turnover_limits
 }
 
 struct ShopAccount {
