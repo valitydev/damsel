@@ -153,6 +153,8 @@ union InvoicePaymentChangePayload {
     14: InvoicePaymentRollbackStarted       invoice_payment_rollback_started
     15: InvoicePaymentClockUpdate           invoice_payment_clock_update
     16: InvoicePaymentCashChanged           invoice_payment_cash_changed
+    17: InvoicePaymentShopLimitInitiated    invoice_payment_shop_limit_initiated
+    18: InvoicePaymentShopLimitApplied      invoice_payment_shop_limit_applied
 }
 
 /**
@@ -175,6 +177,10 @@ struct InvoicePaymentCashChanged {
     1: required domain.Cash old_cash
     2: required domain.Cash new_cash
 }
+
+struct InvoicePaymentShopLimitInitiated {}
+
+struct InvoicePaymentShopLimitApplied {}
 
 struct InvoicePaymentClockUpdate {
     1: required domain.AccounterClock clock
