@@ -74,6 +74,6 @@ service InspectorProxy {
     /**
     * Проверяет существование в черном списке
     **/
-    bool isExistInBlackList(1: BlackListContext context)
+    bool IsBlacklisted(1: BlackListContext context)
         throws (1: base.InvalidRequest ex1)
 }

@@ -510,6 +510,7 @@ struct PaymentRouteScores {
     5: optional i32 random_condition
     6: optional double availability
     7: optional double conversion
+    8: optional i32 blacklist_condition
 }
 
 struct RecurrentParentPayment {
