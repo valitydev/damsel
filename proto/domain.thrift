@@ -2850,8 +2850,9 @@ struct RoutingDelegate {
 enum RoutingPinFeature {
     currency
     payment_tool
-    party_id
     client_ip
+    email
+    card_token
 }
 
 struct RoutingPin {
