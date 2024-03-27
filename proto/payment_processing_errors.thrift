@@ -101,6 +101,7 @@ union AuthorizationFailure {
     12: GeneralFailure    temporarily_unavailable
     13: GeneralFailure    rejected_by_issuer         // "silent reject" / "do not honor" / rejected by issuer / ...
     14: GeneralFailure    processing_deadline_reached
+    15: LimitExceeded     shop_limit_exceeded
 }
 
 union LimitExceeded {
