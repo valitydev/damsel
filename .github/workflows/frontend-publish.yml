@@ -6,7 +6,7 @@ on:
 
 jobs:
   configured:
-    uses: valitydev/action-frontend/.github/workflows/configured.yml@v0.1
+    uses: valitydev/action-frontend/.github/workflows/configured.yml@v1.0
   publish:
     name: Publish
     runs-on: ubuntu-latest
