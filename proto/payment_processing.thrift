@@ -2056,6 +2056,7 @@ union ShopModification {
     11: domain.ShopLocation location_modification
     12: ShopAccountParams shop_account_creation
     13: ScheduleModification payout_schedule_modification
+    14: set<domain.TurnoverLimit> turnover_limits_modification
 
     /* deprecated */
     10: ProxyModification proxy_modification
@@ -2179,6 +2180,7 @@ union ShopEffect {
     7: domain.ShopLocation location_changed
     8: domain.ShopAccount account_created
     9: ScheduleChanged payout_schedule_changed
+    10: set<domain.TurnoverLimit> turnover_limits_changed
 
     /* deprecated */
     6: ShopProxyChanged proxy_changed

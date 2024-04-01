@@ -250,6 +250,7 @@ union ShopModification {
     7: ShopAccountParams shop_account_creation
     8: ScheduleModification payout_schedule_modification
     9: CashRegisterModificationUnit cash_register_modification_unit
+    10: set<domain.TurnoverLimit> turnover_limits_modification
 }
 
 struct ShopParams {
