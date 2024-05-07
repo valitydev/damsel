@@ -3,6 +3,7 @@
  * области (domain config).
  */
 
+include "base.thrift"
 include "domain.thrift"
 
 namespace java dev.vality.damsel.domain_config
@@ -30,8 +31,13 @@ union Reference {
  * конфигурации домена
  */
 struct Snapshot {
-    1: Version version
-    2: domain.Domain domain
+    1: required Version version
+    2: required domain.Domain domain
+    /*
+     * Отметка времени создания этой версии снепшота или изменения
+     * версии конфига.
+     */
+    3: optional base.Timestamp created_at
 }
 
 /**
@@ -40,6 +46,7 @@ struct Snapshot {
 
 struct Commit {
     1: required list<Operation> ops
+    2: optional base.Timestamp created_at
 }
 
 /**
@@ -70,8 +77,14 @@ struct RemoveOp {
 }
 
 struct VersionedObject {
-    1: Version version
-    2: domain.DomainObject object
+    1: required Version version
+    2: required domain.DomainObject object
+    /*
+     * Нет возможности отслеживать отметку врмени изменения
+     * конкретного объекта, но можно точно знать (в соответствии с
+     * версией снепшота) отметку которой этот объект современен.
+     */
+    3: optional base.Timestamp contemporary_at
 }
 
 /**
