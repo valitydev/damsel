@@ -1891,16 +1891,6 @@ service RecurrentPaymentTools {
         )
 }
 
-exception NoLastEvent {}
-
-service RecurrentPaymentToolEventSink {
-    RecurrentPaymentToolEvents GetEvents (1: EventRange range)
-        throws (1: EventNotFound ex1, 2: base.InvalidRequest ex2)
-
-    base.EventID GetLastEventID ()
-        throws (1: NoLastEvent ex1)
-}
-
 /* Party management service definitions */
 
 // Types
@@ -2739,29 +2729,4 @@ service PartyManagement {
             5: OperationNotPermitted ex5,
             6: PayoutToolNotFound ex6
         )
-}
-
-/* Event sink service definitions */
-
-service EventSink {
-
-    /**
-     * Получить последовательный набор событий из истории системы, от более
-     * ранних к более поздним, из диапазона, заданного `range`. Результат
-     * выполнения запроса может содержать от `0` до `range.limit` событий.
-     *
-     * Если в `range.after` указан идентификатор неизвестного события, то есть
-     * события, не наблюдаемого клиентом ранее в известной ему истории,
-     * бросится исключение `EventNotFound`.
-     */
-    Events GetEvents (1: EventRange range)
-        throws (1: EventNotFound ex1, 2: base.InvalidRequest ex2)
-
-    /**
-     * Получить идентификатор наиболее позднего известного на момент исполнения
-     * запроса события.
-     */
-    base.EventID GetLastEventID ()
-        throws (1: NoLastEvent ex1)
-
 }

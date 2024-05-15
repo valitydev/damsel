@@ -101,34 +101,3 @@ service Processing {
     )
 
 }
-
-/// Event sink
-
-typedef i64 SinkEventID
-
-struct SinkEvent {
-    1: required SinkEventID id
-    2: required Timestamp created_at
-    3: required WithdrawalID source
-    4: required Event payload
-}
-
-typedef list<SinkEvent> SinkEvents
-
-struct SinkEventRange {
-    1: optional SinkEventID after
-    2: required i32 limit
-}
-
-exception SinkEventNotFound {}
-exception NoLastEvent {}
-
-service EventSink {
-
-    SinkEvents GetEvents (1: SinkEventRange range)
-        throws (1: SinkEventNotFound ex1)
-
-    SinkEventID GetLastEventID ()
-        throws (1: NoLastEvent ex1)
-
-}
