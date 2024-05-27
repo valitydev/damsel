@@ -43,13 +43,14 @@ struct LimitConfig {
      * Convert operation's amount if its context currency differs from
      * limit-turnover metric (see `LimitTurnoverAmount`).
      *
-     * Defaults to `false` if undefined.
-     *
-     * If `false` and currency codes does not match, then limiter
-     * throws `InvalidOperationCurrency` exception (see limiter-proto).
+     * If undefined and currency codes do not match, then limiter
+     * throws `InvalidOperationCurrency` exception (see
+     * limiter-proto).
      */
-    11: optional bool convert_currency
+    11: optional CurrencyConversion currency_conversion
 }
+
+struct CurrencyConversion {}
 
 union LimitContextType {
     1: LimitContextTypePaymentProcessing payment_processing
