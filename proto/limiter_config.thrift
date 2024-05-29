@@ -111,6 +111,13 @@ union LimitScopeType {
     6: LimitScopeEmptyDetails provider
     7: LimitScopeEmptyDetails terminal
     8: LimitScopeEmptyDetails payer_contact_email
+
+    /**
+     * Scopes for operation's according destination's sender or receiver
+     * tokens.
+     */
+    9: LimitScopeEmptyDetails sender
+    10: LimitScopeEmptyDetails receiver
 }
 
 struct LimitScopeEmptyDetails {}
