@@ -21,8 +21,8 @@ union AuthData {
 }
 
 struct SenderReceiverAuthData {
-    1: required string sender_token
-    2: required string receiver_token
+    1: required domain.Token sender
+    2: required domain.Token receiver
 }
 
 union Destination {
