@@ -13,6 +13,16 @@ struct Withdrawal {
     2: required Destination destination
     3: optional Identity sender
     4: optional Identity receiver
+    6: optional AuthData auth_data
+}
+
+union AuthData {
+    1: SenderReceiverAuthData sender_receiver
+}
+
+struct SenderReceiverAuthData {
+    1: required domain.Token sender
+    2: required domain.Token receiver
 }
 
 union Destination {
