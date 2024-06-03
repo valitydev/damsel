@@ -100,8 +100,7 @@ struct Withdrawal {
     4: optional Identity sender
     5: optional Identity receiver
     6: optional Quote quote
-    9: optional AuthData auth_data
-    10: optional ValidationResult validation
+    9: optional withdrawals_domain.AuthData auth_data
 }
 
 typedef withdrawals_domain.Destination Destination
@@ -110,24 +109,6 @@ typedef withdrawals_domain.Identity    Identity
 struct Cash {
     1: required domain.Amount   amount
     2: required domain.Currency currency
-}
-
-typedef string PersonalDataToken
-typedef string ValidationId
-
-struct ValidationResult {
-    1: required ValidationId validation_id
-    2: required PersonalDataToken token
-    3: required ValidationStatus validation_status
-}
-
-enum ValidationStatus {
-    valid
-    invalid
-}
-
-union AuthData {
-    1: SenderReceiverAuthData sender_receiver
 }
 
 struct SenderReceiverAuthData {
