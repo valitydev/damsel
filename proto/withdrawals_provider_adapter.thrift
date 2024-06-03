@@ -111,11 +111,6 @@ struct Cash {
     2: required domain.Currency currency
 }
 
-struct SenderReceiverAuthData {
-    1: required domain.Token sender
-    2: required domain.Token receiver
-}
-
 /**
  * Данные для получения котировки на заданную сумму по выбранным валютам.
  */
