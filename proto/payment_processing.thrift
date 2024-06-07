@@ -2261,6 +2261,8 @@ struct PartyCreated {
     1: required PartyID id
     7: required domain.PartyContactInfo contact_info
     8: required base.Timestamp created_at
+    9: optional string party_name
+    10: optional string comment
 }
 
 struct ShopBlocking {
