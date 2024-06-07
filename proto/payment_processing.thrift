@@ -1975,11 +1975,18 @@ union PartyModification {
     4: ContractModificationUnit contract_modification
     6: ShopModificationUnit shop_modification
     7: WalletModificationUnit wallet_modification
+    9: AdditionalInfoModificationUnit additional_info_modification
 }
 
 struct ContractorModificationUnit {
     1: required ContractorID id
     2: required ContractorModification modification
+}
+
+struct AdditionalInfoModificationUnit {
+    1: optional string party_name
+    2: optional list<string> manager_contact_emails
+    3: optional string comment
 }
 
 union ContractorModification {
@@ -2254,6 +2261,8 @@ struct PartyCreated {
     1: required PartyID id
     7: required domain.PartyContactInfo contact_info
     8: required base.Timestamp created_at
+    9: optional string party_name
+    10: optional string comment
 }
 
 struct ShopBlocking {

@@ -757,6 +757,8 @@ struct Party {
     5: required map<ShopID, Shop> shops
     10: required map<WalletID, Wallet> wallets
     6: required PartyRevision revision
+    11: optional string party_name
+    12: optional string comment
 }
 
 /** Статусы участника **/
@@ -770,7 +772,8 @@ struct PartyStatus {
 }
 
 struct PartyContactInfo {
-    1: required string email
+    1: required string registration_email
+    2: optional list<string> manager_contact_emails
 }
 
 /* Shops */
