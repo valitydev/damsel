@@ -100,6 +100,7 @@ struct Withdrawal {
     4: optional Identity sender
     5: optional Identity receiver
     6: optional Quote quote
+    9: optional withdrawals_domain.AuthData auth_data
 }
 
 typedef withdrawals_domain.Destination Destination
