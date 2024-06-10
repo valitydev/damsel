@@ -520,6 +520,7 @@ struct InvoiceParams {
     8: optional string external_id
     9: optional domain.InvoiceClientInfo client_info
     10: optional domain.AllocationPrototype allocation
+    11: optional list<domain.InvoiceMutation>  mutations
 }
 
 struct InvoiceWithTemplateParams {
@@ -540,6 +541,7 @@ struct InvoiceTemplateCreateParams {
     8:  optional string                        description
     9:  required domain.InvoiceTemplateDetails details
     6:  required domain.InvoiceContext         context
+    12: optional list<domain.InvoiceMutation>  mutations
 }
 
 struct InvoiceTemplateUpdateParams {
@@ -549,6 +551,7 @@ struct InvoiceTemplateUpdateParams {
     6: optional string description
     7: optional domain.InvoiceTemplateDetails details
     4: optional domain.InvoiceContext context
+    9: optional list<domain.InvoiceMutation>  mutations
 }
 
 struct InvoicePaymentParams {

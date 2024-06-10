@@ -153,6 +153,16 @@ struct Invoice {
     14: optional string external_id
     15: optional InvoiceClientInfo client_info
     16: optional Allocation allocation
+    17: optional list<AppliedInvoiceMutation> mutations
+}
+
+union AppliedInvoiceMutation {
+    1: AppliedInvoiceAmountRandomizationMutation amount_randomization
+}
+
+struct AppliedInvoiceAmountRandomizationMutation {
+    1: required Amount original
+    2: required Amount randomized
 }
 
 struct InvoiceDetails {
@@ -358,6 +368,26 @@ struct InvoiceTemplate {
     12: optional base.Timestamp created_at
     8:  required InvoiceTemplateDetails details
     7:  optional InvoiceContext context
+    13: optional list<InvoiceMutation> mutations
+}
+
+union InvoiceMutation {
+    1: InvoiceAmountRandomizationMutation amount_randomization
+}
+
+struct InvoiceAmountRandomizationMutation {
+    1: required Amount deviation
+    2: optional i64 precision
+    3: optional RoundingMethod rounding
+    4: optional Amount min_amount_condition
+    5: optional Amount max_amount_condition
+    6: optional Amount amount_multiplicity_condition
+}
+
+enum RoundingMethod {
+  round = 1
+  ceil = 2
+  floor = 3
 }
 
 union InvoiceTemplateDetails {
