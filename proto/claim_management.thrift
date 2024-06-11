@@ -414,11 +414,18 @@ union ClaimModification {
     5: ExternalInfoModificationUnit external_info_modification
 }
 
+struct AdditionalInfoModificationUnit {
+    1: optional string party_name
+    2: optional list<string> manager_contact_emails
+    3: optional string comment
+}
+
 union PartyModification {
     1: ContractorModificationUnit contractor_modification
     2: ContractModificationUnit contract_modification
     3: ShopModificationUnit shop_modification
     4: WalletModificationUnit wallet_modification
+    5: AdditionalInfoModificationUnit additional_info_modification
 }
 
 struct IdentityModificationUnit {
@@ -443,6 +450,7 @@ union PartyModificationChange {
     1: ContractorModificationUnit contractor_modification
     2: ContractModificationUnit contract_modification
     3: ShopModificationUnit shop_modification
+    4: AdditionalInfoModificationUnit additional_info_modification
 }
 
 union ClaimModificationChange {
