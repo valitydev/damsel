@@ -153,16 +153,16 @@ struct Invoice {
     14: optional string external_id
     15: optional InvoiceClientInfo client_info
     16: optional Allocation allocation
-    17: optional list<AppliedInvoiceMutation> mutations
+    17: optional list<InvoiceMutation> mutations
 }
 
-union AppliedInvoiceMutation {
-    1: AppliedInvoiceAmountRandomizationMutation amount_randomization
+union InvoiceMutation {
+    1: InvoiceAmountMutation amount
 }
 
-struct AppliedInvoiceAmountRandomizationMutation {
+struct InvoiceAmountMutation {
     1: required Amount original
-    2: required Amount randomized
+    2: required Amount mutated
 }
 
 struct InvoiceDetails {
@@ -368,26 +368,24 @@ struct InvoiceTemplate {
     12: optional base.Timestamp created_at
     8:  required InvoiceTemplateDetails details
     7:  optional InvoiceContext context
-    13: optional list<InvoiceMutation> mutations
+    13: optional list<InvoiceMutationParams> mutations
 }
 
-union InvoiceMutation {
-    1: InvoiceAmountRandomizationMutation amount_randomization
+union InvoiceMutationParams {
+    1: InvoiceAmountMutationParams amount
 }
 
-struct InvoiceAmountRandomizationMutation {
+union InvoiceAmountMutationParams {
+    1: RandomizationMutationParams randomization
+}
+
+struct RandomizationMutationParams {
     1: required Amount deviation
     2: optional i64 precision
     3: optional RoundingMethod rounding
     4: optional Amount min_amount_condition
     5: optional Amount max_amount_condition
     6: optional Amount amount_multiplicity_condition
-}
-
-enum RoundingMethod {
-  round = 1
-  ceil = 2
-  floor = 3
 }
 
 union InvoiceTemplateDetails {
@@ -2317,6 +2315,10 @@ enum RoundingMethod {
     round_half_towards_zero
     /** https://en.wikipedia.org/wiki/Rounding#Round_half_away_from_zero. */
     round_half_away_from_zero
+    /** https://en.wikipedia.org/wiki/Rounding#Rounding_down. */
+    round_down
+    /** https://en.wikipedia.org/wiki/Rounding#Rounding_up. */
+    round_up
 }
 
 /** Композиция различных объёмов. */
