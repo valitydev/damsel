@@ -415,9 +415,10 @@ union ClaimModification {
 }
 
 struct AdditionalInfoModificationUnit {
-    1: optional string party_name
-    2: optional list<string> manager_contact_emails
-    3: optional string comment
+    1: required domain.PartyID id
+    2: optional string party_name
+    3: optional list<string> manager_contact_emails
+    4: optional string comment
 }
 
 union PartyModification {
