@@ -1983,6 +1983,7 @@ struct DigitalWallet {
     2: required DigitalWalletID       id
     3: optional Token                 token
     5: optional string                account_name
+    6: optional string                account_identity_number
 
     // Reserved
     // 1
