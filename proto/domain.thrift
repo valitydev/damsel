@@ -382,7 +382,6 @@ union InvoiceAmountMutationParams {
 struct RandomizationMutationParams {
     1: required Amount deviation
     2: required i64 precision
-    3: required RoundingMethod rounding
     4: optional Amount min_amount_condition
     5: optional Amount max_amount_condition
     6: optional Amount amount_multiplicity_condition
@@ -2316,10 +2315,6 @@ enum RoundingMethod {
     round_half_towards_zero
     /** https://en.wikipedia.org/wiki/Rounding#Round_half_away_from_zero. */
     round_half_away_from_zero
-    /** https://en.wikipedia.org/wiki/Rounding#Rounding_down. */
-    round_down
-    /** https://en.wikipedia.org/wiki/Rounding#Rounding_up. */
-    round_up
 }
 
 /** Композиция различных объёмов. */
