@@ -2316,6 +2316,10 @@ enum RoundingMethod {
     round_half_towards_zero
     /** https://en.wikipedia.org/wiki/Rounding#Round_half_away_from_zero. */
     round_half_away_from_zero
+    /** https://en.wikipedia.org/wiki/Rounding#Rounding_down. */
+    round_down
+    /** https://en.wikipedia.org/wiki/Rounding#Rounding_up. */
+    round_up
 }
 
 /** Композиция различных объёмов. */
