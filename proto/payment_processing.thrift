@@ -2150,6 +2150,7 @@ union ClaimEffect {
     3: ShopEffectUnit shop_effect
     4: ContractorEffectUnit contractor_effect
     5: WalletEffectUnit wallet_effect
+    6: AdditionalInfoEffectUnit additional_info_effect
 }
 
 struct ContractEffectUnit {
@@ -2225,6 +2226,16 @@ struct WalletEffectUnit {
 union WalletEffect {
     1: domain.Wallet created
     2: domain.WalletAccount account_created
+}
+
+struct AdditionalInfoEffectUnit {
+    1: AdditionalInfoEffect effect
+}
+
+union AdditionalInfoEffect {
+    1: string party_name
+    2: domain.PartyContactInfo contact_info
+    3: string party_comment
 }
 
 /* deprecated */
