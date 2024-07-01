@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: valitydev/action-frontend/setup@v1
-      - uses: valitydev/action-setup-thrift@v1.0.2
+      - uses: valitydev/action-setup-thrift@v1.0.3
       - run: npm i # protocols don't always update the package-lock.json, so installing from package.json
       - name: Build
         run: npm run codegen
