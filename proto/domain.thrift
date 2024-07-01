@@ -382,9 +382,19 @@ union InvoiceAmountMutationParams {
 struct RandomizationMutationParams {
     1: required Amount deviation
     2: required i64 precision
+    /**
+     * По умолчанию полагается допустимым отклонение в обе стороны
+     */
+    7: optional DeviationDirection direction
     4: optional Amount min_amount_condition
     5: optional Amount max_amount_condition
     6: optional Amount amount_multiplicity_condition
+}
+
+enum DeviationDirection {
+    both = 1
+    upward = 2
+    downward = 3
 }
 
 union InvoiceTemplateDetails {
