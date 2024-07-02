@@ -922,7 +922,6 @@ exception InvoicePaymentAdjustmentNotFound {}
 
 exception EventNotFound {}
 exception OperationNotPermitted {}
-exception PayoutToolNotFound {}
 exception InsufficientAccountBalance {}
 exception InvalidRecurrentParentPayment {
     1: optional string details
@@ -1905,7 +1904,6 @@ typedef domain.PartyRevision PartyRevision
 typedef domain.ShopID  ShopID
 typedef domain.ContractID  ContractID
 typedef domain.ContractorID ContractorID
-typedef domain.PayoutToolID PayoutToolID
 typedef domain.WalletID WalletID
 typedef domain.ContractTemplateRef ContractTemplateRef
 typedef domain.PaymentInstitutionRef PaymentInstitutionRef
@@ -1915,7 +1913,6 @@ struct Varset {
     2: optional domain.CurrencyRef currency
     3: optional domain.Cash amount
     4: optional domain.PaymentMethodRef payment_method
-    5: optional domain.PayoutMethodRef payout_method
     6: optional domain.WalletID wallet_id
     8: optional domain.ShopID shop_id
     9: optional domain.ContractorIdentificationLevel identification_level
@@ -1926,7 +1923,6 @@ struct Varset {
 
 struct ComputeShopTermsVarset {
     3: optional domain.Cash amount
-    5: optional domain.PayoutMethodRef payout_method
     10: optional domain.PaymentTool payment_tool
 }
 
@@ -1934,7 +1930,6 @@ struct ComputeContractTermsVarset {
     2: optional domain.CurrencyRef currency
     3: optional domain.Cash amount
     8: optional domain.ShopID shop_id
-    5: optional domain.PayoutMethodRef payout_method
     10: optional domain.PaymentTool payment_tool
     6: optional domain.WalletID wallet_id
     12: optional domain.BinData bin_data
@@ -1945,17 +1940,11 @@ struct PartyParams {
     1: required domain.PartyContactInfo contact_info
 }
 
-struct PayoutToolParams {
-    1: required domain.CurrencyRef currency
-    2: required domain.PayoutToolInfo tool_info
-}
-
 struct ShopParams {
     1: optional domain.CategoryRef category
     6: required domain.ShopLocation location
     2: required domain.ShopDetails details
     3: required ContractID contract_id
-    4: required domain.PayoutToolID payout_tool_id
 }
 
 struct ShopAccountParams {
@@ -2013,7 +2002,6 @@ union ContractModification {
     1: ContractParams creation
     2: ContractTermination termination
     3: ContractAdjustmentModificationUnit adjustment_modification
-    4: PayoutToolModificationUnit payout_tool_modification
     5: domain.LegalAgreement legal_agreement_binding
     6: domain.ReportPreferences report_preferences_modification
     7: ContractorID contractor_modification
@@ -2032,16 +2020,6 @@ union ContractAdjustmentModification {
     1: ContractAdjustmentParams creation
 }
 
-struct PayoutToolModificationUnit {
-    1: required domain.PayoutToolID payout_tool_id
-    2: required PayoutToolModification modification
-}
-
-union PayoutToolModification {
-    1: PayoutToolParams creation
-    2: domain.PayoutToolInfo info_modification
-}
-
 typedef list<PartyModification> PartyChangeset
 
 struct ShopModificationUnit {
@@ -2054,10 +2032,8 @@ union ShopModification {
     6: domain.CategoryRef category_modification
     7: domain.ShopDetails details_modification
     8: ShopContractModification contract_modification
-    9: domain.PayoutToolID payout_tool_modification
     11: domain.ShopLocation location_modification
     12: ShopAccountParams shop_account_creation
-    13: ScheduleModification payout_schedule_modification
     14: set<domain.TurnoverLimit> turnover_limits_modification
 
     /* deprecated */
@@ -2066,7 +2042,6 @@ union ShopModification {
 
 struct ShopContractModification {
     1: required ContractID contract_id
-    2: required domain.PayoutToolID payout_tool_id
 }
 
 struct ScheduleModification {
@@ -2162,8 +2137,6 @@ union ContractEffect {
     1: domain.Contract created
     2: domain.ContractStatus status_changed
     3: domain.ContractAdjustment adjustment_created
-    4: domain.PayoutTool payout_tool_created
-    8: PayoutToolInfoChanged payout_tool_info_changed
     5: domain.LegalAgreement legal_agreement_bound
     6: domain.ReportPreferences report_preferences_changed
     7: ContractorID contractor_changed
@@ -2179,10 +2152,8 @@ union ShopEffect {
     2: domain.CategoryRef category_changed
     3: domain.ShopDetails details_changed
     4: ShopContractChanged contract_changed
-    5: domain.PayoutToolID payout_tool_changed
     7: domain.ShopLocation location_changed
     8: domain.ShopAccount account_created
-    9: ScheduleChanged payout_schedule_changed
     10: set<domain.TurnoverLimit> turnover_limits_changed
 
     /* deprecated */
@@ -2191,7 +2162,6 @@ union ShopEffect {
 
 struct ShopContractChanged {
     1: required ContractID contract_id
-    2: required domain.PayoutToolID payout_tool_id
 }
 
 struct ScheduleChanged {
@@ -2211,11 +2181,6 @@ union ContractorEffect {
 
 struct ContractorIdentityDocumentsChanged {
     1: required list<domain.IdentityDocumentToken> identity_documents
-}
-
-struct PayoutToolInfoChanged {
-    1: required domain.PayoutToolID payout_tool_id
-    2: required domain.PayoutToolInfo info
 }
 
 struct WalletEffectUnit {
@@ -2329,14 +2294,6 @@ union PartyRevisionParam {
     1: base.Timestamp timestamp
     2: domain.PartyRevision revision
 }
-
-struct PayoutParams {
-    1: required ShopID id
-    2: required domain.Cash amount
-    3: required base.Timestamp timestamp
-    4: optional domain.PayoutToolID payout_tool_id
-}
-
 /*
  * Контракт магазина
  */
@@ -2422,8 +2379,6 @@ union InvalidContractReason {
     2: ContractID already_exists
     3: domain.ContractStatus invalid_status
     4: domain.ContractAdjustmentID contract_adjustment_already_exists
-    5: domain.PayoutToolID payout_tool_not_exists
-    6: domain.PayoutToolID payout_tool_already_exists
     7: InvalidObjectReference invalid_object_reference
     8: ContractorNotExists contractor_not_exists
 }
@@ -2434,7 +2389,6 @@ union InvalidShopReason {
     3: ShopID no_account
     4: InvalidStatus invalid_status
     5: ContractTermsViolated contract_terms_violated
-    6: ShopPayoutToolInvalid payout_tool_invalid
     7: InvalidObjectReference invalid_object_reference
 }
 
@@ -2458,10 +2412,6 @@ struct ContractorNotExists {
 struct ContractTermsViolated {
     1: required ContractID contract_id
     2: required domain.TermSet terms
-}
-
-struct ShopPayoutToolInvalid {
-    1: optional domain.PayoutToolID payout_tool_id
 }
 
 struct InvalidObjectReference {
@@ -2742,16 +2692,5 @@ service PartyManagement {
         throws (
             2: PartyNotFound ex2,
             3: PaymentInstitutionNotFound ex3
-        )
-
-    /* Payouts */
-    /* TODO looks like adhoc. Rework after feedback. Or not. */
-    domain.FinalCashFlow ComputePayoutCashFlow (2: PartyID party_id, 3: PayoutParams params)
-        throws (
-            2: PartyNotFound ex2,
-            3: PartyNotExistsYet ex3,
-            4: ShopNotFound ex4,
-            5: OperationNotPermitted ex5,
-            6: PayoutToolNotFound ex6
         )
 }
