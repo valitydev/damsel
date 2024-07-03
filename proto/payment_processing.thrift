@@ -1919,11 +1919,17 @@ struct Varset {
     10: optional domain.PaymentTool payment_tool
     11: optional domain.PartyID party_id
     12: optional domain.BinData bin_data
+
+    // Reserved
+    // 5
 }
 
 struct ComputeShopTermsVarset {
     3: optional domain.Cash amount
     10: optional domain.PaymentTool payment_tool
+
+    // Reserved
+    // 5
 }
 
 struct ComputeContractTermsVarset {
@@ -1933,6 +1939,9 @@ struct ComputeContractTermsVarset {
     10: optional domain.PaymentTool payment_tool
     6: optional domain.WalletID wallet_id
     12: optional domain.BinData bin_data
+
+    // Reserved
+    // 5
 }
 
 
@@ -1945,6 +1954,9 @@ struct ShopParams {
     6: required domain.ShopLocation location
     2: required domain.ShopDetails details
     3: required ContractID contract_id
+
+    // Reserved
+    // 4
 }
 
 struct ShopAccountParams {
@@ -2005,6 +2017,9 @@ union ContractModification {
     5: domain.LegalAgreement legal_agreement_binding
     6: domain.ReportPreferences report_preferences_modification
     7: ContractorID contractor_modification
+
+    // Reserved
+    // 4
 }
 
 struct ContractTermination {
@@ -2038,10 +2053,17 @@ union ShopModification {
 
     /* deprecated */
     10: ProxyModification proxy_modification
+
+    // Reserved
+    // 9
+    // 13
 }
 
 struct ShopContractModification {
     1: required ContractID contract_id
+
+    // Reserved
+    // 2
 }
 
 struct ScheduleModification {
@@ -2140,6 +2162,10 @@ union ContractEffect {
     5: domain.LegalAgreement legal_agreement_bound
     6: domain.ReportPreferences report_preferences_changed
     7: ContractorID contractor_changed
+
+    // Reserved
+    // 4
+    // 8
 }
 
 struct ShopEffectUnit {
@@ -2158,10 +2184,17 @@ union ShopEffect {
 
     /* deprecated */
     6: ShopProxyChanged proxy_changed
+
+    // Reserved
+    // 5
+    // 9
 }
 
 struct ShopContractChanged {
     1: required ContractID contract_id
+
+    // Reserved
+    // 2
 }
 
 struct ScheduleChanged {
@@ -2381,6 +2414,10 @@ union InvalidContractReason {
     4: domain.ContractAdjustmentID contract_adjustment_already_exists
     7: InvalidObjectReference invalid_object_reference
     8: ContractorNotExists contractor_not_exists
+
+    // Reserved
+    // 5
+    // 6
 }
 
 union InvalidShopReason {
@@ -2390,6 +2427,9 @@ union InvalidShopReason {
     4: InvalidStatus invalid_status
     5: ContractTermsViolated contract_terms_violated
     7: InvalidObjectReference invalid_object_reference
+
+    // Reserved
+    // 6
 }
 
 union InvalidWalletReason {

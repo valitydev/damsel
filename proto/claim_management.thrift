@@ -110,6 +110,10 @@ union InvalidContractReason {
     4: domain.ContractAdjustmentID contract_adjustment_already_exists
     7: InvalidObjectReference invalid_object_reference
     8: ContractorNotExists contractor_not_exists
+
+    // Reserved
+    // 5
+    // 6
 }
 
 union InvalidShopReason {
@@ -119,6 +123,9 @@ union InvalidShopReason {
     4: InvalidStatus invalid_status
     5: ContractTermsViolated contract_terms_violated
     7: InvalidObjectReference invalid_object_reference
+
+    // Reserved
+    // 6
 }
 
 union InvalidWalletReason {
@@ -179,6 +186,9 @@ struct ScheduleChanged {
 
 struct ShopContractChanged {
     1: required domain.ContractID contract_id
+
+    // Reserved
+    // 2
 }
 
 struct ContractParams {
@@ -194,6 +204,9 @@ struct ShopModificationUnit {
 
 struct ShopContractModification {
     1: required domain.ContractID contract_id
+
+    // Reserved
+    // 2
 }
 
 struct ScheduleModification {
@@ -213,6 +226,10 @@ union ShopModification {
     7: ShopAccountParams shop_account_creation
     9: CashRegisterModificationUnit cash_register_modification_unit
     10: set<domain.TurnoverLimit> turnover_limits_modification
+
+    // Reserved
+    // 5
+    // 8
 }
 
 struct ShopParams {
@@ -220,6 +237,9 @@ struct ShopParams {
     2: required domain.ShopLocation location
     3: required domain.ShopDetails details
     4: required domain.ContractID contract_id
+
+    // Reserved
+    // 5
 }
 
 struct CashRegisterModificationUnit {
@@ -258,6 +278,9 @@ union ContractModification {
     5: domain.LegalAgreement legal_agreement_binding
     6: domain.ReportPreferences report_preferences_modification
     7: domain.ContractorID contractor_modification
+
+    // Reserved
+    // 4
 }
 
 struct ContractTermination {

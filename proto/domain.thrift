@@ -829,6 +829,10 @@ struct Shop {
     6: optional ShopAccount account
     7: required ContractID contract_id
    13: optional set<TurnoverLimit> turnover_limits
+
+   //Reserved
+   // 8
+   // 12
 }
 
 struct ShopAccount {
@@ -1194,6 +1198,9 @@ struct TermSet {
     2: optional RecurrentPaytoolsServiceTerms recurrent_paytools
     4: optional ReportsServiceTerms reports
     5: optional WalletServiceTerms wallets
+
+    //Reserved
+    // 3
 }
 
 struct TimedTermSet {
@@ -1644,6 +1651,9 @@ struct BusinessSchedule {
     2: optional string description
     3: required base.Schedule schedule
     5: optional base.TimeSpan delay
+
+    // Reserved
+    // 4
 }
 
 union BusinessScheduleSelector {
@@ -2493,6 +2503,9 @@ struct WithdrawalProvisionTerms {
     3: optional CashLimitSelector cash_limit
     4: optional CashFlowSelector cash_flow
     6: optional TurnoverLimitSelector turnover_limit
+
+    // Reserved
+    // 2
 }
 
 union CashValueSelector {
