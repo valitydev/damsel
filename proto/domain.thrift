@@ -828,9 +828,11 @@ struct Shop {
     5: required CategoryRef category
     6: optional ShopAccount account
     7: required ContractID contract_id
-    8: optional PayoutToolID payout_tool_id
-   12: optional BusinessScheduleRef payout_schedule
    13: optional set<TurnoverLimit> turnover_limits
+
+   //Reserved
+   // 8
+   // 12
 }
 
 struct ShopAccount {
@@ -1189,15 +1191,16 @@ struct ContractAdjustment {
 //     Held
 //     Recurring
 //     ...
-//   Payouts
 //   ...
 
 struct TermSet {
     1: optional PaymentsServiceTerms payments
     2: optional RecurrentPaytoolsServiceTerms recurrent_paytools
-    3: optional PayoutsServiceTerms payouts
     4: optional ReportsServiceTerms reports
     5: optional WalletServiceTerms wallets
+
+    //Reserved
+    // 3
 }
 
 struct TimedTermSet {
@@ -1272,23 +1275,6 @@ struct PaymentAllocationServiceTerms {
 
 struct RecurrentPaytoolsServiceTerms {
     1: optional PaymentMethodSelector payment_methods
-}
-
-/* Payouts service terms */
-
-struct PayoutsServiceTerms {
-    /* Payout schedule level */
-    4: optional BusinessScheduleSelector payout_schedules
-    /* Payout level */
-    1: optional PayoutMethodSelector payout_methods
-    2: optional CashLimitSelector cash_limit
-    3: optional CashFlowSelector fees
-}
-
-
-// legacy
-struct PayoutCompilationPolicy {
-    1: required base.TimeSpan assets_freeze_for
 }
 
 /** Wallets service terms **/
@@ -1665,8 +1651,9 @@ struct BusinessSchedule {
     2: optional string description
     3: required base.Schedule schedule
     5: optional base.TimeSpan delay
-    // legacy
-    4: optional PayoutCompilationPolicy policy
+
+    // Reserved
+    // 4
 }
 
 union BusinessScheduleSelector {
@@ -2513,10 +2500,12 @@ struct WithdrawalProvisionTerms {
     5: optional Predicate allow
     7: optional Predicate global_allow
     1: optional CurrencySelector currencies
-    2: optional PayoutMethodSelector payout_methods
     3: optional CashLimitSelector cash_limit
     4: optional CashFlowSelector cash_flow
     6: optional TurnoverLimitSelector turnover_limit
+
+    // Reserved
+    // 2
 }
 
 union CashValueSelector {

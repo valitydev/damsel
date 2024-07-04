@@ -108,10 +108,12 @@ union InvalidContractReason {
     2: InvalidClaimConcreteReason already_exists
     3: domain.ContractStatus invalid_status
     4: domain.ContractAdjustmentID contract_adjustment_already_exists
-    5: domain.PayoutToolID payout_tool_not_exists
-    6: domain.PayoutToolID payout_tool_already_exists
     7: InvalidObjectReference invalid_object_reference
     8: ContractorNotExists contractor_not_exists
+
+    // Reserved
+    // 5
+    // 6
 }
 
 union InvalidShopReason {
@@ -120,8 +122,10 @@ union InvalidShopReason {
     3: InvalidClaimConcreteReason account_not_exists
     4: InvalidStatus invalid_status
     5: ContractTermsViolated contract_terms_violated
-    6: InvalidShopPayoutTool payout_tool_invalid
     7: InvalidObjectReference invalid_object_reference
+
+    // Reserved
+    // 6
 }
 
 union InvalidWalletReason {
@@ -144,27 +148,6 @@ struct ContractorNotExists {
 struct ContractTermsViolated {
     1: required domain.ContractID contract_id
     2: required domain.TermSet terms
-}
-
-union InvalidShopPayoutTool {
-    1: PayoutToolNotSetForPayouts not_set_for_payouts
-    2: PayoutToolCurrencyMismatch currency_mismatch
-    3: PayoutToolNotInContract not_in_contract
-}
-
-struct PayoutToolNotSetForPayouts {
-    1: required domain.BusinessScheduleRef payout_schedule
-}
-
-struct PayoutToolCurrencyMismatch {
-    1: required domain.CurrencyRef shop_account_currency
-    2: required domain.PayoutToolID payout_tool_id
-    3: required domain.CurrencyRef payout_tool_currency
-}
-
-struct PayoutToolNotInContract {
-    1: required domain.ContractID contract_id
-    2: required domain.PayoutToolID payout_tool_id
 }
 
 struct InvalidObjectReference {
@@ -201,19 +184,11 @@ struct ScheduleChanged {
     1: optional domain.BusinessScheduleRef schedule
 }
 
-struct PayoutToolInfoChanged {
-    1: required domain.PayoutToolID payout_tool_id
-    2: required domain.PayoutToolInfo info
-}
-
 struct ShopContractChanged {
     1: required domain.ContractID contract_id
-    2: required domain.PayoutToolID payout_tool_id
-}
 
-struct PayoutToolParams {
-    1: required domain.CurrencyRef currency
-    2: required domain.PayoutToolInfo tool_info
+    // Reserved
+    // 2
 }
 
 struct ContractParams {
@@ -229,7 +204,9 @@ struct ShopModificationUnit {
 
 struct ShopContractModification {
     1: required domain.ContractID contract_id
-    2: required domain.PayoutToolID payout_tool_id
+
+    // Reserved
+    // 2
 }
 
 struct ScheduleModification {
@@ -245,12 +222,14 @@ union ShopModification {
     2: domain.CategoryRef category_modification
     3: domain.ShopDetails details_modification
     4: ShopContractModification contract_modification
-    5: domain.PayoutToolID payout_tool_modification
     6: domain.ShopLocation location_modification
     7: ShopAccountParams shop_account_creation
-    8: ScheduleModification payout_schedule_modification
     9: CashRegisterModificationUnit cash_register_modification_unit
     10: set<domain.TurnoverLimit> turnover_limits_modification
+
+    // Reserved
+    // 5
+    // 8
 }
 
 struct ShopParams {
@@ -258,7 +237,9 @@ struct ShopParams {
     2: required domain.ShopLocation location
     3: required domain.ShopDetails details
     4: required domain.ContractID contract_id
-    5: required domain.PayoutToolID payout_tool_id
+
+    // Reserved
+    // 5
 }
 
 struct CashRegisterModificationUnit {
@@ -294,10 +275,12 @@ union ContractModification {
     1: ContractParams creation
     2: ContractTermination termination
     3: ContractAdjustmentModificationUnit adjustment_modification
-    4: PayoutToolModificationUnit payout_tool_modification
     5: domain.LegalAgreement legal_agreement_binding
     6: domain.ReportPreferences report_preferences_modification
     7: domain.ContractorID contractor_modification
+
+    // Reserved
+    // 4
 }
 
 struct ContractTermination {
@@ -315,16 +298,6 @@ struct ContractAdjustmentParams {
 
 union ContractAdjustmentModification {
     1: ContractAdjustmentParams creation
-}
-
-struct PayoutToolModificationUnit {
-    1: required domain.PayoutToolID payout_tool_id
-    2: required PayoutToolModification modification
-}
-
-union PayoutToolModification {
-    1: PayoutToolParams creation
-    2: domain.PayoutToolInfo info_modification
 }
 
 struct WalletModificationUnit {
