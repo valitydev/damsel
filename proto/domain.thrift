@@ -839,8 +839,9 @@ struct ShopAccount {
     1: required CurrencyRef currency
     2: required AccountID settlement
     3: required AccountID guarantee
-    /* Аккаунт на который выводятся деньги из системы */
-    4: required AccountID payout
+
+    // Reserved
+    // 4
 }
 
 struct ShopDetails {
@@ -870,9 +871,8 @@ struct WalletAccount {
     1: required CurrencyRef currency
     2: required AccountID settlement
 
-    // TODO
-    // ?????
-    3: required AccountID payout
+    // Reserved
+    // 3
 }
 
 /* Инспекция платежа */
@@ -2067,19 +2067,16 @@ enum MerchantCashFlowAccount {
      *  - учёт прибыли по платежам в магазине;
      *  - учёт возмещённых вознаграждений.
      */
-    settlement
+    settlement = 0
 
     /**
      * Счёт гарантийного депозита:
      *  - учёт средств для погашения реализовавшихся рисков по мерчанту.
      */
-    guarantee
+    guarantee = 1
 
-    /**
-      * Счёт выплаченных средств:
-      *  - учёт средств выплаченных мерчанту.
-      */
-    payout
+    // Reserved constant
+    // 2
 
 }
 
