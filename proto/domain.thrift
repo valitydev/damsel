@@ -1034,23 +1034,6 @@ struct RussianPrivateEntity {
     4: required ContactInfo contact_info
 }
 
-typedef base.ID PayoutToolID
-
-struct PayoutTool {
-    1: required PayoutToolID id
-    4: required base.Timestamp created_at
-    2: required CurrencyRef currency
-    3: required PayoutToolInfo payout_tool_info
-}
-
-union PayoutToolInfo {
-    1: RussianBankAccount russian_bank_account
-    2: InternationalBankAccount international_bank_account
-    3: WalletInfo wallet_info
-    4: PaymentInstitutionAccount payment_institution_account
-    5: DummyAccount dummy_account
-}
-
 struct PaymentInstitutionAccount {
 }
 
@@ -1070,14 +1053,13 @@ struct Contract {
     6: required ContractStatus status
     7: required TermSetHierarchyRef terms
     8: required list<ContractAdjustment> adjustments
-    // TODO think about it
-    // looks like payout tools are a bit off here,
-    // maybe they should be directly in party
-    9: required list<PayoutTool> payout_tools
     10: optional LegalAgreement legal_agreement
     13: optional ReportPreferences report_preferences
     // deprecated
     3: optional Contractor contractor
+
+    // Reserved
+    // 9
 }
 
 /** Юридическое соглашение */
@@ -1306,33 +1288,6 @@ struct W2WServiceTerms {
     3: optional CashLimitSelector cash_limit
     4: optional CashFlowSelector cash_flow
     5: optional FeeSelector fees
-}
-
-/* Payout methods */
-
-enum PayoutMethod {
-    russian_bank_account
-    international_bank_account
-    wallet_info
-    payment_institution_account
-}
-
-struct PayoutMethodRef { 1: required PayoutMethod id }
-
-/** Способ вывода, категория средства вывода. */
-struct PayoutMethodDefinition {
-    1: required string name
-    2: required string description
-}
-
-union PayoutMethodSelector {
-    1: list<PayoutMethodDecision> decisions
-    2: set<PayoutMethodRef> value
-}
-
-struct PayoutMethodDecision {
-    1: required Predicate if_
-    2: required PayoutMethodSelector then_
 }
 
 /* Reports service terms */
@@ -2624,12 +2579,14 @@ union Condition {
     3: PaymentToolCondition payment_tool
     5: ShopLocation shop_location_is
     6: PartyCondition party
-    7: PayoutMethodRef payout_method_is
     8: ContractorIdentificationLevel identification_level_is
    10: BinDataCondition bin_data
 
    // Legacy
     9: P2PToolCondition p2p_tool
+
+   // Reserved
+   // 7
 }
 
 struct BinDataCondition {
@@ -2972,11 +2929,6 @@ struct PaymentMethodObject {
     2: required PaymentMethodDefinition data
 }
 
-struct PayoutMethodObject {
-    1: required PayoutMethodRef ref
-    2: required PayoutMethodDefinition data
-}
-
 struct BankObject {
     1: required BankRef ref
     2: required Bank data
@@ -3121,7 +3073,6 @@ union Reference {
     19 : BusinessScheduleRef        business_schedule
     20 : CalendarRef                calendar
     3  : PaymentMethodRef           payment_method
-    21 : PayoutMethodRef            payout_method
     5  : BankRef                    bank
     6  : ContractTemplateRef        contract_template
     17 : TermSetHierarchyRef        term_set_hierarchy
@@ -3164,6 +3115,7 @@ union Reference {
     // 40
     // 41
     // 43
+    // 21
 }
 
 union DomainObject {
@@ -3173,7 +3125,6 @@ union DomainObject {
     19 : BusinessScheduleObject     business_schedule
     20 : CalendarObject             calendar
     3  : PaymentMethodObject        payment_method
-    21 : PayoutMethodObject         payout_method
     5  : BankObject                 bank
     6  : ContractTemplateObject     contract_template
     17 : TermSetHierarchyObject     term_set_hierarchy
@@ -3218,6 +3169,7 @@ union DomainObject {
     // 40
     // 41
     // 43
+    // 21
 }
 
 /* Domain */

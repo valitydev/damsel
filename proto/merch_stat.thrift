@@ -215,35 +215,6 @@ struct StatCustomer {
     2: required base.Timestamp created_at
 }
 
-typedef base.ID PayoutID
-
-/**
- * Информация о выплате
- */
-struct StatPayout {
-    1 : required PayoutID id
-    2 : required domain.PartyID party_id
-    3 : required domain.ShopID shop_id
-    4 : required base.Timestamp created_at
-    5 : required PayoutStatus status
-    6 : required domain.Amount amount
-    7 : required domain.Amount fee
-    8 : required string currency_symbolic_code
-    9 : required domain.PayoutToolInfo payout_tool_info
-}
-
-union PayoutStatus {
-    1: PayoutUnpaid unpaid
-    2: PayoutPaid paid
-    3: PayoutCancelled cancelled
-    4: PayoutConfirmed confirmed
-}
-
-struct PayoutUnpaid {}
-struct PayoutPaid {}
-struct PayoutCancelled { 1: required string details }
-struct PayoutConfirmed {}
-
 /** Информация о рефанде **/
 struct StatRefund {
     1 : required domain.InvoicePaymentRefundID id
@@ -334,10 +305,12 @@ union StatResponseData {
     2: list<StatInvoice>         invoices
     3: list<StatCustomer>        customers
     4: list<StatInfo>            records
-    5: list<StatPayout>          payouts
     6: list<StatRefund>          refunds
     7: list<EnrichedStatInvoice> enriched_invoices
     8: list<StatChargeback>      chargebacks
+
+    // Reserved
+    // 5
 }
 
 /**
@@ -370,6 +343,7 @@ service MerchantStatistics {
 
     /**
      * Возвращает набор данных о выплатах
+     * FIXME Deprecated?
      */
     StatResponse GetPayouts(1: StatRequest req) throws (1: InvalidRequest ex1, 3: BadToken ex3)
 
