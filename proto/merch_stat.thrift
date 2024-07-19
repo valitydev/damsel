@@ -342,12 +342,6 @@ service MerchantStatistics {
     StatResponse GetCustomers(1: StatRequest req) throws (1: InvalidRequest ex1, 3: BadToken ex3)
 
     /**
-     * Возвращает набор данных о выплатах
-     * FIXME Deprecated?
-     */
-    StatResponse GetPayouts(1: StatRequest req) throws (1: InvalidRequest ex1, 3: BadToken ex3)
-
-    /**
      * Возвращает набор данных о чарджбэках
      */
     StatResponse GetChargebacks(1: StatRequest req) throws (1: InvalidRequest ex1, 3: BadToken ex3)
