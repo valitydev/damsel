@@ -840,8 +840,8 @@ struct ShopAccount {
     2: required AccountID settlement
     3: required AccountID guarantee
 
-    // Reserved
-    // 4
+    // Deprecated
+    4: required AccountID payout
 }
 
 struct ShopDetails {
@@ -871,8 +871,8 @@ struct WalletAccount {
     1: required CurrencyRef currency
     2: required AccountID settlement
 
-    // Reserved
-    // 3
+    // Deprecated
+    3: required AccountID payout
 }
 
 /* Инспекция платежа */
@@ -1034,6 +1034,26 @@ struct RussianPrivateEntity {
     4: required ContactInfo contact_info
 }
 
+// Deprecated
+typedef base.ID PayoutToolID
+
+// Deprecated
+struct PayoutTool {
+    1: required PayoutToolID id
+    4: required base.Timestamp created_at
+    2: required CurrencyRef currency
+    3: required PayoutToolInfo payout_tool_info
+}
+
+// Deprecated
+union PayoutToolInfo {
+    1: RussianBankAccount russian_bank_account
+    2: InternationalBankAccount international_bank_account
+    3: WalletInfo wallet_info
+    4: PaymentInstitutionAccount payment_institution_account
+    5: DummyAccount dummy_account
+}
+
 struct PaymentInstitutionAccount {
 }
 
@@ -1055,11 +1075,10 @@ struct Contract {
     8: required list<ContractAdjustment> adjustments
     10: optional LegalAgreement legal_agreement
     13: optional ReportPreferences report_preferences
-    // deprecated
-    3: optional Contractor contractor
 
-    // Reserved
-    // 9
+    // Deprecated
+    3: optional Contractor contractor
+    9: required list<PayoutTool> payout_tools
 }
 
 /** Юридическое соглашение */
@@ -2108,9 +2127,8 @@ enum MerchantCashFlowAccount {
      */
     guarantee = 1
 
-    // Reserved constant
-    // 2
-
+    // Deprecated
+    payout = 2
 }
 
 enum ProviderCashFlowAccount {
@@ -2615,8 +2633,8 @@ union Condition {
    // Legacy
     9: P2PToolCondition p2p_tool
 
-   // Reserved
-   // 7
+   // Deprecated
+   7: PayoutMethodRef payout_method_is
 }
 
 struct BinDataCondition {
