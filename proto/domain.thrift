@@ -3220,6 +3220,46 @@ union DomainObject {
     // 43
 }
 
+struct ReflessDomainObject {
+    1  : Category             category
+    2  : Currency             currency
+    3  : BusinessSchedule     business_schedule
+    4  : Calendar             calendar
+    5  : PaymentMethod        payment_method
+    6  : PayoutMethod         payout_method
+    7  : Bank                 bank
+    8  : ContractTemplate     contract_template
+    9  : TermSetHierarchy     term_set_hierarchy
+    10 : PaymentInstitution   payment_institution
+    11 : Provider             provider
+    12 : Terminal             terminal
+    13 : Inspector            inspector
+    14 : SystemAccountSet     system_account_set
+    15 : ExternalAccountSet   external_account_set
+    16 : Proxy                proxy
+    17 : Globals              globals
+    18 : CashRegisterProvider cash_register_provider
+    19 : RoutingRules         routing_rules
+    20 : BankCardCategory     bank_card_category
+    21 : Criterion            criterion
+    22 : DocumentType         document_type
+    23 : PaymentService       payment_service
+    24 : PaymentSystem        payment_system
+    25 : BankCardTokenService payment_token
+    26 : MobileOperator       mobile_operator
+
+    27 : CryptoCurrency       crypto_currency
+
+    28 : Country              country
+    29 : TradeBloc            trade_bloc
+
+    30 : IdentityProvider     identity_provider
+    31 : LimitConfig          limit_config
+
+    32 : Dummy                dummy
+    33 : DummyLink            dummy_link
+}
+
 /* Domain */
 
 typedef map<Reference, DomainObject> Domain
