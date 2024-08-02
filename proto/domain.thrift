@@ -3254,7 +3254,7 @@ struct ReflessDomainObject {
     29 : TradeBloc            trade_bloc
 
     30 : IdentityProvider     identity_provider
-    31 : LimitConfig          limit_config
+    31 : limiter_config.LimitConfig limit_config
 
     32 : Dummy                dummy
     33 : DummyLink            dummy_link
