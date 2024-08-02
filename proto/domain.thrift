@@ -841,7 +841,7 @@ struct ShopAccount {
     3: required AccountID guarantee
 
     // Deprecated
-    4: required AccountID payout
+    4: optional AccountID payout
 }
 
 struct ShopDetails {
@@ -872,7 +872,7 @@ struct WalletAccount {
     2: required AccountID settlement
 
     // Deprecated
-    3: required AccountID payout
+    3: optional AccountID payout
 }
 
 /* Инспекция платежа */
@@ -1078,7 +1078,7 @@ struct Contract {
 
     // Deprecated
     3: optional Contractor contractor
-    9: required list<PayoutTool> payout_tools
+    9: optional list<PayoutTool> payout_tools
 }
 
 /** Юридическое соглашение */
