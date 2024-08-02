@@ -3220,7 +3220,7 @@ union DomainObject {
     // 43
 }
 
-struct ReflessDomainObject {
+union ReflessDomainObject {
     1  : Category             category
     2  : Currency             currency
     3  : BusinessSchedule     business_schedule
