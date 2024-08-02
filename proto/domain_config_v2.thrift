@@ -59,13 +59,13 @@ union LocalVersionReference {
 }
 
 union VersionReference {
-    1: GlobalVersionReference global
-    2: LocalVersionReference local
+    1: GlobalVersionReference global_ref
+    2: LocalVersionReference local_ref
 }
 
 union Version {
-    1: GlobalVersion global
-    2: LocalVersion local
+    1: GlobalVersion global_vs
+    2: LocalVersion local_vs
 }
 
 /**
