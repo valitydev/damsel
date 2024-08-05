@@ -44,28 +44,22 @@ typedef string ContinuationToken
 struct GlobalHead {}
 struct Head {}
 
-typedef i64 GlobalVersion
-typedef i64 LocalVersion
+typedef i64 BaseVersion
 typedef i32 Limit
 
-union GlobalVersionReference {
-    1: GlobalVersion version
-    2: GlobalHead head
-}
-
-union LocalVersionReference {
-    1: LocalVersion version
+union VersionReference {
+    1: BaseVersion version
     2: Head head
 }
 
-union VersionReference {
-    1: GlobalVersionReference global_ref
-    2: LocalVersionReference local_ref
+union ScopedReference {
+    1: VersionReference global_ref
+    2: VersionReference local_ref
 }
 
 union Version {
-    1: GlobalVersion global_vs
-    2: LocalVersion local_vs
+    1: BaseVersion global_vs
+    2: BaseVersion local_vs
 }
 
 /**
@@ -82,17 +76,32 @@ union Operation {
     3: RemoveOp remove
 }
 
+// Создание объекта.
+// object - желаемый объект без ID, если не указан force_ref,
+//          то ID для него генерируется
+// force_ref - указать желаемый ID создаваемого объекта,
+//             так же необходим при создании объекта ID которого невозможно сгенерировать
 struct InsertOp {
     1: required domain.ReflessDomainObject object
     2: optional domain.Reference force_ref
 }
 
+// Обновление объекта
+// targeted_ref - ID объекта, который нужно обновить
+// targeted_version - версия объекта, которую нужно обновить,
+//                    может быть как глобальной для всего конфига,
+//                    так и локальной для конкретного объекта.
+//                    Если версия объекта изменилась до момента
+//                    создания запроса, то вернется исключение
+// new_object - новая версия объекта
 struct UpdateOp {
     1: required domain.Reference targeted_ref
     2: required Version targeted_version
     3: required domain.DomainObject new_object
 }
 
+// Мягкое удаление объекта,
+// в будущих версиях объект будет недоступен, но доступен в прошлых версиях
 struct RemoveOp {
     1: required domain.Reference ref
 }
@@ -112,15 +121,10 @@ struct ObjectVersion {
     5: required UserOp author
 }
 
-struct GetObjectVersionsRequest {
+struct GetLocalVersionsRequest {
     1: required domain.Reference ref
     2: required i32 limit
     3: optional ContinuationToken continuation_token
-}
-
-struct GetObjectVersionsResponse {
-    1: required list<ObjectVersion> result
-    2: optional ContinuationToken continuation_token
 }
 
 struct GetGlobalVersionsRequest {
@@ -128,7 +132,7 @@ struct GetGlobalVersionsRequest {
     2: optional ContinuationToken continuation_token
 }
 
-struct GetGlobalVersionsResponse {
+struct GetVersionsResponse {
     1: required list<ObjectVersion> result
     2: optional ContinuationToken continuation_token
 }
@@ -214,7 +218,7 @@ service RepositoryClient {
     /**
      * Возвращает объект из домена определенной или последней версии
      */
-    VersionedObject checkoutObject (
+    VersionedObject CheckoutObject (
         1: VersionReference version_ref
         2: domain.Reference object_ref
     )
@@ -223,12 +227,12 @@ service RepositoryClient {
             2: ObjectNotFound ex2
         )
     
-    GetObjectVersionsResponse GetObjectVersions (1: GetObjectVersionsRequest req)
+    GetVersionsResponse GetLocalVersions (1: GetLocalVersionsRequest req)
         throws (
             1: ObjectNotFound ex1
         )
 
-    GetGlobalVersionsResponse GetGlobalVersions (1: GetGlobalVersionsResponse req)
+    GetVersionsResponse GetGlobalVersions (1: GetGlobalVersionsRequest req)
 
 }
 
