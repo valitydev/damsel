@@ -107,16 +107,16 @@ struct RemoveOp {
 }
 
 struct VersionedObject {
-    1: required GlobalVersion global_version
-    2: required LocalVersion version
+    1: required Version global_version
+    2: required Version local_version
     3: required domain.DomainObject object
     4: required base.Timestamp created_at
 }
 
 struct ObjectVersion {
     1: required domain.Reference ref
-    2: required GlobalVersion global_version
-    3: required LocalVersion version
+    2: required Version global_version
+    3: required Version local_version
     4: required base.Timestamp created_at
     5: required UserOp author
 }
@@ -140,7 +140,7 @@ struct GetVersionsResponse {
 /**
  * Требуемая версия отсутствует
  */
-exception VersionNotFound {}
+exception LocalVersionNotFound {}
 
 /**
  * Требуемая глобальная версия отсутствует
