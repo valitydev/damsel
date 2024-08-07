@@ -210,6 +210,8 @@ exception ObsoleteCommitVersion {
     1: required Version latest_version
 }
 
+exception VersionNotFound {}
+
 /**
  * Интерфейс сервиса конфигурации предметной области.
  */
@@ -242,8 +244,8 @@ service Repository {
      * Применить изменения к определенной версии.
      * Возвращает следующую версию
      */
-    LocalVersion Commit (
-        1: LocalVersion version
+    Version Commit (
+        1: Version version
         2: Commit commit
         3: UserOpID user_op_id
     )
