@@ -241,11 +241,11 @@ service RepositoryClient {
 service Repository {
 
     /**
-     * Применить изменения к определенной версии.
+     * Применить изменения к определенной глобальной версии.
      * Возвращает следующую версию
      */
-    Version Commit (
-        1: Version version
+    BaseVersion Commit (
+        1: BaseVersion global_version
         2: Commit commit
         3: UserOpID user_op_id
     )
