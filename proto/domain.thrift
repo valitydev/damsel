@@ -902,14 +902,13 @@ union Contractor {
     2: RegisteredUser registered_user
     1: LegalEntity legal_entity
     3: PrivateEntity private_entity
-    4: DummyEntity dummy_entity
+
+   // Reserved
+   // 4
 }
 
 struct RegisteredUser {
     1: required string email
-}
-
-struct DummyEntity {
 }
 
 union LegalEntity {
@@ -1051,13 +1050,12 @@ union PayoutToolInfo {
     2: InternationalBankAccount international_bank_account
     3: WalletInfo wallet_info
     4: PaymentInstitutionAccount payment_institution_account
-    5: DummyAccount dummy_account
+
+    // Reserved
+    // 5
 }
 
 struct PaymentInstitutionAccount {
-}
-
-struct DummyAccount {
 }
 
 typedef base.ID ContractID
