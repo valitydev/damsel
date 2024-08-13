@@ -88,15 +88,9 @@ struct InsertOp {
 
 // Обновление объекта
 // targeted_ref - ID объекта, который нужно обновить
-// targeted_version - версия объекта, которую нужно обновить,
-//                    может быть как глобальной для всего конфига,
-//                    так и локальной для конкретного объекта.
-//                    Если версия объекта изменилась до момента
-//                    создания запроса, то вернется исключение
 // new_object - новая версия объекта
 struct UpdateOp {
     1: required domain.Reference targeted_ref
-    2: required Version targeted_version
     3: required domain.DomainObject new_object
 }
 
