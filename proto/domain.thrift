@@ -686,12 +686,16 @@ union InvoicePaymentChargebackCategory {
        late presentment, credit processed as charge, invalid card numbers,
        addendum/“no show” disputes, incorrect charge amounts, and other similar situations. */
     4: InvoicePaymentChargebackCategoryProcessingError processing_error
+
+    /* Chargeback category that serves as a system category, for internal use. */
+    5: InvoicePaymentChargebackCategorySystemSet       system_set
 }
 
 struct InvoicePaymentChargebackCategoryFraud           {}
 struct InvoicePaymentChargebackCategoryDispute         {}
 struct InvoicePaymentChargebackCategoryAuthorisation   {}
 struct InvoicePaymentChargebackCategoryProcessingError {}
+struct InvoicePaymentChargebackCategorySystemSet       {}
 
 union InvoicePaymentChargebackStage {
     1: InvoicePaymentChargebackStageChargeback     chargeback
