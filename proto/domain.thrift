@@ -843,8 +843,9 @@ struct ShopAccount {
     1: required CurrencyRef currency
     2: required AccountID settlement
     3: required AccountID guarantee
-    /* Аккаунт на который выводятся деньги из системы */
-    4: required AccountID payout
+
+    // Deprecated
+    4: optional AccountID payout
 }
 
 struct ShopDetails {
@@ -874,9 +875,8 @@ struct WalletAccount {
     1: required CurrencyRef currency
     2: required AccountID settlement
 
-    // TODO
-    // ?????
-    3: required AccountID payout
+    // Deprecated
+    3: optional AccountID payout
 }
 
 /* Инспекция платежа */
@@ -1037,8 +1037,10 @@ struct RussianPrivateEntity {
     4: required ContactInfo contact_info
 }
 
+// Deprecated
 typedef base.ID PayoutToolID
 
+// Deprecated
 struct PayoutTool {
     1: required PayoutToolID id
     4: required base.Timestamp created_at
@@ -1046,6 +1048,7 @@ struct PayoutTool {
     3: required PayoutToolInfo payout_tool_info
 }
 
+// Deprecated
 union PayoutToolInfo {
     1: RussianBankAccount russian_bank_account
     2: InternationalBankAccount international_bank_account
@@ -1072,14 +1075,12 @@ struct Contract {
     6: required ContractStatus status
     7: required TermSetHierarchyRef terms
     8: required list<ContractAdjustment> adjustments
-    // TODO think about it
-    // looks like payout tools are a bit off here,
-    // maybe they should be directly in party
-    9: required list<PayoutTool> payout_tools
     10: optional LegalAgreement legal_agreement
     13: optional ReportPreferences report_preferences
-    // deprecated
+
+    // Deprecated
     3: optional Contractor contractor
+    9: optional list<PayoutTool> payout_tools
 }
 
 /** Юридическое соглашение */
@@ -1310,7 +1311,12 @@ struct W2WServiceTerms {
     5: optional FeeSelector fees
 }
 
-/* Payout methods */
+/*
+ * Payout methods
+ *
+ * NOTE Deprecated. Payout objects and relevant refs and data structs
+ * are scheduled for removal in future versions of protocol.
+ */
 
 enum PayoutMethod {
     russian_bank_account
@@ -1319,6 +1325,7 @@ enum PayoutMethod {
     payment_institution_account
 }
 
+// Deprecated
 struct PayoutMethodRef { 1: required PayoutMethod id }
 
 /** Способ вывода, категория средства вывода. */
@@ -2114,20 +2121,16 @@ enum MerchantCashFlowAccount {
      *  - учёт прибыли по платежам в магазине;
      *  - учёт возмещённых вознаграждений.
      */
-    settlement
+    settlement = 0
 
     /**
      * Счёт гарантийного депозита:
      *  - учёт средств для погашения реализовавшихся рисков по мерчанту.
      */
-    guarantee
+    guarantee = 1
 
-    /**
-      * Счёт выплаченных средств:
-      *  - учёт средств выплаченных мерчанту.
-      */
-    payout
-
+    // Deprecated
+    payout = 2
 }
 
 enum ProviderCashFlowAccount {
@@ -2626,12 +2629,14 @@ union Condition {
     3: PaymentToolCondition payment_tool
     5: ShopLocation shop_location_is
     6: PartyCondition party
-    7: PayoutMethodRef payout_method_is
     8: ContractorIdentificationLevel identification_level_is
    10: BinDataCondition bin_data
 
    // Legacy
     9: P2PToolCondition p2p_tool
+
+   // Deprecated
+   7: PayoutMethodRef payout_method_is
 }
 
 struct BinDataCondition {
@@ -2974,6 +2979,7 @@ struct PaymentMethodObject {
     2: required PaymentMethodDefinition data
 }
 
+// Deprecated
 struct PayoutMethodObject {
     1: required PayoutMethodRef ref
     2: required PayoutMethodDefinition data
@@ -3123,7 +3129,6 @@ union Reference {
     19 : BusinessScheduleRef        business_schedule
     20 : CalendarRef                calendar
     3  : PaymentMethodRef           payment_method
-    21 : PayoutMethodRef            payout_method
     5  : BankRef                    bank
     6  : ContractTemplateRef        contract_template
     17 : TermSetHierarchyRef        term_set_hierarchy
@@ -3154,6 +3159,9 @@ union Reference {
     12 : DummyRef                   dummy
     13 : DummyLinkRef               dummy_link
 
+    // Deprecated
+    21 : PayoutMethodRef            payout_method
+
     // Reserved
     // 10
     // 22
@@ -3175,7 +3183,6 @@ union DomainObject {
     19 : BusinessScheduleObject     business_schedule
     20 : CalendarObject             calendar
     3  : PaymentMethodObject        payment_method
-    21 : PayoutMethodObject         payout_method
     5  : BankObject                 bank
     6  : ContractTemplateObject     contract_template
     17 : TermSetHierarchyObject     term_set_hierarchy
@@ -3207,6 +3214,9 @@ union DomainObject {
 
     12 : DummyObject                dummy
     13 : DummyLinkObject            dummy_link
+
+    // Deprecated
+    21 : PayoutMethodObject         payout_method
 
     // Reserved
     // 10
