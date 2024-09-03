@@ -2082,7 +2082,7 @@ struct ShopContractModification {
     1: required ContractID contract_id
 
     // Deprecated
-    2: required domain.PayoutToolID payout_tool_id
+    2: optional domain.PayoutToolID payout_tool_id
 }
 
 struct ScheduleModification {
@@ -2209,7 +2209,9 @@ union ShopEffect {
 
 struct ShopContractChanged {
     1: required ContractID contract_id
-    2: required domain.PayoutToolID payout_tool_id
+
+    // Deprecated
+    2: optional domain.PayoutToolID payout_tool_id
 }
 
 struct ScheduleChanged {
