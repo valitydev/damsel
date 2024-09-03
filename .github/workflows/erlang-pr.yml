@@ -10,7 +10,7 @@ jobs:
     uses: valitydev/erlang-workflows/.github/workflows/erlang-simple-build.yml@v1.0.15
     with:
       otp-version: 24
-      rebar-version: 3
+      rebar-version: 3.23
       use-thrift: true
       thrift-version: 0.14.2.3
       run-eunit: false
