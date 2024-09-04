@@ -1908,6 +1908,9 @@ typedef domain.WalletID WalletID
 typedef domain.ContractTemplateRef ContractTemplateRef
 typedef domain.PaymentInstitutionRef PaymentInstitutionRef
 
+// Deprecated
+typedef domain.PayoutToolID PayoutToolID
+
 struct Varset {
     1: optional domain.CategoryRef category
     2: optional domain.CurrencyRef currency
@@ -1949,14 +1952,20 @@ struct PartyParams {
     1: required domain.PartyContactInfo contact_info
 }
 
+// Deprecated
+struct PayoutToolParams {
+    1: required domain.CurrencyRef currency
+    2: required domain.PayoutToolInfo tool_info
+}
+
 struct ShopParams {
     1: optional domain.CategoryRef category
     6: required domain.ShopLocation location
     2: required domain.ShopDetails details
     3: required ContractID contract_id
 
-    // Reserved
-    // 4
+    // Deprecated
+    4: optional domain.PayoutToolID payout_tool_id
 }
 
 struct ShopAccountParams {
@@ -2018,8 +2027,8 @@ union ContractModification {
     6: domain.ReportPreferences report_preferences_modification
     7: ContractorID contractor_modification
 
-    // Reserved
-    // 4
+    // Deprecated
+    4: PayoutToolModificationUnit payout_tool_modification
 }
 
 struct ContractTermination {
@@ -2033,6 +2042,18 @@ struct ContractAdjustmentModificationUnit {
 
 union ContractAdjustmentModification {
     1: ContractAdjustmentParams creation
+}
+
+// Deprecated
+struct PayoutToolModificationUnit {
+    1: required domain.PayoutToolID payout_tool_id
+    2: required PayoutToolModification modification
+}
+
+// Deprecated
+union PayoutToolModification {
+    1: PayoutToolParams creation
+    2: domain.PayoutToolInfo info_modification
 }
 
 typedef list<PartyModification> PartyChangeset
@@ -2053,17 +2074,15 @@ union ShopModification {
 
     /* deprecated */
     10: ProxyModification proxy_modification
-
-    // Reserved
-    // 9
-    // 13
+    9: domain.PayoutToolID payout_tool_modification
+    13: ScheduleModification payout_schedule_modification
 }
 
 struct ShopContractModification {
     1: required ContractID contract_id
 
-    // Reserved
-    // 2
+    // Deprecated
+    2: optional domain.PayoutToolID payout_tool_id
 }
 
 struct ScheduleModification {
@@ -2163,9 +2182,9 @@ union ContractEffect {
     6: domain.ReportPreferences report_preferences_changed
     7: ContractorID contractor_changed
 
-    // Reserved
-    // 4
-    // 8
+    // Deprecated
+    4: domain.PayoutTool payout_tool_created
+    8: PayoutToolInfoChanged payout_tool_info_changed
 }
 
 struct ShopEffectUnit {
@@ -2184,17 +2203,15 @@ union ShopEffect {
 
     /* deprecated */
     6: ShopProxyChanged proxy_changed
-
-    // Reserved
-    // 5
-    // 9
+    5: domain.PayoutToolID payout_tool_changed
+    9: ScheduleChanged payout_schedule_changed
 }
 
 struct ShopContractChanged {
     1: required ContractID contract_id
 
-    // Reserved
-    // 2
+    // Deprecated
+    2: optional domain.PayoutToolID payout_tool_id
 }
 
 struct ScheduleChanged {
@@ -2214,6 +2231,12 @@ union ContractorEffect {
 
 struct ContractorIdentityDocumentsChanged {
     1: required list<domain.IdentityDocumentToken> identity_documents
+}
+
+// Deprecated
+struct PayoutToolInfoChanged {
+    1: required domain.PayoutToolID payout_tool_id
+    2: required domain.PayoutToolInfo info
 }
 
 struct WalletEffectUnit {
@@ -2415,9 +2438,9 @@ union InvalidContractReason {
     7: InvalidObjectReference invalid_object_reference
     8: ContractorNotExists contractor_not_exists
 
-    // Reserved
-    // 5
-    // 6
+    // Deprecated
+    5: domain.PayoutToolID payout_tool_not_exists
+    6: domain.PayoutToolID payout_tool_already_exists
 }
 
 union InvalidShopReason {
@@ -2428,8 +2451,8 @@ union InvalidShopReason {
     5: ContractTermsViolated contract_terms_violated
     7: InvalidObjectReference invalid_object_reference
 
-    // Reserved
-    // 6
+    // Deprecated
+    6: ShopPayoutToolInvalid payout_tool_invalid
 }
 
 union InvalidWalletReason {
@@ -2452,6 +2475,11 @@ struct ContractorNotExists {
 struct ContractTermsViolated {
     1: required ContractID contract_id
     2: required domain.TermSet terms
+}
+
+// Deprecated
+struct ShopPayoutToolInvalid {
+    1: optional domain.PayoutToolID payout_tool_id
 }
 
 struct InvalidObjectReference {
