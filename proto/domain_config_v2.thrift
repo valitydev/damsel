@@ -100,6 +100,11 @@ struct RemoveOp {
     1: required domain.Reference ref
 }
 
+struct CommitResponse {
+    1: required BaseVersion version
+    2: required set<domain.DomainObject> new_objects
+}
+
 struct VersionedObject {
     1: required Version global_version
     2: required Version local_version
@@ -238,7 +243,7 @@ service Repository {
      * Применить изменения к определенной глобальной версии.
      * Возвращает следующую версию
      */
-    BaseVersion Commit (
+    CommitResponse Commit (
         1: BaseVersion global_version
         2: Commit commit
         3: UserOpID user_op_id
