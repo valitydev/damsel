@@ -57,11 +57,6 @@ union ScopedReference {
     2: VersionReference local_ref
 }
 
-union Version {
-    1: BaseVersion global_vs
-    2: BaseVersion local_vs
-}
-
 /**
  * Возможные операции над набором объектов.
  */
@@ -106,16 +101,16 @@ struct CommitResponse {
 }
 
 struct VersionedObject {
-    1: required Version global_version
-    2: required Version local_version
+    1: required BaseVersion global_version
+    2: required BaseVersion local_version
     3: required domain.DomainObject object
     4: required base.Timestamp created_at
 }
 
 struct ObjectVersion {
     1: required domain.Reference ref
-    2: required Version global_version
-    3: required Version local_version
+    2: required BaseVersion global_version
+    3: required BaseVersion local_version
     4: required base.Timestamp created_at
     5: required UserOp author
 }
@@ -179,7 +174,7 @@ struct ObjectNotFoundConflict {
 
 struct ObjectVersionNotFoundConflict {
     1: required domain.Reference object_ref
-    2: required Version version
+    2: required BaseVersion version
 }
 
 struct ObjectReferenceMismatchConflict {
@@ -206,7 +201,7 @@ struct NonexistantObject {
  * Попытка совершить коммит на устаревшую версию
  */
 exception ObsoleteCommitVersion {
-    1: required Version latest_version
+    1: required BaseVersion latest_version
 }
 
 exception VersionNotFound {}
