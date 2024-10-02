@@ -3236,7 +3236,7 @@ union ReflessDomainObject {
     13 : Inspector            inspector
     14 : SystemAccountSet     system_account_set
     15 : ExternalAccountSet   external_account_set
-    16 : Proxy                proxy
+    16 : ProxyDefinition      proxy
     17 : Globals              globals
     18 : CashRegisterProvider cash_register_provider
     19 : RoutingRules         routing_rules
