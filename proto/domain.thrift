@@ -882,6 +882,7 @@ struct WalletAccount {
 /* Инспекция платежа */
 
 enum RiskScore {
+    trusted = 0
     low = 1
     high = 100
     fatal = 9999
