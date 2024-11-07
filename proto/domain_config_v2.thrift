@@ -25,9 +25,11 @@ struct UserOp {
 }
 
 exception UserOpNotFound {}
+exception UserAlreadyExists {}
 
 service UserOpManagement {
     UserOp Create (1: UserOpParams params)
+        throws (1: UserAlreadyExists ex1)
 
     UserOp Get (1: UserOpID id)
         throws (1: UserOpNotFound ex1)
@@ -222,7 +224,7 @@ service RepositoryClient {
             1: VersionNotFound ex1
             2: ObjectNotFound ex2
         )
-    
+
     GetVersionsResponse GetLocalVersions (1: GetLocalVersionsRequest req)
         throws (
             1: ObjectNotFound ex1
