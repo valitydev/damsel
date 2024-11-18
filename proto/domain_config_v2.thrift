@@ -225,6 +225,8 @@ service RepositoryClient {
             2: ObjectNotFound ex2
         )
 
+    BaseVersion GetLatestGlobalVersion ()
+
     GetVersionsResponse GetLocalVersions (1: GetLocalVersionsRequest req)
         throws (
             1: ObjectNotFound ex1
