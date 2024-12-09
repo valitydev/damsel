@@ -9,33 +9,33 @@ include "domain.thrift"
 namespace java dev.vality.damsel.domain_config_v2
 namespace erlang dmsl.domain_conf_v2
 
-typedef string UserOpID
-typedef string UserOpEmail
-typedef string UserOpName
+typedef string AuthorID
+typedef string AuthorEmail
+typedef string AuthorName
 
-struct UserOpParams {
-    1: required UserOpEmail email
-    2: required UserOpName name
+struct AuthorParams {
+    1: required AuthorEmail email
+    2: required AuthorName name
 }
 
-struct UserOp {
-    1: required UserOpID id
-    2: required UserOpEmail email
-    3: required UserOpName name
+struct Author {
+    1: required AuthorID id
+    2: required AuthorEmail email
+    3: required AuthorName name
 }
 
-exception UserOpNotFound {}
-exception UserAlreadyExists {}
+exception AuthorNotFound {}
+exception AuthorAlreadyExists {}
 
-service UserOpManagement {
-    UserOp Create (1: UserOpParams params)
-        throws (1: UserAlreadyExists ex1)
+service AuthorManagement {
+    Author Create (1: AuthorParams params)
+        throws (1: AuthorAlreadyExists ex1)
 
-    UserOp Get (1: UserOpID id)
-        throws (1: UserOpNotFound ex1)
+    Author Get (1: AuthorID id)
+        throws (1: AuthorNotFound ex1)
 
-    void Delete (1: UserOpID id)
-        throws (1: UserOpNotFound ex1)
+    void Delete (1: AuthorID id)
+        throws (1: AuthorNotFound ex1)
 }
 
 typedef string ContinuationToken
@@ -101,7 +101,7 @@ struct VersionedObject {
     2: required BaseVersion changed_in
     3: required domain.DomainObject object
     4: required base.Timestamp changed_at
-    5: required UserOp changed_by
+    5: required Author changed_by
 }
 
 struct GetObjectVersionsRequest {
@@ -222,13 +222,13 @@ service Repository {
     CommitResponse Commit (
         1: BaseVersion version
         2: Commit commit
-        3: UserOpID user_op_id
+        3: AuthorID author_id
     )
         throws (
             1: VersionNotFound ex1
             2: OperationConflict ex2
             3: OperationInvalid ex3
             4: ObsoleteCommitVersion ex4
-            5: UserOpNotFound ex5
+            5: AuthorNotFound ex5
         )
 }
