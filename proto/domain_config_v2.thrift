@@ -43,7 +43,6 @@ typedef string ContinuationToken
 /**
  * Маркер вершины истории.
  */
-struct GlobalHead {}
 struct Head {}
 
 typedef i64 BaseVersion
@@ -52,11 +51,6 @@ typedef i32 Limit
 union VersionReference {
     1: BaseVersion version
     2: Head head
-}
-
-union ScopedReference {
-    1: VersionReference global_ref
-    2: VersionReference local_ref
 }
 
 /**
@@ -103,45 +97,28 @@ struct CommitResponse {
 }
 
 struct VersionedObject {
-    1: required BaseVersion global_version
-    2: required BaseVersion local_version
+    1: required BaseVersion version
+    2: required BaseVersion changed_in
     3: required domain.DomainObject object
-    4: required base.Timestamp created_at
+    4: required base.Timestamp changed_at
+    5: required UserOp changed_by
 }
 
-struct ObjectVersion {
-    1: required domain.Reference ref
-    2: required BaseVersion global_version
-    3: required BaseVersion local_version
-    4: required base.Timestamp created_at
-    5: required UserOp author
-}
-
-struct GetLocalVersionsRequest {
+struct GetObjectVersionsRequest {
     1: required domain.Reference ref
     2: required i32 limit
     3: optional ContinuationToken continuation_token
 }
 
-struct GetGlobalVersionsRequest {
+struct GetVersionsRequest {
     1: required i32 limit
     2: optional ContinuationToken continuation_token
 }
 
 struct GetVersionsResponse {
-    1: required list<ObjectVersion> result
+    1: required list<VersionedObject> result
     2: optional ContinuationToken continuation_token
 }
-
-/**
- * Требуемая версия отсутствует
- */
-exception LocalVersionNotFound {}
-
-/**
- * Требуемая глобальная версия отсутствует
- */
-exception GlobalVersionNotFound {}
 
 /**
  * Объект не найден в домене
@@ -225,14 +202,14 @@ service RepositoryClient {
             2: ObjectNotFound ex2
         )
 
-    BaseVersion GetLatestGlobalVersion ()
+    BaseVersion GetLatestVersion ()
 
-    GetVersionsResponse GetLocalVersions (1: GetLocalVersionsRequest req)
+    GetVersionsResponse GetObjectVersions (1: GetObjectVersionsRequest req)
         throws (
             1: ObjectNotFound ex1
         )
 
-    GetVersionsResponse GetGlobalVersions (1: GetGlobalVersionsRequest req)
+    GetVersionsResponse GetVersions (1: GetVersionsRequest req)
 
 }
 
@@ -243,7 +220,7 @@ service Repository {
      * Возвращает следующую версию
      */
     CommitResponse Commit (
-        1: BaseVersion global_version
+        1: BaseVersion version
         2: Commit commit
         3: UserOpID user_op_id
     )
