@@ -3196,10 +3196,8 @@ union DomainObject {
     36 : MobileOperatorObject       mobile_operator
 
     42 : CryptoCurrencyObject       crypto_currency
-
     44 : CountryObject              country
     45 : TradeBlocObject            trade_bloc
-
     46 : IdentityProviderObject     identity_provider
     47 : LimitConfigObject          limit_config
 
@@ -3223,41 +3221,52 @@ union DomainObject {
 union ReflessDomainObject {
     1  : Category             category
     2  : Currency             currency
-    3  : BusinessSchedule     business_schedule
-    4  : Calendar             calendar
-    5  : PaymentMethod        payment_method
-    6  : PayoutMethod         payout_method
-    7  : Bank                 bank
-    8  : ContractTemplate     contract_template
-    9  : TermSetHierarchy     term_set_hierarchy
-    10 : PaymentInstitution   payment_institution
-    11 : Provider             provider
-    12 : Terminal             terminal
-    13 : Inspector            inspector
+    19 : BusinessSchedule     business_schedule
+    20 : Calendar             calendar
+    3  : PaymentMethodDefinition payment_method
+    21 : PayoutMethodDefinition payout_method
+    5  : Bank                 bank
+    6  : ContractTemplate     contract_template
+    17 : TermSetHierarchy     term_set_hierarchy
+    18 : PaymentInstitution   payment_institution
+    7  : Provider             provider
+    8  : Terminal             terminal
+    15 : Inspector            inspector
     14 : SystemAccountSet     system_account_set
-    15 : ExternalAccountSet   external_account_set
-    16 : ProxyDefinition      proxy
-    17 : Globals              globals
-    18 : CashRegisterProvider cash_register_provider
-    19 : RoutingRules         routing_rules
-    20 : BankCardCategory     bank_card_category
-    21 : Criterion            criterion
-    22 : DocumentType         document_type
-    23 : PaymentService       payment_service
-    24 : PaymentSystem        payment_system
-    25 : BankCardTokenService payment_token
-    26 : MobileOperator       mobile_operator
+    16 : ExternalAccountSet   external_account_set
+    9  : ProxyDefinition      proxy
+    11 : Globals              globals
+    23 : CashRegisterProvider cash_register_provider
+    26 : RoutingRuleset       routing_rules
+    28 : BankCardCategory     bank_card_category
+    29 : Criterion            criterion
+    32 : DocumentType         document_type
+    33 : PaymentService       payment_service
+    34 : PaymentSystem        payment_system
+    35 : BankCardTokenService payment_token
+    36 : MobileOperator       mobile_operator
 
-    27 : CryptoCurrency       crypto_currency
+    42 : CryptoCurrency       crypto_currency
+    44 : Country              country
+    45 : TradeBloc            trade_bloc
+    46 : IdentityProvider     identity_provider
+    47 : limiter_config.LimitConfig limit_config
 
-    28 : Country              country
-    29 : TradeBloc            trade_bloc
+    12 : Dummy                dummy
+    13 : DummyLink            dummy_link
 
-    30 : IdentityProvider     identity_provider
-    31 : limiter_config.LimitConfig limit_config
-
-    32 : Dummy                dummy
-    33 : DummyLink            dummy_link
+    // Reserved
+    // 10
+    // 22
+    // 27
+    // 24
+    // 25
+    // 37
+    // 38
+    // 39
+    // 40
+    // 41
+    // 43
 }
 
 /* Domain */
