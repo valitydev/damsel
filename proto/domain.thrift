@@ -2718,8 +2718,14 @@ union MobileCommerceConditionDefinition {
     2: MobileOperatorRef operator_is
 }
 
+struct GenericResourceCondition {
+    1: required list<string> field_path
+    2: required string value
+}
+
 union GenericPaymentToolCondition {
     1: PaymentServiceRef payment_service_is
+    2: GenericResourceCondition resource_field_matches
 }
 
 struct PartyCondition {
