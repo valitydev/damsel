@@ -3106,9 +3106,11 @@ struct LimitConfigRef {
     1: required LimitConfigID id
 }
 
-/* There are 2 requirements on Reference and DomainObject unions:
+/* There are 3 requirements on Reference and DomainObject unions:
  * - all field types must be unique,
- * - all corresponding field names in both unions must match.
+ * - all corresponding field names in both unions must match,
+ * - all types must be accounted in DOmainObjectTypes enum with
+ *   union's field number as according values.
  *
  * Otherwise [dmt_core](https://github.com/valitydev/dmt_core)'s
  * integrity verification mechanism would break.
@@ -3219,6 +3221,7 @@ union DomainObject {
 }
 
 union ReflessDomainObject {
+
     1  : Category             category
     2  : Currency             currency
     19 : BusinessSchedule     business_schedule
@@ -3254,6 +3257,57 @@ union ReflessDomainObject {
 
     12 : Dummy                dummy
     13 : DummyLink            dummy_link
+
+    // Reserved
+    // 10
+    // 22
+    // 27
+    // 24
+    // 25
+    // 37
+    // 38
+    // 39
+    // 40
+    // 41
+    // 43
+}
+
+enum DomainObjectTypes {
+    category               = 1
+    currency               = 2
+    business_schedule      = 19
+    calendar               = 20
+    payment_method         = 3
+    payout_method          = 21
+    bank                   = 5
+    contract_template      = 6
+    term_set_hierarchy     = 17
+    payment_institution    = 18
+    provider               = 7
+    terminal               = 8
+    inspector              = 15
+    system_account_set     = 14
+    external_account_set   = 16
+    proxy                  = 9
+    globals                = 11
+    cash_register_provider = 23
+    routing_rules          = 26
+    bank_card_category     = 28
+    criterion              = 29
+    document_type          = 32
+    payment_service        = 33
+    payment_system         = 34
+    payment_token          = 35
+    mobile_operator        = 36
+
+    crypto_currency        = 42
+    country                = 44
+    trade_bloc             = 45
+    identity_provider      = 46
+    limit_config           = 47
+
+    dummy                  = 12
+    dummy_link             = 13
 
     // Reserved
     // 10

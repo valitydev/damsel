@@ -45,11 +45,11 @@ typedef string ContinuationToken
  */
 struct Head {}
 
-typedef i64 BaseVersion
+typedef i64 Version
 typedef i32 Limit
 
 union VersionReference {
-    1: BaseVersion version
+    1: Version version
     2: Head head
 }
 
@@ -78,11 +78,9 @@ struct InsertOp {
 }
 
 // Обновление объекта
-// targeted_ref - ID объекта, который нужно обновить
-// new_object - новая версия объекта
+// object - новая версия объекта (реф объекта есть внутри)
 struct UpdateOp {
-    1: required domain.Reference targeted_ref
-    3: required domain.DomainObject new_object
+    1: required domain.DomainObject object
 }
 
 // Мягкое удаление объекта,
@@ -92,31 +90,24 @@ struct RemoveOp {
 }
 
 struct CommitResponse {
-    1: required BaseVersion version
+    1: required Version version
     2: required set<domain.DomainObject> new_objects
 }
 
 struct VersionedObject {
-    1: required BaseVersion version
-    2: required BaseVersion changed_in
-    3: required domain.DomainObject object
-    4: required base.Timestamp changed_at
-    5: required Author changed_by
+    1: required VersionedObjectInfo info
+    2: required domain.DomainObject object
 }
 
-struct GetObjectVersionsRequest {
-    1: required domain.Reference ref
-    2: required i32 limit
-    3: optional ContinuationToken continuation_token
+struct VersionedObjectInfo {
+    1: required Version version
+    2: required domain.Reference ref
+    3: required base.Timestamp changed_at
+    4: required Author changed_by
 }
 
-struct GetVersionsRequest {
-    1: required i32 limit
-    2: optional ContinuationToken continuation_token
-}
-
-struct GetVersionsResponse {
-    1: required list<VersionedObject> result
+struct ObjectVersionsResponse {
+    1: required list<VersionedObjectInfo> result
     2: optional ContinuationToken continuation_token
 }
 
@@ -124,6 +115,11 @@ struct GetVersionsResponse {
  * Объект не найден в домене
  */
 exception ObjectNotFound {}
+
+/**
+ * Неизвестный тип объекта
+ */
+exception ObjectTypeNotFound {}
 
 /**
  * Возникает в случаях, если коммит
@@ -153,7 +149,7 @@ struct ObjectNotFoundConflict {
 
 struct ObjectVersionNotFoundConflict {
     1: required domain.Reference object_ref
-    2: required BaseVersion version
+    2: required Version version
 }
 
 struct ObjectReferenceMismatchConflict {
@@ -165,6 +161,7 @@ exception OperationInvalid { 1: required list<OperationError> errors }
 union OperationError {
     1: ObjectReferenceCycle object_reference_cycle
     2: NonexistantObject object_not_exists
+    3: BadObjectReference bad_ref
 }
 
 struct ObjectReferenceCycle {
@@ -176,11 +173,16 @@ struct NonexistantObject {
     2: required list<domain.Reference> referenced_by
 }
 
+struct BadObjectReference {
+    1: required domain.Reference object_ref
+    2: required domain.ReflessDomainObject object
+}
+
 /**
  * Попытка совершить коммит на устаревшую версию
  */
 exception ObsoleteCommitVersion {
-    1: required BaseVersion latest_version
+    1: required Version latest_version
 }
 
 exception VersionNotFound {}
@@ -193,37 +195,28 @@ service RepositoryClient {
     /**
      * Возвращает объект из домена определенной или последней версии
      */
-    VersionedObject CheckoutObject (
-        1: VersionReference version_ref
-        2: domain.Reference object_ref
-    )
-        throws (
-            1: VersionNotFound ex1
-            2: ObjectNotFound ex2
-        )
+    VersionedObject CheckoutObject (1: VersionReference version_ref, 2: domain.Reference object_ref)
+        throws (1: VersionNotFound ex1, 2: ObjectNotFound ex2)
 
-    BaseVersion GetLatestVersion ()
+}
 
-    GetVersionsResponse GetObjectVersions (1: GetObjectVersionsRequest req)
-        throws (
-            1: ObjectNotFound ex1
-        )
-
-    GetVersionsResponse GetVersions (1: GetVersionsRequest req)
-
+struct RequestParams {
+    1: required Limit limit
+    2: optional ContinuationToken continuation_token
 }
 
 service Repository {
 
     /**
+     * Возвращает последнюю версию домен конфига.
+     */
+    Version GetLatestVersion ()
+
+    /**
      * Применить изменения к определенной глобальной версии.
      * Возвращает следующую версию
      */
-    CommitResponse Commit (
-        1: BaseVersion version
-        2: Commit commit
-        3: AuthorID author_id
-    )
+    CommitResponse Commit (1: Version version, 2: Commit commit, 3: AuthorID author_id)
         throws (
             1: VersionNotFound ex1
             2: OperationConflict ex2
@@ -231,4 +224,25 @@ service Repository {
             4: ObsoleteCommitVersion ex4
             5: AuthorNotFound ex5
         )
+
+    /**
+     * Возвращает список версий (изменений) объекта по убыванию номера
+     * версии (сначала самые поздние изменения объекта).
+     */
+    ObjectVersionsResponse GetObjectHistory (1: domain.Reference ref, 2: RequestParams request_params)
+        throws (1: ObjectNotFound ex1)
+
+    /**
+     * Возвращает список версий (изменений) ВСЕХ объектов в домене по
+     * убыванию номера версии (сначала самые поздние изменения
+     * объектов).
+     */
+    ObjectVersionsResponse GetAllObjectsHistory (1: RequestParams request_params)
+
+    /**
+     * Возвращает список объектов данного типа.
+     */
+    ObjectVersionsResponse GetObjectsByType (1: domain.DomainObjectTypes type, 2: RequestParams request_params)
+        throws (1: ObjectTypeNotFound ex1)
+
 }
