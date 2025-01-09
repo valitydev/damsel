@@ -3222,41 +3222,41 @@ union DomainObject {
 
 union ReflessDomainObject {
 
-    1  : Category             category
-    2  : Currency             currency
-    19 : BusinessSchedule     business_schedule
-    20 : Calendar             calendar
-    3  : PaymentMethodDefinition payment_method
-    21 : PayoutMethodDefinition payout_method
-    5  : Bank                 bank
-    6  : ContractTemplate     contract_template
-    17 : TermSetHierarchy     term_set_hierarchy
-    18 : PaymentInstitution   payment_institution
-    7  : Provider             provider
-    8  : Terminal             terminal
-    15 : Inspector            inspector
-    14 : SystemAccountSet     system_account_set
-    16 : ExternalAccountSet   external_account_set
-    9  : ProxyDefinition      proxy
-    11 : Globals              globals
-    23 : CashRegisterProvider cash_register_provider
-    26 : RoutingRuleset       routing_rules
-    28 : BankCardCategory     bank_card_category
-    29 : Criterion            criterion
-    32 : DocumentType         document_type
-    33 : PaymentService       payment_service
-    34 : PaymentSystem        payment_system
-    35 : BankCardTokenService payment_token
-    36 : MobileOperator       mobile_operator
+    1  : Category                   category
+    2  : Currency                   currency
+    19 : BusinessSchedule           business_schedule
+    20 : Calendar                   calendar
+    3  : PaymentMethodDefinition    payment_method
+    21 : PayoutMethodDefinition     payout_method
+    5  : Bank                       bank
+    6  : ContractTemplate           contract_template
+    17 : TermSetHierarchy           term_set_hierarchy
+    18 : PaymentInstitution         payment_institution
+    7  : Provider                   provider
+    8  : Terminal                   terminal
+    15 : Inspector                  inspector
+    14 : SystemAccountSet           system_account_set
+    16 : ExternalAccountSet         external_account_set
+    9  : ProxyDefinition            proxy
+    11 : Globals                    globals
+    23 : CashRegisterProvider       cash_register_provider
+    26 : RoutingRuleset             routing_rules
+    28 : BankCardCategory           bank_card_category
+    29 : Criterion                  criterion
+    32 : DocumentType               document_type
+    33 : PaymentService             payment_service
+    34 : PaymentSystem              payment_system
+    35 : BankCardTokenService       payment_token
+    36 : MobileOperator             mobile_operator
 
-    42 : CryptoCurrency       crypto_currency
-    44 : Country              country
-    45 : TradeBloc            trade_bloc
-    46 : IdentityProvider     identity_provider
+    42 : CryptoCurrency             crypto_currency
+    44 : Country                    country
+    45 : TradeBloc                  trade_bloc
+    46 : IdentityProvider           identity_provider
     47 : limiter_config.LimitConfig limit_config
 
-    12 : Dummy                dummy
-    13 : DummyLink            dummy_link
+    12 : Dummy                      dummy
+    13 : DummyLink                  dummy_link
 
     // Reserved
     // 10
