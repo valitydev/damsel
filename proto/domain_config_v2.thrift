@@ -108,7 +108,8 @@ struct VersionedObjectInfo {
 
 struct ObjectVersionsResponse {
     1: required list<VersionedObjectInfo> result
-    2: optional ContinuationToken continuation_token
+    2: required i64 total_count
+    3: optional ContinuationToken continuation_token
 }
 
 /**
@@ -208,7 +209,7 @@ struct RequestParams {
 service Repository {
 
     /**
-     * Возвращает последнюю версию домен конфига.
+     * Возвращает номер последней версии домен конфига.
      */
     Version GetLatestVersion ()
 
@@ -242,7 +243,11 @@ service Repository {
     /**
      * Возвращает список объектов данного типа.
      */
-    ObjectVersionsResponse GetObjectsByType (1: domain.DomainObjectTypes type, 2: RequestParams request_params)
+    ObjectVersionsResponse GetObjectsByType (
+        1: Version version
+        2: domain.DomainObjectTypes type
+        3: RequestParams request_params
+    )
         throws (1: ObjectTypeNotFound ex1)
 
 }
