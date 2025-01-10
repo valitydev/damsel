@@ -3239,7 +3239,7 @@ union ReflessDomainObject {
     16 : ProxyDefinition      proxy
     17 : Globals              globals
     18 : CashRegisterProvider cash_register_provider
-    19 : RoutingRules         routing_rules
+    19 : RoutingRuleset       routing_rules
     20 : BankCardCategory     bank_card_category
     21 : Criterion            criterion
     22 : DocumentType         document_type
