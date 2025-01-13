@@ -57,10 +57,6 @@ union VersionReference {
  * Возможные операции над набором объектов.
  */
 
-struct Commit {
-    1: required list<Operation> ops
-}
-
 union Operation {
     1: InsertOp insert
     2: UpdateOp update
@@ -217,7 +213,7 @@ service Repository {
      * Применить изменения к определенной глобальной версии.
      * Возвращает следующую версию
      */
-    CommitResponse Commit (1: Version version, 2: Commit commit, 3: AuthorID author_id)
+    CommitResponse Commit (1: Version version, 2: list<Operation> ops, 3: AuthorID author_id)
         throws (
             1: VersionNotFound ex1
             2: OperationConflict ex2
