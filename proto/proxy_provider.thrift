@@ -355,6 +355,25 @@ service ProviderProxy {
 
 exception PaymentNotFound {}
 
+/**
+ * Набор изменений в сессии платежа.
+ */
+struct PaymentSessionChange {
+    1: required PaymentSessionStatusChange status
+}
+
+/**
+ * Изменение статуса сессии.
+ *
+ * TODO Может быть использовать FinishStatus вместо этого юниона
+ */
+union PaymentSessionStatusChange {
+    // Reserved
+    // 1: Success success
+
+    2: domain.Failure failure
+}
+
 service ProviderProxyHost {
 
     /**
@@ -376,4 +395,13 @@ service ProviderProxyHost {
     PaymentInfo GetPayment (1: CallbackTag tag)
         throws (1: PaymentNotFound ex1)
 
+    /**
+     * Изменить соответствующую callback-тегу сессию платежа.
+     *
+     * NOTE Кроме костыль функции по получению инфо платежа все
+     * функции сервиса хоста оперируют непрозрачным содержимым типов
+     * Callback и CallbackResponse.
+     */
+    void ChangePaymentSession (1: CallbackTag tag, 2: PaymentSessionChange change)
+        throws (1: base.InvalidRequest ex1)
 }

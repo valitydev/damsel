@@ -118,9 +118,23 @@ union LimitScopeType {
      */
     9: LimitScopeEmptyDetails sender
     10: LimitScopeEmptyDetails receiver
+
+    /**
+     * Scope for operations with destination's generic resource fields.
+     * See damsel's "base.Content" https://github.com/valitydev/damsel/blob/ad715bd647bc5cfa822e2b09b1329dab6a2bf295/proto/base.thrift#L20-L25
+     * and it's example with generic payment tool https://github.com/valitydev/damsel/blob/ad715bd647bc5cfa822e2b09b1329dab6a2bf295/proto/domain.thrift#L1816-L1836
+     */
+    11: LimitScopeDestinationFieldDetails destination_field
 }
 
 struct LimitScopeEmptyDetails {}
+
+/**
+ * TODO Support universal context-based field selector
+ */
+struct LimitScopeDestinationFieldDetails {
+    1: required list<string> field_path
+}
 
 struct OperationLimitBehaviour {
     1: optional OperationBehaviour invoice_payment_refund
