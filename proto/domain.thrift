@@ -30,6 +30,8 @@ struct ContactInfo {
     7: optional string city
     8: optional string address
     9: optional string postal_code
+    10: optional base.Date date_of_birth
+    11: optional string document_id
 }
 
 union OperationFailure {
