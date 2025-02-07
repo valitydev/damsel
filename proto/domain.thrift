@@ -3121,9 +3121,11 @@ struct LimitConfigRef {
     1: required LimitConfigID id
 }
 
-/* There are 2 requirements on Reference and DomainObject unions:
+/* There are 3 requirements on Reference and DomainObject unions:
  * - all field types must be unique,
- * - all corresponding field names in both unions must match.
+ * - all corresponding field names in both unions must match,
+ * - all types must be accounted in DOmainObjectTypes enum with
+ *   union's field number as according values.
  *
  * Otherwise [dmt_core](https://github.com/valitydev/dmt_core)'s
  * integrity verification mechanism would break.
@@ -3212,10 +3214,8 @@ union DomainObject {
     36 : MobileOperatorObject       mobile_operator
 
     42 : CryptoCurrencyObject       crypto_currency
-
     44 : CountryObject              country
     45 : TradeBlocObject            trade_bloc
-
     46 : IdentityProviderObject     identity_provider
     47 : LimitConfigObject          limit_config
 
@@ -3240,43 +3240,92 @@ union DomainObject {
 }
 
 union ReflessDomainObject {
-    1  : Category                category
-    2  : Currency                currency
-    19 : BusinessSchedule        business_schedule
-    20 : Calendar                calendar
-    3  : PaymentMethodDefinition payment_method
-    21 : PayoutMethod            payout_method
-    5  : Bank                    bank
-    6  : ContractTemplate        contract_template
-    17 : TermSetHierarchy        term_set_hierarchy
-    18 : PaymentInstitution      payment_institution
-    7  : Provider                provider
-    8  : Terminal                terminal
-    15 : Inspector               inspector
-    14 : SystemAccountSet        system_account_set
-    16 : ExternalAccountSet      external_account_set
-    9  : ProxyDefinition         proxy
-    11 : Globals                 globals
-    23 : CashRegisterProvider    cash_register_provider
-    26 : RoutingRuleset          routing_rules
-    28 : BankCardCategory        bank_card_category
-    29 : Criterion               criterion
-    32 : DocumentType            document_type
-    33 : PaymentService          payment_service
-    34 : PaymentSystem           payment_system
-    35 : BankCardTokenService    payment_token
-    36 : MobileOperator          mobile_operator
+    1  : Category                   category
+    2  : Currency                   currency
+    19 : BusinessSchedule           business_schedule
+    20 : Calendar                   calendar
+    3  : PaymentMethodDefinition    payment_method
+    21 : PayoutMethodDefinition     payout_method
+    5  : Bank                       bank
+    6  : ContractTemplate           contract_template
+    17 : TermSetHierarchy           term_set_hierarchy
+    18 : PaymentInstitution         payment_institution
+    7  : Provider                   provider
+    8  : Terminal                   terminal
+    15 : Inspector                  inspector
+    14 : SystemAccountSet           system_account_set
+    16 : ExternalAccountSet         external_account_set
+    9  : ProxyDefinition            proxy
+    11 : Globals                    globals
+    23 : CashRegisterProvider       cash_register_provider
+    26 : RoutingRuleset             routing_rules
+    28 : BankCardCategory           bank_card_category
+    29 : Criterion                  criterion
+    32 : DocumentType               document_type
+    33 : PaymentService             payment_service
+    34 : PaymentSystem              payment_system
+    35 : BankCardTokenService       payment_token
+    36 : MobileOperator             mobile_operator
 
-    42 : CryptoCurrency          crypto_currency
-
-    44 : Country                 country
-    45 : TradeBloc               trade_bloc
-
-    46 : IdentityProvider        identity_provider
+    42 : CryptoCurrency             crypto_currency
+    44 : Country                    country
+    45 : TradeBloc                  trade_bloc
+    46 : IdentityProvider           identity_provider
     47 : limiter_config.LimitConfig limit_config
 
-    12 : Dummy                   dummy
-    13 : DummyLink               dummy_link
+    12 : Dummy                      dummy
+    13 : DummyLink                  dummy_link
+
+    // Reserved
+    // 10
+    // 22
+    // 27
+    // 24
+    // 25
+    // 37
+    // 38
+    // 39
+    // 40
+    // 41
+    // 43
+}
+
+enum DomainObjectTypes {
+    category               = 1
+    currency               = 2
+    business_schedule      = 19
+    calendar               = 20
+    payment_method         = 3
+    payout_method          = 21
+    bank                   = 5
+    contract_template      = 6
+    term_set_hierarchy     = 17
+    payment_institution    = 18
+    provider               = 7
+    terminal               = 8
+    inspector              = 15
+    system_account_set     = 14
+    external_account_set   = 16
+    proxy                  = 9
+    globals                = 11
+    cash_register_provider = 23
+    routing_rules          = 26
+    bank_card_category     = 28
+    criterion              = 29
+    document_type          = 32
+    payment_service        = 33
+    payment_system         = 34
+    payment_token          = 35
+    mobile_operator        = 36
+
+    crypto_currency        = 42
+    country                = 44
+    trade_bloc             = 45
+    identity_provider      = 46
+    limit_config           = 47
+
+    dummy                  = 12
+    dummy_link             = 13
 
     // Reserved
     // 10
