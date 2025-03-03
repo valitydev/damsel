@@ -108,6 +108,20 @@ struct ObjectVersionsResponse {
     3: optional ContinuationToken continuation_token
 }
 
+struct SearchRequestParams {
+    1: required string query
+    2: required Version version
+    3: optional domain.DomainObjectTypes type
+    4: optional i32 limit
+    5: optional ContinuationToken continuation_token
+}
+
+struct SearchResponse {
+    1: required list<VersionedObjectInfo> result
+    2: required i64 total_count
+    3: optional ContinuationToken continuation_token
+}
+
 /**
  * Объект не найден в домене
  */
@@ -246,4 +260,8 @@ service Repository {
     )
         throws (1: ObjectTypeNotFound ex1)
 
+    SearchObjectsResponse SearchObjects (
+        1: SearchRequestParams request_params
+    )
+        throws (1: ObjectTypeNotFound ex1)
 }
