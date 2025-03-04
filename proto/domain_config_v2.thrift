@@ -260,7 +260,7 @@ service Repository {
     )
         throws (1: ObjectTypeNotFound ex1)
 
-    SearchObjectsResponse SearchObjects (
+    SearchResponse SearchObjects (
         1: SearchRequestParams request_params
     )
         throws (1: ObjectTypeNotFound ex1)
