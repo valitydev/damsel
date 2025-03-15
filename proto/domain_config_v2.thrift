@@ -111,8 +111,8 @@ struct ObjectVersionsResponse {
 struct SearchRequestParams {
     1: required string query
     2: required Version version
-    3: optional domain.DomainObjectTypes type
-    4: optional i32 limit
+    3: required i32 limit
+    4: optional domain.DomainObjectTypes type
     5: optional ContinuationToken continuation_token
 }
 
