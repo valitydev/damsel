@@ -250,16 +250,6 @@ service Repository {
      */
     ObjectVersionsResponse GetAllObjectsHistory (1: RequestParams request_params)
 
-    /**
-     * Возвращает список объектов данного типа.
-     */
-    ObjectVersionsResponse GetObjectsByType (
-        1: Version version
-        2: domain.DomainObjectTypes type
-        3: RequestParams request_params
-    )
-        throws (1: ObjectTypeNotFound ex1)
-
     SearchResponse SearchObjects (
         1: SearchRequestParams request_params
     )
