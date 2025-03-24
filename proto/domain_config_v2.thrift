@@ -25,17 +25,19 @@ struct Author {
 }
 
 exception AuthorNotFound {}
-exception AuthorAlreadyExists {}
+exception AuthorAlreadyExists {
+    1: required AuthorID id
+}
 
 service AuthorManagement {
     Author Create (1: AuthorParams params)
-        throws (1: AuthorAlreadyExists ex1)
+        throws (1: AuthorAlreadyExists already_exists)
 
     Author Get (1: AuthorID id)
-        throws (1: AuthorNotFound ex1)
+        throws (1: AuthorNotFound not_found)
 
     void Delete (1: AuthorID id)
-        throws (1: AuthorNotFound ex1)
+        throws (1: AuthorNotFound not_found)
 }
 
 typedef string ContinuationToken
