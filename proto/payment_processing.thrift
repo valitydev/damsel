@@ -2806,6 +2806,9 @@ service PartyConfigManagement {
     void Create (1: PartyID party_id, 2: PartyParams params)
         throws (1: PartyExists ex1)
 
+    void Update (1: PartyID party_id, 2: PartyParams params)
+        throws (1: PartyNotFound ex1)
+
     domain.PartyConfig Get (1: PartyID party_id)
         throws (1: PartyNotFound ex1)
 
