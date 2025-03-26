@@ -5,17 +5,13 @@ on:
     branches: ['*']
 
 jobs:
-  configured:
-    uses: valitydev/action-frontend/.github/workflows/configured.yml@v1.0
   check:
     name: Check
     runs-on: ubuntu-latest
-    needs: configured
-    if: needs.configured.outputs.exists == 'true'
     steps:
       - uses: actions/checkout@v4
+      - uses: valitydev/action-setup-thrift@v1
       - uses: valitydev/action-frontend/setup@v1
-      - uses: valitydev/action-setup-thrift@v1.0.2
       - run: npm i # protocols don't always update the package-lock.json, so installing from package.json
       - name: Codegen
         run: npm run codegen
