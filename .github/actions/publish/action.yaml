@@ -5,7 +5,7 @@ inputs:
   npm-token:
     description: The NPM access token to use when publishing
     required: true
-  npm-version-not-up:
+  npm-skip-version-up:
     description: Version not up
     default: "false"
     required: false
@@ -30,12 +30,12 @@ runs:
   using: composite
   steps:
     - name: Package version up
-      if: inputs.version-not-up == 'false'
+      if: inputs.npm-skip-version-up == 'false'
       working-directory: ${{ inputs.directory }}
       run: |
         PREFIX=""
-        if [ "${{ inputs.version-tag }}" != "" ]; then
-          PREFIX="${{ inputs.version-tag }}-${{ github.event.number }}-"
+        if [ "${{ inputs.npm-version-tag }}" != "" ]; then
+          PREFIX="${{ inputs.npm-version-tag }}-${{ github.event.number }}-"
         fi
         SHA=$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-7)
         npm version prerelease --preid "${PREFIX}${SHA}" --no-git-tag-version
@@ -44,13 +44,13 @@ runs:
         NODE_AUTH_TOKEN: ${{ inputs.npm-token }}
     - name: Publish
       if: >
-        inputs.only-labeled == 'false'
-        || (contains(env.LABELS, 'publish')
-        || (inputs.label != '' && contains(env.LABELS, format('publish {0}', inputs.label))))
+        inputs.pr-only-labeled == 'false'
+        || (contains(github.event.pull_request.labels.*.name, 'publish')
+        || (inputs.label != ''
+        && contains(github.event.pull_request.labels.*.name, format('publish {0}', inputs.pr-label))))
       working-directory: ${{ inputs.directory }}
       run: |
-        npm publish ${{ inputs.version-tag != '' && format('--tag {0}', inputs.version-tag) || '' }}
+        npm publish ${{ inputs.npm-version-tag != '' && format('--tag {0}', inputs.npm-version-tag) || '' }}
       shell: bash
       env:
         NODE_AUTH_TOKEN: ${{ inputs.npm-token }}
-        LABELS: ${{ github.event.pull_request.labels.*.name }}
