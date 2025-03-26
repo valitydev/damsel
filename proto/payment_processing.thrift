@@ -1922,6 +1922,7 @@ struct Varset {
     10: optional domain.PaymentTool payment_tool
     11: optional domain.PartyID party_id
     12: optional domain.BinData bin_data
+    13: optional domain.DataRevision revision
 
     // Reserved
     // 5
