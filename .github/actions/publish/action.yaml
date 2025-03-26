@@ -32,16 +32,24 @@ runs:
     - name: Package version up
       if: inputs.version-not-up == 'false'
       working-directory: ${{ inputs.directory }}
-      run: npm version prerelease --preid ${{ inputs.version-tag != '' && format('{0}-{1}-', inputs.version-tag, github.event.number) || '' }}$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-7) --no-git-tag-version
+      run: |
+        PREFIX=""
+        if [ "${{ inputs.version-tag }}" != "" ]; then
+          PREFIX="${{ inputs.version-tag }}-${{ github.event.number }}-"
+        fi
+        SHA=$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-7)
+        npm version prerelease --preid "${PREFIX}${SHA}" --no-git-tag-version
       shell: bash
       env:
         NODE_AUTH_TOKEN: ${{ inputs.npm-token }}
     - name: Publish
       if: >
         inputs.only-labeled == 'false'
-        || (contains(env.LABELS, 'publish') || (inputs.label != '' && contains(env.LABELS, format('publish {0}', inputs.label))))
+        || (contains(env.LABELS, 'publish')
+        || (inputs.label != '' && contains(env.LABELS, format('publish {0}', inputs.label))))
       working-directory: ${{ inputs.directory }}
-      run: npm publish ${{ inputs.version-tag != '' && format('--tag {0}', inputs.version-tag) || '' }}
+      run: |
+        npm publish ${{ inputs.version-tag != '' && format('--tag {0}', inputs.version-tag) || '' }}
       shell: bash
       env:
         NODE_AUTH_TOKEN: ${{ inputs.npm-token }}
