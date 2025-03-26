@@ -23,4 +23,5 @@ jobs:
       - uses: ./.github/actions/publish
         with:
           npm-token: ${{ secrets.NPM_TOKEN }}
-          only-labeled: 'true'
+          npm-version-tag: 'pr'
+          pr-only-labeled: 'true'

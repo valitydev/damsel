@@ -5,11 +5,11 @@ inputs:
   npm-token:
     description: The NPM access token to use when publishing
     required: true
-  version-not-up:
+  npm-version-not-up:
     description: Version not up
     default: "false"
     required: false
-  version-tag:
+  npm-version-tag:
     description: Version tag
     default: ""
     required: false
@@ -17,11 +17,11 @@ inputs:
     description: Directory
     default: "./"
     required: false
-  label:
-    description: Package label
+  pr-label:
+    description: PR label for publish (publish {label})
     default: ""
     required: false
-  only-labeled:
+  pr-only-labeled:
     description: Only publish if the PR is labeled
     default: "false"
     required: false
