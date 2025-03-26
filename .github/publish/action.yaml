@@ -1,0 +1,48 @@
+name: "Publish to NPM"
+description: "Publish to NPM"
+
+inputs:
+  npm-token:
+    description: The NPM access token to use when publishing
+    required: true
+  version-not-up:
+    description: Version not up
+    default: "false"
+    required: false
+  version-tag:
+    description: Version tag
+    default: ""
+    required: false
+  directory:
+    description: Directory
+    default: "./"
+    required: false
+  label:
+    description: Package label
+    default: ""
+    required: false
+  only-labeled:
+    description: Only publish if the PR is labeled
+    default: "false"
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Package version up
+      if: inputs.version-not-up == 'false'
+      working-directory: ${{ inputs.directory }}
+      run: npm version prerelease --preid ${{ inputs.version-tag != '' && format('{0}-{1}-', inputs.version-tag, github.event.number) || '' }}$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-7) --no-git-tag-version
+      shell: bash
+      env:
+        NODE_AUTH_TOKEN: ${{ inputs.npm-token }}
+    - name: Publish
+      if: >
+        inputs.only-labeled == 'false'
+        || (contains(env.LABELS, 'publish') || (inputs.label != '' && contains(env.LABELS, 'publish ' + inputs.label)))
+      working-directory: ${{ inputs.directory }}
+      run: npm publish ${{ inputs.version-tag != '' && format('--tag {0}', inputs.version-tag) || '' }}
+      shell: bash
+      env:
+        NODE_AUTH_TOKEN: ${{ inputs.npm-token }}
+        LABELS: ${{ github.event.pull_request.labels.*.name }}
