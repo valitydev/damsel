@@ -39,7 +39,7 @@ runs:
     - name: Publish
       if: >
         inputs.only-labeled == 'false'
-        || (contains(env.LABELS, 'publish') || (inputs.label != '' && contains(env.LABELS, 'publish ' + inputs.label)))
+        || (contains(env.LABELS, 'publish') || (inputs.label != '' && contains(env.LABELS, format('publish {0}', inputs.label))))
       working-directory: ${{ inputs.directory }}
       run: npm publish ${{ inputs.version-tag != '' && format('--tag {0}', inputs.version-tag) || '' }}
       shell: bash
