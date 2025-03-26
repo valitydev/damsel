@@ -3,6 +3,9 @@ name: 'Frontend: PR'
 on:
   pull_request:
     branches: ['*']
+  pull_request_target:
+    types: [labeled]
+    branches: ['*']
 
 jobs:
   check:
