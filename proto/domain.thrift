@@ -3153,6 +3153,7 @@ struct ShopConfig {
     9: optional set<TurnoverLimit> turnover_limits
     10: required PaymentInstitutionRef payment_institution
     11: optional TermSetHierarchyRef terms
+    12: required PartyID party_id
 }
 
 struct ShopConfigObject {
@@ -3180,6 +3181,7 @@ struct WalletConfig {
     7: optional TermSetHierarchyRef terms
     8: optional map<CurrencyRef, WalletCurrencyConfig> currency_configs
     9: optional Details details
+    10: required PartyID party_id
 }
 
 struct WalletConfigObject {
