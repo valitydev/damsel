@@ -46,7 +46,7 @@ runs:
       if: >
         inputs.pr-only-labeled == 'false'
         || (contains(github.event.pull_request.labels.*.name, 'publish')
-        || (inputs.label != ''
+        || (inputs.pr-label != ''
         && contains(github.event.pull_request.labels.*.name, format('publish {0}', inputs.pr-label))))
       working-directory: ${{ inputs.directory }}
       run: |
