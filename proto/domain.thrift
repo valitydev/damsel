@@ -3133,9 +3133,11 @@ struct Details {
     2: optional string description
 }
 
-struct ShopRef {
-    1: required ShopConfigID id
-    2: required ShopConfigRevision revision
+struct ShopCurrencyConfig {
+    1: required CurrencyRef currency
+    2: required AccountID settlement
+    3: required AccountID guarantee
+    4: optional TermSetHierarchyRef terms
 }
 
 /** Магазин мерчанта. */
@@ -3147,10 +3149,10 @@ struct ShopConfig {
     5: required Details details
     6: required ShopLocation location
     7: required CategoryRef category
-    8: optional map<CurrencyRef, ShopAccount> accounts
+    8: optional map<CurrencyRef, ShopCurrencyConfig> currency_configs
     9: optional set<TurnoverLimit> turnover_limits
     10: required PaymentInstitutionRef payment_institution
-    11: required TermSetHierarchyRef terms
+    11: optional TermSetHierarchyRef terms
 }
 
 struct ShopConfigObject {
@@ -3162,9 +3164,10 @@ struct ShopConfigRef {
     1: required ShopConfigID id
 }
 
-struct WalletRef {
-    1: required WalletConfigID id
-    2: required WalletConfigRevision revision
+struct WalletCurrencyConfig {
+    1: required CurrencyRef currency
+    2: required AccountID settlement
+    3: optional TermSetHierarchyRef terms
 }
 
 struct WalletConfig {
@@ -3174,8 +3177,8 @@ struct WalletConfig {
     4: required Blocking blocking
     5: required Suspension suspension
     6: required PaymentInstitutionRef payment_institution
-    7: required TermSetHierarchyRef terms
-    8: optional map<CurrencyRef, WalletAccount> accounts
+    7: optional TermSetHierarchyRef terms
+    8: optional map<CurrencyRef, WalletCurrencyConfig> currency_configs
     9: optional Details details
 }
 
@@ -3193,9 +3196,8 @@ struct PartyConfig {
     1: required PartyID id
     2: required Blocking blocking
     3: required Suspension suspension
-    4: required list<ShopRef> shops
-    5: required list<WalletRef> wallets
-    6: required PartyRevision revision
+    4: required list<ShopConfigRef> shops
+    5: required list<WalletConfigRef> wallets
     7: required PartyContactInfo contact_info
     8: required base.Timestamp created_at
     9: optional string party_name

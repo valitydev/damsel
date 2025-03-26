@@ -1970,8 +1970,8 @@ struct ShopConfigParams {
     2: required domain.ShopLocation location
     3: required domain.Details details
     4: required domain.PaymentInstitutionRef payment_institution
-    5: required domain.TermSetHierarchyRef terms
-    6: required map<domain.CurrencyRef, domain.ShopAccount> accounts
+    5: optional domain.TermSetHierarchyRef terms
+    6: required map<domain.CurrencyRef, domain.ShopCurrencyConfig> currency_configs
 }
 
 struct ShopConfigUpdateParams {
@@ -1980,8 +1980,8 @@ struct ShopConfigUpdateParams {
     3: optional domain.Details details
     4: optional domain.PaymentInstitutionRef payment_institution
     5: optional domain.TermSetHierarchyRef terms
-    6: optional map<domain.CurrencyRef, domain.ShopAccount> accounts
-    7: optional map<domain.CurrencyRef, domain.ShopAccount> remove_accounts
+    6: optional map<domain.CurrencyRef, domain.ShopCurrencyConfig> currency_configs
+    7: optional map<domain.CurrencyRef, domain.ShopCurrencyConfig> remove_currency_configs
 }
 
 struct ShopAccountParams {
@@ -2129,8 +2129,8 @@ struct WalletConfigParams {
     1: required string name
     2: required domain.Details details
     3: required domain.PaymentInstitutionRef payment_institution
-    4: required domain.TermSetHierarchyRef terms
-    5: required map<domain.CurrencyRef, domain.WalletAccount> accounts
+    4: optional domain.TermSetHierarchyRef terms
+    5: required map<domain.CurrencyRef, domain.WalletCurrencyConfig> currency_configs
 }
 
 struct WalletConfigUpdateParams {
@@ -2138,8 +2138,8 @@ struct WalletConfigUpdateParams {
     2: optional domain.Details details
     3: optional domain.PaymentInstitutionRef payment_institution
     4: optional domain.TermSetHierarchyRef terms
-    5: optional map<domain.CurrencyRef, domain.WalletAccount> accounts
-    6: optional map<domain.CurrencyRef, domain.WalletAccount> remove_accounts
+    5: optional map<domain.CurrencyRef, domain.WalletCurrencyConfig> currency_configs
+    6: optional map<domain.CurrencyRef, domain.WalletCurrencyConfig> remove_currency_configs
 }
 
 struct WalletAccountParams {
