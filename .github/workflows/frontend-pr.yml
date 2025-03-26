@@ -2,9 +2,7 @@ name: 'Frontend: PR'
 
 on:
   pull_request:
-    branches: ['*']
-  pull_request_target:
-    types: [labeled]
+    types: [opened, synchronize, reopened, labeled]
     branches: ['*']
 
 jobs:
