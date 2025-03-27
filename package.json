@@ -2,8 +2,7 @@
   "name": "@vality/domain-proto",
   "version": "2.0.0",
   "scripts": {
-    "codegen": "thrift-codegen --i ./proto --n domain_config domain claim_management payment_processing accounter",
-    "codegen2": "thrift-codegen --i ./proto --n domain_config_v2 domain claim_management payment_processing accounter"
+    "codegen": "thrift-codegen --i ./proto --n domain_config domain_config_v2 domain claim_management payment_processing accounter"
   },
   "publishConfig": {
     "access": "public",
