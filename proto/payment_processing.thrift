@@ -2858,17 +2858,12 @@ service PartyConfigManagement {
     void UnblockShop (1: PartyID party_id, 2: ShopID id, 3: string reason)
         throws (1: PartyNotFound ex1, 2: ShopNotFound ex2, 3: InvalidShopStatus ex3)
 
-    domain.TermSet ComputeShopTerms (
-        1: PartyID party_id,
-        2: ShopID shop_id,
-        3: domain.DataRevision revision,
-        4: Varset varset
+    domain.TermSet ComputeTerms (
+        1: domain.TermSetHierarchyRef ref,
+        2: domain.DataRevision revision,
+        3: Varset varset
     )
-        throws (
-            1: PartyNotFound ex1,
-            2: PartyNotExistsYet ex2,
-            3: ShopNotFound ex3
-        )
+        throws ()
 
     /* Wallet */
 
@@ -2892,18 +2887,6 @@ service PartyConfigManagement {
 
     void UnblockWallet (1: PartyID party_id, 2: WalletID id, 3: string reason)
         throws (1: PartyNotFound ex1, 2: WalletNotFound ex2, 3: InvalidWalletStatus ex3)
-
-    domain.TermSet ComputeWalletTerms (
-        1: PartyID party_id,
-        2: WalletID wallet_id,
-        3: domain.DataRevision revision,
-        4: Varset varset
-    )
-        throws (
-            1: PartyNotFound ex1,
-            2: PartyNotExistsYet ex2,
-            3: WalletNotFound ex3
-        )
 
     /* Accounts */
 
