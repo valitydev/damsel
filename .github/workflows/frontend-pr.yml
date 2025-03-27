@@ -12,13 +12,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: valitydev/action-setup-thrift@v1
-      # - uses: valitydev/action-frontend/setup@v1
-      - uses: ./.github/actions/setup
+      - uses: valitydev/action-frontend/setup-install@v2
         with:
           npm-not-ci: 'true'
       - name: Codegen
         run: npm run codegen
-      - uses: ./.github/actions/publish
+      - uses: valitydev/action-frontend/publish@v2
         with:
           npm-token: ${{ secrets.NPM_TOKEN }}
           npm-version-tag: 'pr'
