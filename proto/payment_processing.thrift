@@ -1922,7 +1922,6 @@ struct Varset {
     10: optional domain.PaymentTool payment_tool
     11: optional domain.PartyID party_id
     12: optional domain.BinData bin_data
-    13: optional domain.DataRevision revision
 
     // Reserved
     // 5
@@ -2861,8 +2860,8 @@ service PartyConfigManagement {
 
     domain.TermSet ComputeShopTerms (
         1: PartyID party_id,
-        2: ShopID id,
-        3: PartyRevisionParam party_revision,
+        2: ShopID shop_id,
+        3: domain.DataRevision revision,
         4: Varset varset
     )
         throws (
@@ -2896,8 +2895,8 @@ service PartyConfigManagement {
 
     domain.TermSet ComputeWalletTerms (
         1: PartyID party_id,
-        2: WalletID id,
-        3: PartyRevisionParam party_revision,
+        2: WalletID wallet_id,
+        3: domain.DataRevision revision,
         4: Varset varset
     )
         throws (
