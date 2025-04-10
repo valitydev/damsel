@@ -3204,6 +3204,7 @@ struct PartyConfig {
     8: required base.Timestamp created_at
     9: optional string party_name
     10: optional string comment
+    11: required PaymentInstitutionRealm realm
 }
 
 struct PartyConfigObject {
