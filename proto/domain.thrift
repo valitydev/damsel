@@ -2390,7 +2390,7 @@ struct Provider {
     1: required string name
     2: required string description
     3: required Proxy proxy
-    9: optional string identity
+    14: required PaymentInstitutionRef payment_institution
     7: optional ProviderAccountSet accounts = {}
     10: optional ProvisionTermSet terms
     11: optional list<ProviderParameter> params_schema
@@ -2403,7 +2403,7 @@ struct Provider {
     5: optional string abs_account
     6: optional PaymentsProvisionTerms payment_terms
     8: optional RecurrentPaytoolsProvisionTerms recurrent_paytool_terms
-
+    9: optional string identity
     // Reserved
     // 4
 }
