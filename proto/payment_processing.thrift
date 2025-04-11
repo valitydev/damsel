@@ -1965,25 +1965,6 @@ struct ShopParams {
     3: required ContractID contract_id
 }
 
-struct ShopConfigParams {
-    1: required domain.CategoryRef category
-    2: required domain.ShopLocation location
-    3: required domain.Details details
-    4: required domain.PaymentInstitutionRef payment_institution
-    5: optional domain.TermSetHierarchyRef terms
-    6: required map<domain.CurrencyRef, domain.ShopCurrencyConfig> currency_configs
-}
-
-struct ShopConfigUpdateParams {
-    1: optional domain.CategoryRef category
-    2: optional domain.ShopLocation location
-    3: optional domain.Details details
-    4: optional domain.PaymentInstitutionRef payment_institution
-    5: optional domain.TermSetHierarchyRef terms
-    6: optional map<domain.CurrencyRef, domain.ShopCurrencyConfig> currency_configs
-    7: optional map<domain.CurrencyRef, domain.ShopCurrencyConfig> remove_currency_configs
-}
-
 struct ShopAccountParams {
     1: required domain.CurrencyRef currency
 }
@@ -2123,23 +2104,6 @@ union WalletModification {
 struct WalletParams {
     1: optional string name
     2: required ContractID contract_id
-}
-
-struct WalletConfigParams {
-    1: required string name
-    2: required domain.Details details
-    3: required domain.PaymentInstitutionRef payment_institution
-    4: optional domain.TermSetHierarchyRef terms
-    5: required map<domain.CurrencyRef, domain.WalletCurrencyConfig> currency_configs
-}
-
-struct WalletConfigUpdateParams {
-    1: optional string name
-    2: optional domain.Details details
-    3: optional domain.PaymentInstitutionRef payment_institution
-    4: optional domain.TermSetHierarchyRef terms
-    5: optional map<domain.CurrencyRef, domain.WalletCurrencyConfig> currency_configs
-    6: optional map<domain.CurrencyRef, domain.WalletCurrencyConfig> remove_currency_configs
 }
 
 struct WalletAccountParams {
@@ -2800,93 +2764,12 @@ service PartyManagement {
 
 
 service PartyConfigManagement {
-
-    /* Party */
-
-    void Create (1: PartyID party_id, 2: PartyParams params)
-        throws (1: PartyExists ex1)
-
-    void Update (1: PartyID party_id, 2: PartyParams params)
-        throws (1: PartyNotFound ex1)
-
-    domain.PartyConfig Get (1: PartyID party_id)
-        throws (1: PartyNotFound ex1)
-
-    PartyRevision GetRevision (1: PartyID party_id)
-        throws (1: PartyNotFound ex1)
-
-    domain.PartyConfig Checkout (1: PartyID party_id, 2: domain.PartyRevision revision)
-        throws (1: PartyNotFound ex1, 2: InvalidPartyRevision ex2)
-
-    void Suspend (1: PartyID party_id)
-        throws (1: PartyNotFound ex1, 2: InvalidPartyStatus ex2)
-
-    void Activate (1: PartyID party_id)
-        throws (1: PartyNotFound ex1, 2: InvalidPartyStatus ex2)
-
-    void Block (1: PartyID party_id, 2: string reason)
-        throws (1: PartyNotFound ex1, 2: InvalidPartyStatus ex2)
-
-    void Unblock (1: PartyID party_id, 2: string reason)
-        throws (1: PartyNotFound ex1, 2: InvalidPartyStatus ex2)
-
-    /* Party Status */
-
-    domain.PartyStatus GetStatus (1: PartyID party_id)
-        throws (1: PartyNotFound ex1)
-
-    /* Shop */
-
-    void CreateShop (1: PartyID party_id, 2: ShopConfigParams params)
-        throws (1: PartyExists ex1)
-
-    void UpdateShop (1: PartyID party_id, 2: ShopID id, 3: ShopConfigUpdateParams params)
-        throws (1: PartyExists ex1, 2: ShopNotFound ex2)
-
-    domain.ShopConfig GetShop (1: PartyID party_id, 2: ShopID id)
-        throws (1: PartyNotFound ex1, 2: ShopNotFound ex2)
-
-    void SuspendShop (1: PartyID party_id, 2: ShopID id)
-        throws (1: PartyNotFound ex1, 2: ShopNotFound ex2, 3: InvalidShopStatus ex3)
-
-    void ActivateShop (1: PartyID party_id, 2: ShopID id)
-        throws (1: PartyNotFound ex1, 2: ShopNotFound ex2, 3: InvalidShopStatus ex3)
-
-    void BlockShop (1: PartyID party_id, 2: ShopID id, 3: string reason)
-        throws (1: PartyNotFound ex1, 2: ShopNotFound ex2, 3: InvalidShopStatus ex3)
-
-    void UnblockShop (1: PartyID party_id, 2: ShopID id, 3: string reason)
-        throws (1: PartyNotFound ex1, 2: ShopNotFound ex2, 3: InvalidShopStatus ex3)
-
     domain.TermSet ComputeTerms (
         1: domain.TermSetHierarchyRef ref,
         2: domain.DataRevision revision,
         3: Varset varset
     )
         throws ()
-
-    /* Wallet */
-
-    void CreateWallet (1: PartyID party_id, 2: WalletConfigParams params)
-        throws (1: PartyExists ex1)
-
-    void UpdateWallet (1: PartyID party_id, 2: WalletID id, 3: WalletConfigUpdateParams params)
-        throws (1: PartyExists ex1, 2: WalletNotFound ex2)
-
-    domain.WalletConfig GetWallet (1: PartyID party_id, 2: WalletID id)
-        throws (1: PartyNotFound ex1, 2: WalletNotFound ex2)
-
-    void SuspendWallet (1: PartyID party_id, 2: WalletID id)
-        throws (1: PartyNotFound ex1, 2: WalletNotFound ex2, 3: InvalidWalletStatus ex3)
-
-    void ActivateWallet (1: PartyID party_id, 2: WalletID id)
-        throws (1: PartyNotFound ex1, 2: WalletNotFound ex2, 3: InvalidWalletStatus ex3)
-
-    void BlockWallet (1: PartyID party_id, 2: WalletID id, 3: string reason)
-        throws (1: PartyNotFound ex1, 2: WalletNotFound ex2, 3: InvalidWalletStatus ex3)
-
-    void UnblockWallet (1: PartyID party_id, 2: WalletID id, 3: string reason)
-        throws (1: PartyNotFound ex1, 2: WalletNotFound ex2, 3: InvalidWalletStatus ex3)
 
     /* Accounts */
 
