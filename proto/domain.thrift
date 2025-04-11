@@ -2390,7 +2390,7 @@ struct Provider {
     1: required string name
     2: required string description
     3: required Proxy proxy
-    14: required PaymentInstitutionRef payment_institution
+    14: required PaymentInstitutionRealm realm
     7: optional ProviderAccountSet accounts = {}
     10: optional ProvisionTermSet terms
     11: optional list<ProviderParameter> params_schema
