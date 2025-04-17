@@ -97,6 +97,12 @@ struct VersionedObject {
     2: required domain.DomainObject object
 }
 
+struct LimitedVersionedObject {
+    1: required VersionedObjectInfo info
+    2: optional string name
+    3: optional string description
+}
+
 struct VersionedObjectInfo {
     1: required Version version
     2: required domain.Reference ref
@@ -105,21 +111,37 @@ struct VersionedObjectInfo {
 }
 
 struct ObjectVersionsResponse {
-    1: required list<VersionedObjectInfo> result
+    1: required list<LimitedVersionedObject> result
     2: required i64 total_count
     3: optional ContinuationToken continuation_token
 }
 
 struct SearchRequestParams {
+    /**
+     * PostgreSQL tsquery expression for searching objects.
+     * See: https://www.postgresql.org/docs/current/textsearch-intro.html
+     * If query is '*', it matches everything.
+     */
     1: required string query
-    2: required Version version
+
+    /**
+     * Version to search in. If null, latest version is assumed.
+     */
+    2: optional Version version
+
     3: required i32 limit
     4: optional domain.DomainObjectTypes type
     5: optional ContinuationToken continuation_token
 }
 
 struct SearchResponse {
-    1: required list<VersionedObjectInfo> result
+    1: required list<LimitedVersionedObject> result
+    2: required i64 total_count
+    3: optional ContinuationToken continuation_token
+}
+
+struct SearchFullResponse {
+    1: required list<VersionedObject> result
     2: required i64 total_count
     3: optional ContinuationToken continuation_token
 }
@@ -253,6 +275,11 @@ service Repository {
     ObjectVersionsResponse GetAllObjectsHistory (1: RequestParams request_params)
 
     SearchResponse SearchObjects (
+        1: SearchRequestParams request_params
+    )
+        throws (1: ObjectTypeNotFound ex1)
+
+    SearchFullResponse SearchFullObjects (
         1: SearchRequestParams request_params
     )
         throws (1: ObjectTypeNotFound ex1)
