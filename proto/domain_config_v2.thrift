@@ -36,6 +36,9 @@ service AuthorManagement {
     Author Get (1: AuthorID id)
         throws (1: AuthorNotFound not_found)
 
+    Author GetByEmail (1: AuthorEmail email)
+        throws (1: AuthorNotFound not_found)
+
     void Delete (1: AuthorID id)
         throws (1: AuthorNotFound not_found)
 }
