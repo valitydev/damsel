@@ -133,7 +133,7 @@ struct SearchRequestParams {
     2: optional Version version
 
     3: required i32 limit
-    4: optional domain.DomainObjectTypes type
+    4: optional domain.DomainObjectType type
     5: optional ContinuationToken continuation_token
 }
 

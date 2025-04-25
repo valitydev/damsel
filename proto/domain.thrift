@@ -3126,7 +3126,7 @@ struct LimitConfigRef {
 /* There are 3 requirements on Reference and DomainObject unions:
  * - all field types must be unique,
  * - all corresponding field names in both unions must match,
- * - all types must be accounted in DomainObjectTypes enum with
+ * - all types must be accounted in DomainObjectType enum with
  *   union's field number as according values.
  *
  * Otherwise [dmt_core](https://github.com/valitydev/dmt_core)'s
@@ -3292,7 +3292,7 @@ union ReflessDomainObject {
     // 43
 }
 
-enum DomainObjectTypes {
+enum DomainObjectType {
     category               = 1
     currency               = 2
     business_schedule      = 19
