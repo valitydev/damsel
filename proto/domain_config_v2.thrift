@@ -152,7 +152,9 @@ struct SearchFullResponse {
 /**
  * Объект не найден в домене
  */
-exception ObjectNotFound {}
+exception ObjectNotFound {
+    1: optional domain.Reference object_ref
+}
 
 /**
  * Неизвестный тип объекта
@@ -236,6 +238,19 @@ service RepositoryClient {
     VersionedObject CheckoutObject (1: VersionReference version_ref, 2: domain.Reference object_ref)
         throws (1: VersionNotFound ex1, 2: ObjectNotFound ex2)
 
+
+    /**
+     * Возвращает батч объектов из домена определенной или последней версии
+     */
+    list<VersionedObject> CheckoutObjects (1: VersionReference version_ref, 2: list<domain.Reference> object_refs)
+        throws (1: VersionNotFound ex1, 2: ObjectNotFound ex2)
+
+    /**
+     * Возвращает снепшот домена определенной или последней версии
+     * DEPRECATED: используйте CheckoutObjects
+     */
+    domain.Domain CheckoutSnapshot (1: VersionReference version_ref)
+        throws (1: VersionNotFound ex1)
 }
 
 struct RequestParams {
