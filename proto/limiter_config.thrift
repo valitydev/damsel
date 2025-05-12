@@ -98,7 +98,6 @@ union LimitScopeType {
     1: LimitScopeEmptyDetails party
     2: LimitScopeEmptyDetails shop
     3: LimitScopeEmptyDetails wallet
-    4: LimitScopeEmptyDetails identity
 
     /**
      * Scope over data which uniquely identifies payment tool used in a payment.
