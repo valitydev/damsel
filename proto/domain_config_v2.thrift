@@ -58,12 +58,25 @@ union VersionReference {
     2: Head head
 }
 
+struct HistoricalCommit {
+    1: required Version version
+    2: required list<FinalOperation> ops
+    3: required base.Timestamp created_at
+    4: required Author changed_by
+}
+
 /**
  * Возможные операции над набором объектов.
  */
 
 union Operation {
     1: InsertOp insert
+    2: UpdateOp update
+    3: RemoveOp remove
+}
+
+union FinalOperation {
+    1: FinalInsertOp insert
     2: UpdateOp update
     3: RemoveOp remove
 }
@@ -76,6 +89,10 @@ union Operation {
 struct InsertOp {
     1: required domain.ReflessDomainObject object
     2: optional domain.Reference force_ref
+}
+
+struct FinalInsertOp {
+    1: required domain.DomainObject object
 }
 
 // Обновление объекта
@@ -93,6 +110,13 @@ struct RemoveOp {
 struct CommitResponse {
     1: required Version version
     2: required set<domain.DomainObject> new_objects
+}
+
+struct Snapshot {
+    1: required Version version
+    2: required domain.Domain domain
+    3: required base.Timestamp created_at
+    4: required Author changed_by
 }
 
 struct VersionedObject {
@@ -249,7 +273,7 @@ service RepositoryClient {
      * Возвращает снепшот домена определенной или последней версии
      * DEPRECATED: используйте CheckoutObjects
      */
-    domain.Domain CheckoutSnapshot (1: VersionReference version_ref)
+    Snapshot CheckoutSnapshot (1: VersionReference version_ref)
         throws (1: VersionNotFound ex1)
 }
 
