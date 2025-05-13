@@ -126,15 +126,15 @@ struct VersionedObject {
 
 struct LimitedVersionedObject {
     1: required VersionedObjectInfo info
-    2: optional string name
-    3: optional string description
+    2: required domain.Reference ref
+    3: optional string name
+    4: optional string description
 }
 
 struct VersionedObjectInfo {
     1: required Version version
-    2: required domain.Reference ref
-    3: required base.Timestamp changed_at
-    4: required Author changed_by
+    2: required base.Timestamp changed_at
+    3: required Author changed_by
 }
 
 struct ObjectVersionsResponse {
