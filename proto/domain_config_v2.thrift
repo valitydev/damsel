@@ -176,9 +176,7 @@ struct SearchFullResponse {
 /**
  * Объект не найден в домене
  */
-exception ObjectNotFound {
-    1: optional domain.Reference object_ref
-}
+exception ObjectNotFound {}
 
 /**
  * Неизвестный тип объекта
@@ -265,9 +263,10 @@ service RepositoryClient {
 
     /**
      * Возвращает батч объектов из домена определенной или последней версии
+     * Отсутствие объекта в списке, означает что для данной версии домена объекта по данному Reference нет
      */
     list<VersionedObject> CheckoutObjects (1: VersionReference version_ref, 2: list<domain.Reference> object_refs)
-        throws (1: VersionNotFound ex1, 2: ObjectNotFound ex2)
+        throws (1: VersionNotFound ex1)
 
     /**
      * Возвращает снепшот домена определенной или последней версии
