@@ -2390,22 +2390,14 @@ struct Provider {
     1: required string name
     2: required string description
     3: required Proxy proxy
-    14: required PaymentInstitutionRealm realm
-    7: optional ProviderAccountSet accounts = {}
-    10: optional ProvisionTermSet terms
-    11: optional list<ProviderParameter> params_schema
+    4: required PaymentInstitutionRealm realm
+    5: optional ProviderAccountSet accounts = {}
+    6: optional ProvisionTermSet terms
+    7: optional list<ProviderParameter> params_schema
     // Default behaviour is CascadeWhenNoUI
-    12: optional CascadeBehaviour cascade_behaviour
+    8: optional CascadeBehaviour cascade_behaviour
     /* Настройка переопределения логики доступности маршрута */
-    13: optional RouteFaultDetectorOverrides route_fd_overrides
-
-    // Deprecated
-    5: optional string abs_account
-    6: optional PaymentsProvisionTerms payment_terms
-    8: optional RecurrentPaytoolsProvisionTerms recurrent_paytool_terms
-    9: optional string identity
-    // Reserved
-    // 4
+    9: optional RouteFaultDetectorOverrides route_fd_overrides
 }
 
 struct CashRegisterProviderRef { 1: required ObjectID id }
@@ -2584,19 +2576,19 @@ typedef string MerchantCategoryCode
 struct Terminal {
     1: required string name
     2: required string description
-    9: optional ProxyOptions options
-    10: optional RiskScore risk_coverage
-    13: optional ProviderRef provider_ref
-    14: optional ProvisionTermSet terms
+    3: optional ProxyOptions options
+    4: optional RiskScore risk_coverage
+    5: optional ProviderRef provider_ref
+    6: optional ProvisionTermSet terms
 
     /* Идентификатор терминала во внешней системе провайдера.*/
-    15: optional ExternalTerminalID external_terminal_id
+    7: optional ExternalTerminalID external_terminal_id
     /* Идентификатор мерчанта во внешней системе провайдера.*/
-    16: optional MerchantID external_merchant_id
+    8: optional MerchantID external_merchant_id
     /* Код классификации вида деятельности мерчанта. */
-    17: optional MerchantCategoryCode mcc
+    9: optional MerchantCategoryCode mcc
     /* Настройка переопределения логики доступности маршрута */
-    18: optional RouteFaultDetectorOverrides route_fd_overrides
+    10: optional RouteFaultDetectorOverrides route_fd_overrides
 }
 
 struct ProviderTerminalRef {
