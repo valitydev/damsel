@@ -3215,9 +3215,11 @@ struct PartyConfigRef {
     1: required PartyID id
 }
 
-/* There are 2 requirements on Reference and DomainObject unions:
+/* There are 3 requirements on Reference and DomainObject unions:
  * - all field types must be unique,
- * - all corresponding field names in both unions must match.
+ * - all corresponding field names in both unions must match,
+ * - all types must be accounted in DomainObjectType enum with
+ *   union's field number as according values.
  *
  * Otherwise [dmt_core](https://github.com/valitydev/dmt_core)'s
  * integrity verification mechanism would break.
@@ -3300,6 +3302,84 @@ union DomainObject {
     33: PartyConfigObject party_config
     34: ShopConfigObject shop_config
     35: WalletConfigObject wallet_config
+}
+
+union ReflessDomainObject {
+    1: Category category
+    2: Currency currency
+    3: BusinessSchedule business_schedule
+    4: Calendar calendar
+    5: PaymentMethodDefinition payment_method
+    6: Bank bank
+    7: ContractTemplate contract_template
+    8: TermSetHierarchy term_set_hierarchy
+    9: PaymentInstitution payment_institution
+    10: Provider provider
+    11: Terminal terminal
+    12: Inspector inspector
+    13: SystemAccountSet system_account_set
+    14: ExternalAccountSet external_account_set
+    15: ProxyDefinition proxy
+    16: Globals globals
+    17: CashRegisterProvider cash_register_provider
+    18: RoutingRuleset routing_rules
+    19: BankCardCategory bank_card_category
+    20: Criterion criterion
+    21: DocumentType document_type
+    22: PaymentService payment_service
+    23: PaymentSystem payment_system
+    24: BankCardTokenService payment_token
+    25: MobileOperator mobile_operator
+    26: CryptoCurrency crypto_currency
+    27: Country country
+    28: TradeBloc trade_bloc
+    29: IdentityProvider identity_provider
+    30: limiter_config.LimitConfig limit_config
+    31: Dummy dummy
+    32: DummyLink dummy_link
+
+    33: PartyConfig party_config
+    34: ShopConfig shop_config
+    35: WalletConfig wallet_config
+}
+
+enum DomainObjectType {
+    category = 1
+    currency = 2
+    business_schedule = 3
+    calendar = 4
+    payment_method = 5
+    bank = 6
+    contract_template = 7
+    term_set_hierarchy = 8
+    payment_institution = 9
+    provider = 10
+    terminal = 11
+    inspector = 12
+    system_account_set = 13
+    external_account_set = 14
+    proxy = 15
+    globals = 16
+    cash_register_provider = 17
+    routing_rules = 18
+    bank_card_category = 19
+    criterion = 20
+    document_type = 21
+    payment_service = 22
+    payment_system = 23
+    payment_token = 24
+    mobile_operator = 25
+    crypto_currency = 26
+    country = 27
+    trade_bloc = 28
+    identity_provider = 29
+    limit_config = 30
+    dummy = 31
+    dummy_link = 32
+
+    party_config = 33
+    shop_config = 34
+    wallet_config = 35
 }
 
 /* Domain */
