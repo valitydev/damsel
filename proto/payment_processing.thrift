@@ -1960,12 +1960,9 @@ struct PayoutToolParams {
 
 struct ShopParams {
     1: optional domain.CategoryRef category
-    6: required domain.ShopLocation location
-    2: required domain.ShopDetails details
-    3: required ContractID contract_id
-
-    // Deprecated
-    4: optional domain.PayoutToolID payout_tool_id
+    2: required domain.ShopLocation location
+    3: required domain.ShopDetails details
+    4: required ContractID contract_id
 }
 
 struct ShopAccountParams {
@@ -2490,6 +2487,8 @@ exception AccountNotFound {}
 
 exception ShopAccountNotFound {}
 
+exception WalletAccountNotFound {}
+
 exception PartyMetaNamespaceNotFound {}
 
 exception PaymentInstitutionNotFound {}
@@ -2761,4 +2760,31 @@ service PartyManagement {
             2: PartyNotFound ex2,
             3: PaymentInstitutionNotFound ex3
         )
+}
+
+
+service PartyConfigManagement {
+    domain.TermSet ComputeTerms (
+        1: domain.TermSetHierarchyRef ref,
+        2: domain.DataRevision revision,
+        3: Varset varset
+    )
+        throws ()
+
+    /* Accounts */
+
+    AccountState GetAccountState (1: PartyID party_id, 2: domain.AccountID account_id)
+        throws (1: PartyNotFound ex1, 2: AccountNotFound ex2)
+
+    list<domain.ShopAccount> GetShopAccounts (1: PartyID party_id, 2: ShopID shop_id)
+        throws (1: PartyNotFound ex1, 2: ShopNotFound ex2)
+
+    domain.ShopAccount GetShopAccount (1: PartyID party_id, 2: ShopID shop_id, 3: domain.CurrencyRef currency)
+        throws (1: PartyNotFound ex1, 2: ShopNotFound ex2, 3: ShopAccountNotFound ex3)
+
+    list<domain.WalletAccount> GetWalletAccounts (1: PartyID party_id, 2: WalletID wallet_id)
+        throws (1: PartyNotFound ex1, 2: WalletNotFound ex2)
+
+    domain.WalletAccount GetWalletAccount (1: PartyID party_id, 2: WalletID wallet_id, 3: domain.CurrencyRef currency)
+        throws (1: PartyNotFound ex1, 2: WalletNotFound ex2, 3: WalletAccountNotFound ex3)
 }

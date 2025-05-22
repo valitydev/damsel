@@ -2390,22 +2390,14 @@ struct Provider {
     1: required string name
     2: required string description
     3: required Proxy proxy
-    9: optional string identity
-    7: optional ProviderAccountSet accounts = {}
-    10: optional ProvisionTermSet terms
-    11: optional list<ProviderParameter> params_schema
+    4: required PaymentInstitutionRealm realm
+    5: optional ProviderAccountSet accounts = {}
+    6: optional ProvisionTermSet terms
+    7: optional list<ProviderParameter> params_schema
     // Default behaviour is CascadeWhenNoUI
-    12: optional CascadeBehaviour cascade_behaviour
+    8: optional CascadeBehaviour cascade_behaviour
     /* Настройка переопределения логики доступности маршрута */
-    13: optional RouteFaultDetectorOverrides route_fd_overrides
-
-    // Deprecated
-    5: optional string abs_account
-    6: optional PaymentsProvisionTerms payment_terms
-    8: optional RecurrentPaytoolsProvisionTerms recurrent_paytool_terms
-
-    // Reserved
-    // 4
+    9: optional RouteFaultDetectorOverrides route_fd_overrides
 }
 
 struct CashRegisterProviderRef { 1: required ObjectID id }
@@ -2584,19 +2576,19 @@ typedef string MerchantCategoryCode
 struct Terminal {
     1: required string name
     2: required string description
-    9: optional ProxyOptions options
-    10: optional RiskScore risk_coverage
-    13: optional ProviderRef provider_ref
-    14: optional ProvisionTermSet terms
+    3: optional ProxyOptions options
+    4: optional RiskScore risk_coverage
+    5: optional ProviderRef provider_ref
+    6: optional ProvisionTermSet terms
 
     /* Идентификатор терминала во внешней системе провайдера.*/
-    15: optional ExternalTerminalID external_terminal_id
+    7: optional ExternalTerminalID external_terminal_id
     /* Идентификатор мерчанта во внешней системе провайдера.*/
-    16: optional MerchantID external_merchant_id
+    8: optional MerchantID external_merchant_id
     /* Код классификации вида деятельности мерчанта. */
-    17: optional MerchantCategoryCode mcc
+    9: optional MerchantCategoryCode mcc
     /* Настройка переопределения логики доступности маршрута */
-    18: optional RouteFaultDetectorOverrides route_fd_overrides
+    10: optional RouteFaultDetectorOverrides route_fd_overrides
 }
 
 struct ProviderTerminalRef {
@@ -3123,6 +3115,98 @@ struct LimitConfigRef {
     1: required LimitConfigID id
 }
 
+typedef base.ID ShopConfigID
+typedef base.ID WalletConfigID
+typedef i64 ShopConfigRevision
+typedef i64 WalletConfigRevision
+
+struct Details {
+    1: required string name
+    2: optional string description
+}
+
+struct ShopCurrencyConfig {
+    1: required CurrencyRef currency
+    2: required AccountID settlement
+    3: required AccountID guarantee
+    4: optional TermSetHierarchyRef terms
+}
+
+/** Магазин мерчанта. */
+struct ShopConfig {
+    1: required ShopConfigID id
+    2: required base.Timestamp created_at
+    3: required Blocking blocking
+    4: required Suspension suspension
+    5: required Details details
+    6: required ShopLocation location
+    7: required CategoryRef category
+    8: optional map<CurrencyRef, ShopCurrencyConfig> currency_configs
+    9: optional set<TurnoverLimit> turnover_limits
+    10: required PaymentInstitutionRef payment_institution
+    11: optional TermSetHierarchyRef terms
+    12: required PartyID party_id
+}
+
+struct ShopConfigObject {
+    1: required ShopConfigRef ref
+    2: required ShopConfig data
+}
+
+struct ShopConfigRef {
+    1: required ShopConfigID id
+}
+
+struct WalletCurrencyConfig {
+    1: required CurrencyRef currency
+    2: required AccountID settlement
+    3: optional TermSetHierarchyRef terms
+}
+
+struct WalletConfig {
+    1: required WalletConfigID id
+    2: optional string name
+    3: required base.Timestamp created_at
+    4: required Blocking blocking
+    5: required Suspension suspension
+    6: required PaymentInstitutionRef payment_institution
+    7: optional TermSetHierarchyRef terms
+    8: optional map<CurrencyRef, WalletCurrencyConfig> currency_configs
+    9: optional Details details
+    10: required PartyID party_id
+}
+
+struct WalletConfigObject {
+    1: required WalletConfigRef ref
+    2: required WalletConfig data
+}
+
+struct WalletConfigRef {
+    1: required WalletConfigID id
+}
+
+/** Участник. */
+struct PartyConfig {
+    1: required PartyID id
+    2: required Blocking blocking
+    3: required Suspension suspension
+    4: required list<ShopConfigRef> shops
+    5: required list<WalletConfigRef> wallets
+    7: required PartyContactInfo contact_info
+    8: required base.Timestamp created_at
+    9: optional string party_name
+    10: optional string comment
+}
+
+struct PartyConfigObject {
+    1: required PartyConfigRef ref
+    2: required PartyConfig data
+}
+
+struct PartyConfigRef {
+    1: required PartyID id
+}
+
 /* There are 3 requirements on Reference and DomainObject unions:
  * - all field types must be unique,
  * - all corresponding field names in both unions must match,
@@ -3135,212 +3219,159 @@ struct LimitConfigRef {
 
 union Reference {
 
-    1  : CategoryRef                category
-    2  : CurrencyRef                currency
-    19 : BusinessScheduleRef        business_schedule
-    20 : CalendarRef                calendar
-    3  : PaymentMethodRef           payment_method
-    5  : BankRef                    bank
-    6  : ContractTemplateRef        contract_template
-    17 : TermSetHierarchyRef        term_set_hierarchy
-    18 : PaymentInstitutionRef      payment_institution
-    7  : ProviderRef                provider
-    8  : TerminalRef                terminal
-    15 : InspectorRef               inspector
-    14 : SystemAccountSetRef        system_account_set
-    16 : ExternalAccountSetRef      external_account_set
-    9  : ProxyRef                   proxy
-    11 : GlobalsRef                 globals
-    23 : CashRegisterProviderRef    cash_register_provider
-    26 : RoutingRulesetRef          routing_rules
-    28 : BankCardCategoryRef        bank_card_category
-    29 : CriterionRef               criterion
-    32 : DocumentTypeRef            document_type
-    33 : PaymentServiceRef          payment_service
-    34 : PaymentSystemRef           payment_system
-    35 : BankCardTokenServiceRef    payment_token
-    36 : MobileOperatorRef          mobile_operator
+    1: CategoryRef category
+    2: CurrencyRef currency
+    3: BusinessScheduleRef business_schedule
+    4: CalendarRef calendar
+    5: PaymentMethodRef payment_method
+    6: BankRef bank
+    7: ContractTemplateRef contract_template
+    8: TermSetHierarchyRef term_set_hierarchy
+    9: PaymentInstitutionRef payment_institution
+    10: ProviderRef provider
+    11: TerminalRef terminal
+    12: InspectorRef inspector
+    13: SystemAccountSetRef system_account_set
+    14: ExternalAccountSetRef external_account_set
+    15: ProxyRef proxy
+    16: GlobalsRef globals
+    17: CashRegisterProviderRef cash_register_provider
+    18: RoutingRulesetRef routing_rules
+    19: BankCardCategoryRef bank_card_category
+    20: CriterionRef criterion
+    21: DocumentTypeRef document_type
+    22: PaymentServiceRef payment_service
+    23: PaymentSystemRef payment_system
+    24: BankCardTokenServiceRef payment_token
+    25: MobileOperatorRef mobile_operator
+    26: CryptoCurrencyRef crypto_currency
+    27: CountryRef country
+    28: TradeBlocRef trade_bloc
+    29: IdentityProviderRef identity_provider
+    30: LimitConfigRef limit_config
+    31: DummyRef dummy
+    32: DummyLinkRef dummy_link
 
-    42 : CryptoCurrencyRef          crypto_currency
-    44 : CountryRef                 country
-    45 : TradeBlocRef               trade_bloc
-    46 : IdentityProviderRef        identity_provider
-    47 : LimitConfigRef             limit_config
-
-    12 : DummyRef                   dummy
-    13 : DummyLinkRef               dummy_link
-
-    // Deprecated
-    21 : PayoutMethodRef            payout_method
-
-    // Reserved
-    // 10
-    // 22
-    // 27
-    // 24
-    // 25
-    // 37
-    // 38
-    // 39
-    // 40
-    // 41
-    // 43
+    33: PartyConfigRef party_config
+    34: ShopConfigRef shop_config
+    35: WalletConfigRef wallet_config
 }
 
 union DomainObject {
+    1: CategoryObject category
+    2: CurrencyObject currency
+    3: BusinessScheduleObject business_schedule
+    4: CalendarObject calendar
+    5: PaymentMethodObject payment_method
+    6: BankObject bank
+    7: ContractTemplateObject contract_template
+    8: TermSetHierarchyObject term_set_hierarchy
+    9: PaymentInstitutionObject payment_institution
+    10: ProviderObject provider
+    11: TerminalObject terminal
+    12: InspectorObject inspector
+    13: SystemAccountSetObject system_account_set
+    14: ExternalAccountSetObject external_account_set
+    15: ProxyObject proxy
+    16: GlobalsObject globals
+    17: CashRegisterProviderObject cash_register_provider
+    18: RoutingRulesObject routing_rules
+    19: BankCardCategoryObject bank_card_category
+    20: CriterionObject criterion
+    21: DocumentTypeObject document_type
+    22: PaymentServiceObject payment_service
+    23: PaymentSystemObject payment_system
+    24: BankCardTokenServiceObject payment_token
+    25: MobileOperatorObject mobile_operator
+    26: CryptoCurrencyObject crypto_currency
+    27: CountryObject country
+    28: TradeBlocObject trade_bloc
+    29: IdentityProviderObject identity_provider
+    30: LimitConfigObject limit_config
+    31: DummyObject dummy
+    32: DummyLinkObject dummy_link
 
-    1  : CategoryObject             category
-    2  : CurrencyObject             currency
-    19 : BusinessScheduleObject     business_schedule
-    20 : CalendarObject             calendar
-    3  : PaymentMethodObject        payment_method
-    5  : BankObject                 bank
-    6  : ContractTemplateObject     contract_template
-    17 : TermSetHierarchyObject     term_set_hierarchy
-    18 : PaymentInstitutionObject   payment_institution
-    7  : ProviderObject             provider
-    8  : TerminalObject             terminal
-    15 : InspectorObject            inspector
-    14 : SystemAccountSetObject     system_account_set
-    16 : ExternalAccountSetObject   external_account_set
-    9  : ProxyObject                proxy
-    11 : GlobalsObject              globals
-    23 : CashRegisterProviderObject cash_register_provider
-    26 : RoutingRulesObject         routing_rules
-    28 : BankCardCategoryObject     bank_card_category
-    29 : CriterionObject            criterion
-    32 : DocumentTypeObject         document_type
-    33 : PaymentServiceObject       payment_service
-    34 : PaymentSystemObject        payment_system
-    35 : BankCardTokenServiceObject payment_token
-    36 : MobileOperatorObject       mobile_operator
-
-    42 : CryptoCurrencyObject       crypto_currency
-    44 : CountryObject              country
-    45 : TradeBlocObject            trade_bloc
-    46 : IdentityProviderObject     identity_provider
-    47 : LimitConfigObject          limit_config
-
-    12 : DummyObject                dummy
-    13 : DummyLinkObject            dummy_link
-
-    // Deprecated
-    21 : PayoutMethodObject         payout_method
-
-    // Reserved
-    // 10
-    // 22
-    // 27
-    // 24
-    // 25
-    // 37
-    // 38
-    // 39
-    // 40
-    // 41
-    // 43
+    33: PartyConfigObject party_config
+    34: ShopConfigObject shop_config
+    35: WalletConfigObject wallet_config
 }
 
 union ReflessDomainObject {
-    1  : Category                   category
-    2  : Currency                   currency
-    19 : BusinessSchedule           business_schedule
-    20 : Calendar                   calendar
-    3  : PaymentMethodDefinition    payment_method
-    21 : PayoutMethodDefinition     payout_method
-    5  : Bank                       bank
-    6  : ContractTemplate           contract_template
-    17 : TermSetHierarchy           term_set_hierarchy
-    18 : PaymentInstitution         payment_institution
-    7  : Provider                   provider
-    8  : Terminal                   terminal
-    15 : Inspector                  inspector
-    14 : SystemAccountSet           system_account_set
-    16 : ExternalAccountSet         external_account_set
-    9  : ProxyDefinition            proxy
-    11 : Globals                    globals
-    23 : CashRegisterProvider       cash_register_provider
-    26 : RoutingRuleset             routing_rules
-    28 : BankCardCategory           bank_card_category
-    29 : Criterion                  criterion
-    32 : DocumentType               document_type
-    33 : PaymentService             payment_service
-    34 : PaymentSystem              payment_system
-    35 : BankCardTokenService       payment_token
-    36 : MobileOperator             mobile_operator
+    1: Category category
+    2: Currency currency
+    3: BusinessSchedule business_schedule
+    4: Calendar calendar
+    5: PaymentMethodDefinition payment_method
+    6: Bank bank
+    7: ContractTemplate contract_template
+    8: TermSetHierarchy term_set_hierarchy
+    9: PaymentInstitution payment_institution
+    10: Provider provider
+    11: Terminal terminal
+    12: Inspector inspector
+    13: SystemAccountSet system_account_set
+    14: ExternalAccountSet external_account_set
+    15: ProxyDefinition proxy
+    16: Globals globals
+    17: CashRegisterProvider cash_register_provider
+    18: RoutingRuleset routing_rules
+    19: BankCardCategory bank_card_category
+    20: Criterion criterion
+    21: DocumentType document_type
+    22: PaymentService payment_service
+    23: PaymentSystem payment_system
+    24: BankCardTokenService payment_token
+    25: MobileOperator mobile_operator
+    26: CryptoCurrency crypto_currency
+    27: Country country
+    28: TradeBloc trade_bloc
+    29: IdentityProvider identity_provider
+    30: limiter_config.LimitConfig limit_config
+    31: Dummy dummy
+    32: DummyLink dummy_link
 
-    42 : CryptoCurrency             crypto_currency
-    44 : Country                    country
-    45 : TradeBloc                  trade_bloc
-    46 : IdentityProvider           identity_provider
-    47 : limiter_config.LimitConfig limit_config
-
-    12 : Dummy                      dummy
-    13 : DummyLink                  dummy_link
-
-    // Reserved
-    // 10
-    // 22
-    // 27
-    // 24
-    // 25
-    // 37
-    // 38
-    // 39
-    // 40
-    // 41
-    // 43
+    33: PartyConfig party_config
+    34: ShopConfig shop_config
+    35: WalletConfig wallet_config
 }
 
 enum DomainObjectType {
-    category               = 1
-    currency               = 2
-    business_schedule      = 19
-    calendar               = 20
-    payment_method         = 3
-    payout_method          = 21
-    bank                   = 5
-    contract_template      = 6
-    term_set_hierarchy     = 17
-    payment_institution    = 18
-    provider               = 7
-    terminal               = 8
-    inspector              = 15
-    system_account_set     = 14
-    external_account_set   = 16
-    proxy                  = 9
-    globals                = 11
-    cash_register_provider = 23
-    routing_rules          = 26
-    bank_card_category     = 28
-    criterion              = 29
-    document_type          = 32
-    payment_service        = 33
-    payment_system         = 34
-    payment_token          = 35
-    mobile_operator        = 36
+    category = 1
+    currency = 2
+    business_schedule = 3
+    calendar = 4
+    payment_method = 5
+    bank = 6
+    contract_template = 7
+    term_set_hierarchy = 8
+    payment_institution = 9
+    provider = 10
+    terminal = 11
+    inspector = 12
+    system_account_set = 13
+    external_account_set = 14
+    proxy = 15
+    globals = 16
+    cash_register_provider = 17
+    routing_rules = 18
+    bank_card_category = 19
+    criterion = 20
+    document_type = 21
+    payment_service = 22
+    payment_system = 23
+    payment_token = 24
+    mobile_operator = 25
+    crypto_currency = 26
+    country = 27
+    trade_bloc = 28
+    identity_provider = 29
+    limit_config = 30
+    dummy = 31
+    dummy_link = 32
 
-    crypto_currency        = 42
-    country                = 44
-    trade_bloc             = 45
-    identity_provider      = 46
-    limit_config           = 47
-
-    dummy                  = 12
-    dummy_link             = 13
-
-    // Reserved
-    // 10
-    // 22
-    // 27
-    // 24
-    // 25
-    // 37
-    // 38
-    // 39
-    // 40
-    // 41
-    // 43
+    party_config = 33
+    shop_config = 34
+    wallet_config = 35
 }
 
 /* Domain */
