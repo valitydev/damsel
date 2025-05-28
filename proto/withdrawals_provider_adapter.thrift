@@ -97,14 +97,13 @@ struct Withdrawal {
     2: required Cash body
     3: required Destination destination
     8: optional domain.PaymentService payment_service
-    4: optional Identity sender
-    5: optional Identity receiver
+    4: optional domain.PartyID sender
+    5: optional domain.PartyID receiver
     6: optional Quote quote
     9: optional withdrawals_domain.AuthData auth_data
 }
 
 typedef withdrawals_domain.Destination Destination
-typedef withdrawals_domain.Identity    Identity
 
 struct Cash {
     1: required domain.Amount   amount
