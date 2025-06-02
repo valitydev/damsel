@@ -1076,7 +1076,6 @@ service Invoicing {
 
     domain.TermSet ComputeTerms (
         2: domain.InvoiceID id
-        3: PartyRevisionParam party_revision_param
     )
         throws (
             2: InvoiceNotFound ex2
