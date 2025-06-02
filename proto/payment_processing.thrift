@@ -1503,14 +1503,11 @@ service InvoiceTemplating {
     /* Terms */
 
     domain.TermSet ComputeTerms (
-        2: domain.InvoiceTemplateID id,
-        3: base.Timestamp timestamp,
-        4: PartyRevisionParam party_revision_param
+        2: domain.InvoiceTemplateID id
     )
         throws (
             2: InvoiceTemplateNotFound ex2,
-            3: InvoiceTemplateRemoved ex3,
-            4: PartyNotExistsYet ex4
+            3: InvoiceTemplateRemoved ex3
         )
 }
 
