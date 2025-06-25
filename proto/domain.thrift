@@ -1314,39 +1314,6 @@ struct W2WServiceTerms {
     5: optional FeeSelector fees
 }
 
-/*
- * Payout methods
- *
- * NOTE Deprecated. Payout objects and relevant refs and data structs
- * are scheduled for removal in future versions of protocol.
- */
-
-enum PayoutMethod {
-    russian_bank_account
-    international_bank_account
-    wallet_info
-    payment_institution_account
-}
-
-// Deprecated
-struct PayoutMethodRef { 1: required PayoutMethod id }
-
-/** Способ вывода, категория средства вывода. */
-struct PayoutMethodDefinition {
-    1: required string name
-    2: required string description
-}
-
-union PayoutMethodSelector {
-    1: list<PayoutMethodDecision> decisions
-    2: set<PayoutMethodRef> value
-}
-
-struct PayoutMethodDecision {
-    1: required Predicate if_
-    2: required PayoutMethodSelector then_
-}
-
 /* Reports service terms */
 struct ReportsServiceTerms {
     1: optional ServiceAcceptanceActsTerms acts
@@ -2943,12 +2910,6 @@ struct CalendarObject {
 struct PaymentMethodObject {
     1: required PaymentMethodRef ref
     2: required PaymentMethodDefinition data
-}
-
-// Deprecated
-struct PayoutMethodObject {
-    1: required PayoutMethodRef ref
-    2: required PayoutMethodDefinition data
 }
 
 struct BankObject {
