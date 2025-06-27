@@ -33,6 +33,6 @@
     }
   },
   "devDependencies": {
-    "@vality/thrift-codegen": "2.3.2"
+    "@vality/thrift-codegen": "3.0.0"
   }
 }
