@@ -28,29 +28,10 @@ struct WebhookParams {
 }
 
 union EventFilter {
-    1: PartyEventFilter party
     2: InvoiceEventFilter invoice
     3: CustomerEventFilter customer
     4: WalletEventFilter wallet
 }
-
-struct PartyEventFilter {
-    1: required set<PartyEventType> types
-}
-
-union PartyEventType {
-    1: ClaimEventType claim
-}
-
-union ClaimEventType {
-    1: ClaimCreated created
-    2: ClaimDenied denied
-    3: ClaimAccepted accepted
-}
-
-struct ClaimCreated {}
-struct ClaimDenied {}
-struct ClaimAccepted {}
 
 struct InvoiceEventFilter {
     1: required set<InvoiceEventType> types

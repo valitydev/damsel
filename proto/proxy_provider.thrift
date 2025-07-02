@@ -203,8 +203,9 @@ struct PaymentInfo {
 struct Shop {
     1: required domain.ShopID       id
     2: required domain.Category     category
-    3: required domain.ShopDetails  details
-    4: required domain.ShopLocation location
+    3: required string              name
+    4: optional string              description
+    5: required domain.ShopLocation location
 }
 
 struct Invoice {
