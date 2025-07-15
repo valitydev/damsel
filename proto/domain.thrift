@@ -789,8 +789,7 @@ struct Party {
     6: required Blocking blocking
     7: required Suspension suspension
     8: required map<ShopID, Shop> shops
-    9: required map<WalletID, Wallet> wallets
-    10: required DataRevision revision
+    9: required DataRevision revision
 }
 
 /** Статусы участника **/
@@ -834,24 +833,6 @@ struct ShopAccount {
 
 union ShopLocation {
     1: string url
-}
-
-/** RBKM Wallets **/
-
-typedef base.ID WalletID
-
-struct Wallet {
-    1: required WalletID id
-    2: optional string name
-    3: required base.Timestamp created_at
-    4: required Blocking blocking
-    5: required Suspension suspension
-    7: optional WalletAccount account
-}
-
-struct WalletAccount {
-    1: required CurrencyRef currency
-    2: required AccountID settlement
 }
 
 /* Инспекция платежа */
@@ -923,10 +904,6 @@ struct InternationalBankDetails {
     // sources
     5: optional string    aba_rtn     // ABA Routing Transit Number
 
-}
-
-struct WalletInfo {
-    1: required WalletID wallet_id
 }
 
 /* Categories */
@@ -1051,7 +1028,6 @@ struct WalletServiceTerms {
     2: optional CashLimitSelector wallet_limit
     3: optional TurnoverLimitSelector turnover_limit
     4: optional WithdrawalServiceTerms withdrawals
-    6: optional W2WServiceTerms w2w
 }
 
 /** Withdrawal service terms **/
@@ -1063,16 +1039,6 @@ struct WithdrawalServiceTerms {
     3: optional CashFlowSelector cash_flow
     4: optional AttemptLimitSelector attempt_limit
     5: optional PaymentMethodSelector methods
-}
-
-/** W2W service terms **/
-
-struct W2WServiceTerms {
-    1: optional Predicate allow
-    2: optional CurrencySelector currencies
-    3: optional CashLimitSelector cash_limit
-    4: optional CashFlowSelector cash_flow
-    5: optional FeeSelector fees
 }
 
 /* Reports service terms */
@@ -1528,8 +1494,6 @@ struct BankCardTokenService {
   1: required string name
   2: optional string description
 }
-
-typedef base.ID RecurrentPaymentToolID
 
 union PaymentTool {
     1: GenericPaymentTool generic
@@ -2423,6 +2387,8 @@ struct PartyCondition {
     2: optional PartyConditionDefinition definition
 }
 
+typedef base.ID WalletID
+
 union PartyConditionDefinition {
     1: ShopID shop_is
     2: WalletID wallet_is
@@ -2769,21 +2735,6 @@ struct LimitConfigRef {
 }
 
 typedef base.ID ShopConfigID
-typedef base.ID WalletConfigID
-typedef i64 ShopConfigRevision
-typedef i64 WalletConfigRevision
-
-struct Details {
-    1: required string name
-    2: optional string description
-}
-
-struct ShopCurrencyConfig {
-    1: required CurrencyRef currency
-    2: required AccountID settlement
-    3: required AccountID guarantee
-    4: optional TermSetHierarchyRef terms
-}
 
 /** Магазин мерчанта. */
 struct ShopConfig {
@@ -2793,7 +2744,7 @@ struct ShopConfig {
     4: required Suspension suspension
     5: required PaymentInstitutionRef payment_institution
     6: optional TermSetHierarchyRef terms
-    7: required map<CurrencyRef, ShopCurrencyConfig> currency_configs
+    7: required ShopAccount account
     8: required PartyID party_id
 
     9: required ShopLocation location
@@ -2810,10 +2761,11 @@ struct ShopConfigRef {
     1: required ShopConfigID id
 }
 
-struct WalletCurrencyConfig {
+typedef base.ID WalletConfigID
+
+struct WalletAccount {
     1: required CurrencyRef currency
     2: required AccountID settlement
-    3: optional TermSetHierarchyRef terms
 }
 
 struct WalletConfig {
@@ -2823,7 +2775,7 @@ struct WalletConfig {
     4: required Suspension suspension
     5: required PaymentInstitutionRef payment_institution
     6: optional TermSetHierarchyRef terms
-    7: required map<CurrencyRef, WalletCurrencyConfig> currency_configs
+    7: required WalletAccount account
     9: required PartyID party_id
 }
 

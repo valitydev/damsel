@@ -127,68 +127,6 @@ struct SuspendIntent {
     4: optional timeout_behaviour.TimeoutBehaviour timeout_behaviour
 }
 
-struct RecurrentPaymentTool {
-    1: required base.ID                          id
-    2: required base.Timestamp                   created_at
-    3: required domain.DisposablePaymentResource payment_resource
-    4: required Cash                             minimal_payment_cost
-}
-
-/**
- * Данные, необходимые для генерации многоразового токена
- */
-struct RecurrentTokenInfo {
-    1: required RecurrentPaymentTool   payment_tool
-    2: optional domain.TransactionInfo trx
-    3: required Shop                   shop
-}
-
-/**
- * Данные сессии взаимодействия с адаптером в рамках генерации многоразового токена.
- */
-struct RecurrentTokenSession {
-    1: optional ProxyState state
-}
-
-/**
- * Набор данных для взаимодействия с адаптером в рамках проведения генерации многоразового токена.
- */
-struct RecurrentTokenContext {
-    1: required RecurrentTokenSession session
-    2: required RecurrentTokenInfo    token_info
-    3: optional domain.ProxyOptions   options = {}
-}
-
-struct RecurrentTokenProxyResult {
-    1: required RecurrentTokenIntent   intent
-    2: optional ProxyState             next_state
-    4: optional domain.TransactionInfo trx
-}
-
-union RecurrentTokenIntent {
-    1: RecurrentTokenFinishIntent finish
-    2: SleepIntent                sleep
-    3: SuspendIntent              suspend
-}
-
-struct RecurrentTokenFinishIntent {
-    1: required RecurrentTokenFinishStatus status
-}
-
-union RecurrentTokenFinishStatus {
-    1: RecurrentTokenSuccess success
-    2: domain.Failure        failure
-}
-
-struct RecurrentTokenSuccess {
-    1: required domain.Token token
-}
-
-struct RecurrentTokenCallbackResult {
-    1: required CallbackResponse          response
-    2: required RecurrentTokenProxyResult result
-}
-
 /**
  * Данные платежа, необходимые для обращения к провайдеру.
  */
@@ -218,12 +156,6 @@ struct Invoice {
 
 union PaymentResource {
     1: domain.DisposablePaymentResource disposable_payment_resource
-    2: RecurrentPaymentResource         recurrent_payment_resource
-}
-
-struct RecurrentPaymentResource {
-    1: required domain.PaymentTool      payment_tool
-    2: required domain.Token            rec_token
 }
 
 struct InvoicePayment {
@@ -325,23 +257,6 @@ struct PaymentCallbackProxyResult {
 }
 
 service ProviderProxy {
-
-    /**
-     * Запрос к адаптеру на создание многоразового токена.
-     */
-    RecurrentTokenProxyResult GenerateToken (
-        1: RecurrentTokenContext context
-    )
-
-    /**
-     * Запрос к адаптеру на обработку обратного вызова от провайдера в рамках сессии получения
-     * многоразового токена.
-     */
-    RecurrentTokenCallbackResult HandleRecurrentTokenCallback (
-        1: Callback              callback
-        2: RecurrentTokenContext context
-    )
-
     /**
      * Запрос к адаптеру на проведение взаимодействия с провайдером в рамках платежной сессии.
      */
@@ -381,13 +296,6 @@ service ProviderProxyHost {
      * Запрос к процессингу на обработку callback от провайдера в рамках взаимодействия по платежу.
      */
     CallbackResponse ProcessPaymentCallback (1: CallbackTag tag, 2: Callback callback)
-        throws (1: base.InvalidRequest ex1)
-
-    /**
-     * Запрос к процессингу на обработку callback от провайдера в рамках взаимодействия по
-     * получению многоразового токена.
-     */
-    CallbackResponse ProcessRecurrentTokenCallback (1: CallbackTag tag, 2: Callback callback)
         throws (1: base.InvalidRequest ex1)
 
     /**
