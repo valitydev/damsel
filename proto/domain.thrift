@@ -491,21 +491,12 @@ union TargetInvoicePaymentStatus {
 
 union Payer {
     1: PaymentResourcePayer payment_resource
-    2: CustomerPayer        customer
-    3: RecurrentPayer       recurrent
+    2: RecurrentPayer       recurrent
 }
 
 struct PaymentResourcePayer {
     1: required DisposablePaymentResource resource
     2: required ContactInfo               contact_info
-}
-
-struct CustomerPayer {
-    1: required CustomerID             customer_id
-    2: required CustomerBindingID      customer_binding_id
-    3: required RecurrentPaymentToolID rec_payment_tool_id
-    4: required PaymentTool            payment_tool
-    5: required ContactInfo            contact_info
 }
 
 struct RecurrentPayer {
@@ -1538,9 +1529,6 @@ struct BankCardTokenService {
   2: optional string description
 }
 
-
-typedef base.ID CustomerID
-typedef base.ID CustomerBindingID
 typedef base.ID RecurrentPaymentToolID
 
 union PaymentTool {

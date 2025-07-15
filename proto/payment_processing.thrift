@@ -73,12 +73,8 @@ struct Event {
 union EventSource {
     /** Идентификатор инвойса, который породил событие. */
     1: domain.InvoiceID         invoice_id
-    /** Идентификатор участника, который породил событие. */
-    2: domain.PartyID           party_id
     /** Идентификатор шаблона инвойса, который породил событие. */
-    3: domain.InvoiceTemplateID invoice_template_id
-    /** Идентификатор плательщика, который породил событие. */
-    4: domain.CustomerID        customer_id
+    2: domain.InvoiceTemplateID invoice_template_id
 }
 
 /**
@@ -88,9 +84,7 @@ union EventPayload {
     /** Набор изменений, порождённых инвойсом. */
     1: list<InvoiceChange>          invoice_changes
     /** Набор изменений, порождённых шаблоном инвойса. */
-    3: list<InvoiceTemplateChange>  invoice_template_changes
-    /** Некоторое событие, порождённое плательщиком. */
-    4: list<CustomerChange>         customer_changes
+    2: list<InvoiceTemplateChange>  invoice_template_changes
 }
 
 /**
@@ -580,17 +574,12 @@ struct RegisterInvoicePaymentParams {
 
 union PayerParams {
     1: PaymentResourcePayerParams payment_resource
-    2: CustomerPayerParams        customer
-    3: RecurrentPayerParams       recurrent
+    2: RecurrentPayerParams recurrent
 }
 
 struct PaymentResourcePayerParams {
     1: required domain.DisposablePaymentResource resource
     2: required domain.ContactInfo               contact_info
-}
-
-struct CustomerPayerParams {
-    1: required domain.CustomerID customer_id
 }
 
 struct RecurrentPayerParams{
@@ -1496,222 +1485,7 @@ service InvoiceTemplating {
         )
 }
 
-/* Customer management service definitions */
-
-/* Customers */
-
-typedef domain.CustomerID CustomerID
 typedef domain.Metadata   Metadata
-
-struct CustomerParams {
-    5: required CustomerID         customer_id
-    1: required PartyID            party_id
-    2: required ShopID             shop_id
-    3: required domain.ContactInfo contact_info
-    4: required Metadata           metadata
-}
-
-struct Customer {
-    1: required CustomerID            id
-    2: required PartyID               owner_id
-    3: required ShopID                shop_id
-    4: required CustomerStatus        status
-    5: required base.Timestamp        created_at
-    6: required list<CustomerBinding> bindings
-    7: required domain.ContactInfo    contact_info
-    8: required Metadata              metadata
-    9: optional CustomerBindingID     active_binding_id
-}
-
-/**
- * Статусы плательщика
- *
- * Статус отражает возможость проводить платежи с помощью данного плательщика,
- * то есть существует ли (и она сейчас активна) у него привязка, завершившаяся успешно
- */
-union CustomerStatus {
-    1: CustomerUnready unready
-    2: CustomerReady   ready
-}
-
-struct CustomerUnready {}
-struct CustomerReady   {}
-
-// События
-union CustomerChange {
-    1: CustomerCreated        customer_created
-    2: CustomerDeleted        customer_deleted
-    3: CustomerStatusChanged  customer_status_changed
-    4: CustomerBindingChanged customer_binding_changed
-}
-
-/**
- * Событие о создании нового плательщика.
- */
-struct CustomerCreated {
-    2: required CustomerID         customer_id
-    3: required PartyID            owner_id
-    4: required ShopID             shop_id
-    5: required Metadata           metadata
-    6: required domain.ContactInfo contact_info
-    7: required base.Timestamp     created_at
-}
-
-/**
- * Событие об удалении плательщика.
- */
-struct CustomerDeleted {}
-
-/**
- * Событие об изменении статуса плательщика.
- */
-struct CustomerStatusChanged {
-    1: required CustomerStatus status
-}
-
-/**
- * Событие, касающееся определённой привязки плательщика.
- */
-struct CustomerBindingChanged {
-    1: required CustomerBindingID            id
-    2: required CustomerBindingChangePayload payload
-}
-
-
-/* Bindings */
-
-typedef domain.CustomerBindingID CustomerBindingID
-typedef domain.DisposablePaymentResource DisposablePaymentResource
-
-struct CustomerBindingParams {
-    3: required CustomerBindingID         customer_binding_id
-    2: required RecurrentPaymentToolID    rec_payment_tool_id
-    1: required DisposablePaymentResource payment_resource
-}
-
-struct CustomerBinding {
-    1: required CustomerBindingID         id
-    2: required RecurrentPaymentToolID    rec_payment_tool_id
-    3: required DisposablePaymentResource payment_resource
-    4: required CustomerBindingStatus     status
-    5: optional PartyRevision             party_revision
-    6: optional domain.DataRevision       domain_revision
-}
-
-// Statuses
-union CustomerBindingStatus {
-    1: CustomerBindingPending   pending
-    2: CustomerBindingSucceeded succeeded
-    3: CustomerBindingFailed    failed
-}
-
-/**
- * Привязка находится в процессе обработки
- */
-struct CustomerBindingPending   {}
-
-/**
- * Привязка завершилась успешно
- */
-struct CustomerBindingSucceeded {}
-
-/**
- * Привязка завершилась неудачно
- */
-struct CustomerBindingFailed    { 1: required domain.OperationFailure failure }
-
-// Events
-union CustomerBindingChangePayload {
-    1: CustomerBindingStarted started
-    2: CustomerBindingStatusChanged status_changed
-    3: CustomerBindingInteractionChanged interaction_changed
-}
-
-/**
- * Событие о старте процесса привязки
- */
-struct CustomerBindingStarted {
-    1: required CustomerBinding binding
-    2: optional base.Timestamp  timestamp
-}
-
-/**
- * Событие об изменении статуса привязки
- */
-struct CustomerBindingStatusChanged {
-    1: required CustomerBindingStatus status
-}
-
-struct CustomerBindingInteractionChanged {
-    1: required user_interaction.UserInteraction interaction
-    /**
-     * Статус взаимодействия.
-     * Если не указан, статус считается по умолчанию _requested_.
-     */
-    2: optional user_interaction.Status status
-}
-
-// Exceptions
-exception InvalidCustomerStatus {
-    1: required CustomerStatus status
-}
-exception CustomerNotFound   {}
-exception InvalidPaymentTool {}
-
-// Service
-
-service CustomerManagement {
-
-    Customer Create (1: CustomerParams params)
-        throws (
-            2: InvalidPartyStatus    invalid_party_status
-            3: InvalidShopStatus     invalid_shop_status
-            4: ShopNotFound          shop_not_found
-            5: PartyNotFound         party_not_found
-            6: OperationNotPermitted operation_not_permitted
-        )
-
-    Customer Get (1: CustomerID id, 2: EventRange range)
-        throws (
-            2: CustomerNotFound not_found
-        )
-
-    void Delete (1: CustomerID id)
-        throws (
-            2: CustomerNotFound      not_found
-            3: InvalidPartyStatus    invalid_party_status
-            4: InvalidShopStatus     invalid_shop_status
-        )
-
-    CustomerBinding StartBinding (1: CustomerID customer_id, 2: CustomerBindingParams params)
-        throws (
-            2: CustomerNotFound      customer_not_found
-            3: InvalidPartyStatus    invalid_party_status
-            4: InvalidShopStatus     invalid_shop_status
-            6: OperationNotPermitted operation_not_permitted
-        )
-
-    CustomerBinding GetActiveBinding (1: CustomerID customer_id)
-        throws (
-            2: CustomerNotFound      customer_not_found
-            3: InvalidCustomerStatus invalid_customer_status
-        )
-
-    Events GetEvents (1: CustomerID customer_id, 2: EventRange range)
-        throws (
-            2: CustomerNotFound customer_not_found
-            3: EventNotFound    event_not_found
-        )
-
-    /* terms */
-
-    domain.TermSet ComputeTerms (
-        1: CustomerID customer_id,
-        2: domain.DataRevision domain_revision
-    )
-        throws (2: CustomerNotFound ex2)
-
-}
 
 /* Recurrent Payment Tool */
 
@@ -1727,7 +1501,7 @@ struct RecurrentPaymentTool {
     4:  required domain.DataRevision        domain_revision
     6:  required RecurrentPaymentToolStatus status
     7:  required base.Timestamp             created_at
-    8:  required DisposablePaymentResource  payment_resource
+    8:  required domain.DisposablePaymentResource  payment_resource
     9:  optional domain.Token               rec_token
     10: optional domain.PaymentRoute        route
     12: optional domain.Cash                minimal_payment_cost
@@ -1739,7 +1513,7 @@ struct RecurrentPaymentToolParams {
     4: optional PartyRevision             party_revision
     6: optional domain.DataRevision       domain_revision
     2: required ShopID                    shop_id
-    3: required DisposablePaymentResource payment_resource
+    3: required domain.DisposablePaymentResource payment_resource
 }
 
 // Statuses
