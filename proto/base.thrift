@@ -219,6 +219,3 @@ struct IntegerRange {
     2: optional i64 upper
 }
 
-/* Типы, используемые для идентфикации заявок */
-typedef i64 ClaimID
-typedef i32 ClaimRevision

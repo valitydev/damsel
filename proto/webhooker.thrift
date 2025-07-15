@@ -28,29 +28,8 @@ struct WebhookParams {
 }
 
 union EventFilter {
-    1: PartyEventFilter party
-    2: InvoiceEventFilter invoice
-    3: CustomerEventFilter customer
-    4: WalletEventFilter wallet
+    1: InvoiceEventFilter invoice
 }
-
-struct PartyEventFilter {
-    1: required set<PartyEventType> types
-}
-
-union PartyEventType {
-    1: ClaimEventType claim
-}
-
-union ClaimEventType {
-    1: ClaimCreated created
-    2: ClaimDenied denied
-    3: ClaimAccepted accepted
-}
-
-struct ClaimCreated {}
-struct ClaimDenied {}
-struct ClaimAccepted {}
 
 struct InvoiceEventFilter {
     1: required set<InvoiceEventType> types
@@ -139,50 +118,6 @@ union InvoicePaymentRefundStatus {
 struct InvoicePaymentRefundPending {}
 struct InvoicePaymentRefundSucceeded {}
 struct InvoicePaymentRefundFailed {}
-
-struct CustomerEventFilter {
-    1: required set<CustomerEventType> types
-    2: required domain.ShopID shop_id
-}
-
-union CustomerEventType {
-    1: CustomerCreated created
-    2: CustomerDeleted deleted
-    3: CustomerStatusReady ready
-    4: CustomerBindingEvent binding
-}
-
-struct CustomerCreated {}
-struct CustomerDeleted {}
-struct CustomerStatusReady {}
-
-union CustomerBindingEvent {
-    1: CustomerBindingStarted started
-    2: CustomerBindingSucceeded succeeded
-    3: CustomerBindingFailed failed
-}
-
-struct CustomerBindingStarted {}
-struct CustomerBindingSucceeded {}
-struct CustomerBindingFailed {}
-
-struct WalletEventFilter {
-    1: required set<WalletEventType> types
-}
-
-union WalletEventType {
-    1: WalletWithdrawalEventType withdrawal
-}
-
-union WalletWithdrawalEventType {
-    1: WalletWithdrawalStarted started
-    2: WalletWithdrawalSucceeded succeeded
-    3: WalletWithdrawalFailed failed
-}
-
-struct WalletWithdrawalStarted {}
-struct WalletWithdrawalSucceeded {}
-struct WalletWithdrawalFailed {}
 
 service WebhookManager {
     list<Webhook> GetList(1: domain.PartyID party_id)
