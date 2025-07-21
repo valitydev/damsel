@@ -1556,8 +1556,6 @@ exception ShopAccountNotFound {}
 
 exception WalletAccountNotFound {}
 
-exception PartyMetaNamespaceNotFound {}
-
 exception PaymentInstitutionNotFound {}
 
 exception ProviderNotFound {}
@@ -1577,11 +1575,6 @@ exception TermSetHierarchyNotFound {}
 // @NOTE: Argument and exception tags start with 2 for historical reasons
 
 service PartyManagement {
-    /* Shop */
-
-    domain.Shop GetShop (2: PartyID party_id, 3: ShopID id)
-        throws (2: PartyNotFound ex2, 3: ShopNotFound ex3)
-
     /* Accounts */
 
     domain.ShopAccount GetShopAccount (1: PartyID party_id, 2: ShopID shop_id)

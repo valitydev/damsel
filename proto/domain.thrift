@@ -770,32 +770,6 @@ struct Suspended {
 
 typedef base.ID PartyID
 
-typedef string PartyMetaNamespace
-typedef msgpack.Value PartyMetaData
-typedef map<PartyMetaNamespace, PartyMetaData> PartyMeta
-
-/** Участник. */
-struct Party {
-    1: required PartyID id
-    2: required string name
-    3: required string description
-    4: required PartyContactInfo contact_info
-    5: required base.Timestamp created_at
-    6: required Blocking blocking
-    7: required Suspension suspension
-    8: required map<ShopID, Shop> shops
-    9: required DataRevision revision
-}
-
-/** Статусы участника **/
-/** Данная структура используется только для получения статусов Участника **/
-
-struct PartyStatus {
-    1: required PartyID id
-    2: required Blocking blocking
-    3: required Suspension suspension
-}
-
 struct PartyContactInfo {
     1: required string registration_email
     2: optional list<string> manager_contact_emails
@@ -804,20 +778,6 @@ struct PartyContactInfo {
 /* Shops */
 
 typedef base.ID ShopID
-
-/** Магазин мерчанта. */
-struct Shop {
-    1: required ShopID id
-    2: required string name
-    3: required string description
-    4: required base.Timestamp created_at
-    5: required Blocking blocking
-    6: required Suspension suspension
-    7: required ShopLocation location
-    8: required CategoryRef category
-    9: optional ShopAccount account
-    10: optional set<TurnoverLimit> turnover_limits
-}
 
 struct ShopAccount {
     1: required CurrencyRef currency
