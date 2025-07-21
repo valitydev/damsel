@@ -320,7 +320,6 @@ struct InvoicePayment {
     8:  required InvoicePaymentFlow flow
     9:  required Payer payer
     10: optional PayerSessionInfo payer_session_info
-    11: optional PartyRevision party_revision
     12: optional PartyID owner_id
     13: optional ShopID shop_id
     14: optional bool make_recurrent
@@ -558,7 +557,6 @@ struct InvoicePaymentAdjustment {
     5: required string reason
     6: required FinalCashFlow new_cash_flow
     7: required FinalCashFlow old_cash_flow_inverse
-    8: optional PartyRevision party_revision
     9: optional InvoicePaymentAdjustmentState state
 }
 
@@ -642,7 +640,6 @@ struct InvoicePaymentChargeback {
      6: required Cash                            body
      7: required InvoicePaymentChargebackStage   stage
      8: required DataRevision                    domain_revision
-     9: optional PartyRevision                   party_revision
     10: optional InvoicePaymentChargebackContext context
     11: optional string                          external_id
 }
@@ -719,7 +716,6 @@ struct InvoicePaymentRefund {
     2 : required InvoicePaymentRefundStatus status
     3 : required base.Timestamp created_at
     4 : required DataRevision domain_revision
-    7 : optional PartyRevision party_revision
     6 : optional Cash cash
     5 : optional string reason
     8 : optional InvoiceCart cart
@@ -773,7 +769,6 @@ struct Suspended {
 /* Parties */
 
 typedef base.ID PartyID
-typedef i64 PartyRevision
 
 typedef string PartyMetaNamespace
 typedef msgpack.Value PartyMetaData
@@ -799,7 +794,6 @@ struct PartyStatus {
     1: required PartyID id
     2: required Blocking blocking
     3: required Suspension suspension
-    4: required PartyRevision revision
 }
 
 struct PartyContactInfo {

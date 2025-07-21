@@ -874,7 +874,6 @@ typedef map<domain.PaymentRoute, list<TurnoverLimitValue>> RouteLimitContext
 // forward-declared
 exception PartyNotFound {}
 exception PartyNotExistsYet {}
-exception InvalidPartyRevision {}
 
 exception ShopNotFound {}
 exception WalletNotFound {}
@@ -1490,7 +1489,6 @@ service InvoiceTemplating {
 // Types
 
 typedef domain.PartyID PartyID
-typedef domain.PartyRevision PartyRevision
 typedef domain.ShopID  ShopID
 typedef domain.WalletID WalletID
 typedef domain.PaymentInstitutionRef PaymentInstitutionRef
@@ -1574,34 +1572,48 @@ exception RuleSetNotFound {}
 
 exception TermSetHierarchyNotFound {}
 
-
 // Service
 
 // @NOTE: Argument and exception tags start with 2 for historical reasons
 
-service ConfigManagement {
+service PartyManagement {
+    /* Shop */
+
+    domain.Shop GetShop (2: PartyID party_id, 3: ShopID id)
+        throws (2: PartyNotFound ex2, 3: ShopNotFound ex3)
+
+    /* Accounts */
+
+    domain.ShopAccount GetShopAccount (1: PartyID party_id, 2: ShopID shop_id)
+        throws (1: PartyNotFound ex1, 2: ShopNotFound ex2, 3: ShopAccountNotFound ex3)
+
+    domain.WalletAccount GetWalletAccount (1: PartyID party_id, 2: WalletID wallet_id)
+        throws (1: PartyNotFound ex1, 2: WalletNotFound ex2, 3: WalletAccountNotFound ex3)
+
+    AccountState GetAccountState (1: PartyID party_id, 2: domain.AccountID account_id)
+        throws (1: PartyNotFound ex1, 2: AccountNotFound ex12)
 
     /* Provider */
 
     domain.Provider ComputeProvider (
-        1: domain.ProviderRef provider_ref,
-        2: domain.DataRevision domain_revision,
-        3: Varset varset
-    )
-        throws (
-            1: ProviderNotFound ex2
-        )
-
-    domain.ProvisionTermSet ComputeProviderTerminalTerms (
-        1: domain.ProviderRef provider_ref,
-        2: domain.TerminalRef terminal_ref,
+        2: domain.ProviderRef provider_ref,
         3: domain.DataRevision domain_revision,
         4: Varset varset
     )
         throws (
-            1: ProviderNotFound ex2,
-            2: TerminalNotFound ex3,
-            3: ProvisionTermSetUndefined ex4
+            2: ProviderNotFound ex2
+        )
+
+    domain.ProvisionTermSet ComputeProviderTerminalTerms (
+        2: domain.ProviderRef provider_ref,
+        3: domain.TerminalRef terminal_ref,
+        4: domain.DataRevision domain_revision,
+        5: Varset varset
+    )
+        throws (
+            2: ProviderNotFound ex2,
+            3: TerminalNotFound ex3,
+            4: ProvisionTermSetUndefined ex4
         )
 
     /**
@@ -1616,45 +1628,46 @@ service ConfigManagement {
         3: Varset varset
     )
         throws (
-            1: TerminalNotFound ex2
+            2: TerminalNotFound ex2
         )
 
     /* Globals */
 
     domain.Globals ComputeGlobals (
-        1: domain.DataRevision domain_revision,
-        2: Varset varset
+        3: domain.DataRevision domain_revision,
+        4: Varset varset
     )
         throws (
-            1: GlobalsNotFound ex2
+            2: GlobalsNotFound ex2
         )
 
     /* RuleSet */
 
     domain.RoutingRuleset ComputeRoutingRuleset (
-        1: domain.RoutingRulesetRef ruleset_ref,
-        2: domain.DataRevision domain_revision,
-        3: Varset varset
+        2: domain.RoutingRulesetRef ruleset_ref,
+        3: domain.DataRevision domain_revision,
+        4: Varset varset
     )
         throws (
-            1: RuleSetNotFound ex2
+            2: RuleSetNotFound ex2
         )
 
     /* Payment institutions */
 
     domain.TermSet ComputePaymentInstitutionTerms (
-        1: PaymentInstitutionRef ref,
-        2: Varset varset
+        3: PaymentInstitutionRef ref,
+        4: Varset varset
     )
-        throws (1: PaymentInstitutionNotFound ex2)
+        throws (2: PartyNotFound ex2, 3: PaymentInstitutionNotFound ex3)
 
     domain.PaymentInstitution ComputePaymentInstitution (
-        1: PaymentInstitutionRef ref,
-        2: domain.DataRevision domain_revision,
-        3: Varset varset
+        2: PaymentInstitutionRef ref,
+        3: domain.DataRevision domain_revision,
+        4: Varset varset
     )
         throws (
-            1: PaymentInstitutionNotFound ex1
+            2: PartyNotFound ex2,
+            3: PaymentInstitutionNotFound ex3
         )
 
     domain.TermSet ComputeTerms (
@@ -1663,21 +1676,4 @@ service ConfigManagement {
         3: Varset varset
     )
         throws (1: TermSetHierarchyNotFound ex1)
-
-    /* Accounts */
-
-    AccountState GetAccountState (1: PartyID party_id, 2: domain.AccountID account_id)
-        throws (1: PartyNotFound ex1, 2: AccountNotFound ex2)
-
-    list<domain.ShopAccount> GetShopAccounts (1: ShopID shop_id)
-        throws (1: ShopNotFound ex2)
-
-    domain.ShopAccount GetShopAccount (1: ShopID shop_id, 2: domain.CurrencyRef currency)
-        throws (1: ShopNotFound ex2, 2: ShopAccountNotFound ex3)
-
-    list<domain.WalletAccount> GetWalletAccounts (1: WalletID wallet_id)
-        throws (1: WalletNotFound ex2)
-
-    domain.WalletAccount GetWalletAccount (1: WalletID wallet_id, 2: domain.CurrencyRef currency)
-        throws (1: WalletNotFound ex2, 2: WalletAccountNotFound ex3)
 }
