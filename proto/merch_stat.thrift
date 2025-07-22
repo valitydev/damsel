@@ -39,8 +39,7 @@ struct StatPayment {
 
 union Payer {
     1: PaymentResourcePayer payment_resource
-    2: CustomerPayer        customer
-    3: RecurrentPayer       recurrent
+    2: RecurrentPayer       recurrent
 }
 
 struct RecurrentParentPayment {
@@ -62,13 +61,6 @@ struct PaymentResourcePayer {
     4: optional string phone_number
     5: optional string email
     6: optional domain.PaymentSessionID session_id
-}
-
-struct CustomerPayer {
-    1: required domain.CustomerID customer_id
-    2: required PaymentTool payment_tool
-    3: optional string phone_number
-    4: optional string email
 }
 
 union InvoicePaymentFlow {
@@ -207,14 +199,6 @@ union InvoiceStatus {
     4: InvoiceFulfilled fulfilled
 }
 
-/**
-* Информация о клиенте. Уникальность клиента определяется по fingerprint.
-*/
-struct StatCustomer {
-    1: required domain.Fingerprint id
-    2: required base.Timestamp created_at
-}
-
 /** Информация о рефанде **/
 struct StatRefund {
     1 : required domain.InvoicePaymentRefundID id
@@ -303,7 +287,6 @@ struct StatResponse {
 union StatResponseData {
     1: list<StatPayment>         payments
     2: list<StatInvoice>         invoices
-    3: list<StatCustomer>        customers
     4: list<StatInfo>            records
     6: list<StatRefund>          refunds
     7: list<EnrichedStatInvoice> enriched_invoices
@@ -335,12 +318,7 @@ service MerchantStatistics {
      *  Возвращает набор данных об инвойсах
      */
     StatResponse GetInvoices(1: StatRequest req) throws (1: InvalidRequest ex1, 3: BadToken ex3)
-
-    /**
-     * Возвращает набор данных о покупателях
-     */
-    StatResponse GetCustomers(1: StatRequest req) throws (1: InvalidRequest ex1, 3: BadToken ex3)
-
+    
     /**
      * Возвращает набор данных о чарджбэках
      */

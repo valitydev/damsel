@@ -73,12 +73,8 @@ struct Event {
 union EventSource {
     /** Идентификатор инвойса, который породил событие. */
     1: domain.InvoiceID         invoice_id
-    /** Идентификатор участника, который породил событие. */
-    2: domain.PartyID           party_id
     /** Идентификатор шаблона инвойса, который породил событие. */
-    3: domain.InvoiceTemplateID invoice_template_id
-    /** Идентификатор плательщика, который породил событие. */
-    4: domain.CustomerID        customer_id
+    2: domain.InvoiceTemplateID invoice_template_id
 }
 
 /**
@@ -87,12 +83,8 @@ union EventSource {
 union EventPayload {
     /** Набор изменений, порождённых инвойсом. */
     1: list<InvoiceChange>          invoice_changes
-    /** Набор изменений, порождённых участником. */
-    2: list<PartyChange>            party_changes
     /** Набор изменений, порождённых шаблоном инвойса. */
-    3: list<InvoiceTemplateChange>  invoice_template_changes
-    /** Некоторое событие, порождённое плательщиком. */
-    4: list<CustomerChange>         customer_changes
+    2: list<InvoiceTemplateChange>  invoice_template_changes
 }
 
 /**
@@ -582,17 +574,12 @@ struct RegisterInvoicePaymentParams {
 
 union PayerParams {
     1: PaymentResourcePayerParams payment_resource
-    2: CustomerPayerParams        customer
-    3: RecurrentPayerParams       recurrent
+    2: RecurrentPayerParams recurrent
 }
 
 struct PaymentResourcePayerParams {
     1: required domain.DisposablePaymentResource resource
     2: required domain.ContactInfo               contact_info
-}
-
-struct CustomerPayerParams {
-    1: required domain.CustomerID customer_id
 }
 
 struct RecurrentPayerParams{
@@ -887,7 +874,6 @@ typedef map<domain.PaymentRoute, list<TurnoverLimitValue>> RouteLimitContext
 // forward-declared
 exception PartyNotFound {}
 exception PartyNotExistsYet {}
-exception InvalidPartyRevision {}
 
 exception ShopNotFound {}
 exception WalletNotFound {}
@@ -895,7 +881,6 @@ exception WalletNotFound {}
 exception InvalidPartyStatus { 1: required InvalidStatus status }
 exception InvalidShopStatus { 1: required InvalidStatus status }
 exception InvalidWalletStatus { 1: required InvalidStatus status }
-exception InvalidContractStatus { 1: required domain.ContractStatus status }
 
 union InvalidStatus {
     1: domain.Blocking blocking
@@ -1030,7 +1015,6 @@ service Invoicing {
             4: ShopNotFound ex4,
             5: InvalidPartyStatus ex5,
             6: InvalidShopStatus ex6,
-            7: InvalidContractStatus ex7,
             8: InvoiceTermsViolated ex8,
             9: AllocationNotAllowed ex9,
             10: AllocationExceededPaymentAmount ex10,
@@ -1042,7 +1026,6 @@ service Invoicing {
             2: base.InvalidRequest ex2,
             3: InvalidPartyStatus ex3,
             4: InvalidShopStatus ex4,
-            5: InvalidContractStatus ex5
             6: InvoiceTemplateNotFound ex6,
             7: InvoiceTemplateRemoved ex7,
             8: InvoiceTermsViolated ex8
@@ -1094,7 +1077,6 @@ service Invoicing {
             5: base.InvalidRequest ex5,
             6: InvalidPartyStatus ex6,
             7: InvalidShopStatus ex7,
-            8: InvalidContractStatus ex8,
             9: InvalidRecurrentParentPayment ex9,
             10: OperationNotPermitted ex10
         )
@@ -1109,7 +1091,6 @@ service Invoicing {
             3: base.InvalidRequest ex3,
             4: InvalidPartyStatus ex4,
             5: InvalidShopStatus ex5,
-            6: InvalidContractStatus ex6,
             8: InvalidRecurrentParentPayment ex9
         )
 
@@ -1252,7 +1233,6 @@ service Invoicing {
             8:  InvoicePaymentAmountExceeded ex8
             9:  InconsistentChargebackCurrency ex9,
             11: InvoicePaymentChargebackInvalidStatus ex11
-            12: InvalidContractStatus ex12
             14: InvoicePaymentChargebackPending ex14
             /* something else? */
         )
@@ -1288,7 +1268,6 @@ service Invoicing {
             8:  InvoicePaymentAmountExceeded ex8
             9:  InconsistentChargebackCurrency ex9,
             11: InvoicePaymentChargebackInvalidStatus ex11
-            12: InvalidContractStatus ex12
         )
 
     /**
@@ -1307,7 +1286,6 @@ service Invoicing {
             6:  OperationNotPermitted ex6,
             9:  InconsistentChargebackCurrency ex9,
             11: InvoicePaymentChargebackInvalidStatus ex11
-            12: InvalidContractStatus ex12
         )
 
     /**
@@ -1328,7 +1306,6 @@ service Invoicing {
             8:  InvoicePaymentAmountExceeded ex8
             9:  InconsistentChargebackCurrency ex9,
             11: InvoicePaymentChargebackInvalidStatus ex11
-            12: InvalidContractStatus ex12
             13: InvoicePaymentChargebackCannotReopenAfterArbitration ex13
             14: InvoicePaymentChargebackInvalidStage ex14
         )
@@ -1369,7 +1346,6 @@ service Invoicing {
             10: InconsistentRefundCurrency ex10,
             11: InvalidPartyStatus ex11,
             12: InvalidShopStatus ex12,
-            13: InvalidContractStatus ex13,
             14: InvoicePaymentChargebackPending ex14,
             15: AllocationNotAllowed ex15,
             16: AllocationExceededPaymentAmount ex16,
@@ -1396,7 +1372,6 @@ service Invoicing {
             9: InconsistentRefundCurrency ex9,
             10: InvalidPartyStatus ex10,
             11: InvalidShopStatus ex11,
-            12: InvalidContractStatus ex12,
             13: base.InvalidRequest ex13,
             14: InvoicePaymentChargebackPending ex14,
             15: AllocationNotAllowed ex15,
@@ -1422,7 +1397,6 @@ service Invoicing {
             3: InvalidInvoiceStatus ex3,
             4: InvalidPartyStatus ex4,
             5: InvalidShopStatus ex5,
-            6: InvalidContractStatus ex6
         )
 
     void Rescind (2: domain.InvoiceID id, 3: string reason)
@@ -1432,7 +1406,6 @@ service Invoicing {
             4: InvoicePaymentPending ex4,
             5: InvalidPartyStatus ex5,
             6: InvalidShopStatus ex6,
-            7: InvalidContractStatus ex7
         )
 
     /* Ad-hoc repairs */
@@ -1511,750 +1484,31 @@ service InvoiceTemplating {
         )
 }
 
-/* Customer management service definitions */
-
-/* Customers */
-
-typedef domain.CustomerID CustomerID
-typedef domain.Metadata   Metadata
-
-struct CustomerParams {
-    5: required CustomerID         customer_id
-    1: required PartyID            party_id
-    2: required ShopID             shop_id
-    3: required domain.ContactInfo contact_info
-    4: required Metadata           metadata
-}
-
-struct Customer {
-    1: required CustomerID            id
-    2: required PartyID               owner_id
-    3: required ShopID                shop_id
-    4: required CustomerStatus        status
-    5: required base.Timestamp        created_at
-    6: required list<CustomerBinding> bindings
-    7: required domain.ContactInfo    contact_info
-    8: required Metadata              metadata
-    9: optional CustomerBindingID     active_binding_id
-}
-
-/**
- * Статусы плательщика
- *
- * Статус отражает возможость проводить платежи с помощью данного плательщика,
- * то есть существует ли (и она сейчас активна) у него привязка, завершившаяся успешно
- */
-union CustomerStatus {
-    1: CustomerUnready unready
-    2: CustomerReady   ready
-}
-
-struct CustomerUnready {}
-struct CustomerReady   {}
-
-// События
-union CustomerChange {
-    1: CustomerCreated        customer_created
-    2: CustomerDeleted        customer_deleted
-    3: CustomerStatusChanged  customer_status_changed
-    4: CustomerBindingChanged customer_binding_changed
-}
-
-/**
- * Событие о создании нового плательщика.
- */
-struct CustomerCreated {
-    2: required CustomerID         customer_id
-    3: required PartyID            owner_id
-    4: required ShopID             shop_id
-    5: required Metadata           metadata
-    6: required domain.ContactInfo contact_info
-    7: required base.Timestamp     created_at
-}
-
-/**
- * Событие об удалении плательщика.
- */
-struct CustomerDeleted {}
-
-/**
- * Событие об изменении статуса плательщика.
- */
-struct CustomerStatusChanged {
-    1: required CustomerStatus status
-}
-
-/**
- * Событие, касающееся определённой привязки плательщика.
- */
-struct CustomerBindingChanged {
-    1: required CustomerBindingID            id
-    2: required CustomerBindingChangePayload payload
-}
-
-
-/* Bindings */
-
-typedef domain.CustomerBindingID CustomerBindingID
-typedef domain.DisposablePaymentResource DisposablePaymentResource
-
-struct CustomerBindingParams {
-    3: required CustomerBindingID         customer_binding_id
-    2: required RecurrentPaymentToolID    rec_payment_tool_id
-    1: required DisposablePaymentResource payment_resource
-}
-
-struct CustomerBinding {
-    1: required CustomerBindingID         id
-    2: required RecurrentPaymentToolID    rec_payment_tool_id
-    3: required DisposablePaymentResource payment_resource
-    4: required CustomerBindingStatus     status
-    5: optional PartyRevision             party_revision
-    6: optional domain.DataRevision       domain_revision
-}
-
-// Statuses
-union CustomerBindingStatus {
-    1: CustomerBindingPending   pending
-    2: CustomerBindingSucceeded succeeded
-    3: CustomerBindingFailed    failed
-}
-
-/**
- * Привязка находится в процессе обработки
- */
-struct CustomerBindingPending   {}
-
-/**
- * Привязка завершилась успешно
- */
-struct CustomerBindingSucceeded {}
-
-/**
- * Привязка завершилась неудачно
- */
-struct CustomerBindingFailed    { 1: required domain.OperationFailure failure }
-
-// Events
-union CustomerBindingChangePayload {
-    1: CustomerBindingStarted started
-    2: CustomerBindingStatusChanged status_changed
-    3: CustomerBindingInteractionChanged interaction_changed
-}
-
-/**
- * Событие о старте процесса привязки
- */
-struct CustomerBindingStarted {
-    1: required CustomerBinding binding
-    2: optional base.Timestamp  timestamp
-}
-
-/**
- * Событие об изменении статуса привязки
- */
-struct CustomerBindingStatusChanged {
-    1: required CustomerBindingStatus status
-}
-
-struct CustomerBindingInteractionChanged {
-    1: required user_interaction.UserInteraction interaction
-    /**
-     * Статус взаимодействия.
-     * Если не указан, статус считается по умолчанию _requested_.
-     */
-    2: optional user_interaction.Status status
-}
-
-// Exceptions
-exception InvalidCustomerStatus {
-    1: required CustomerStatus status
-}
-exception CustomerNotFound   {}
-exception InvalidPaymentTool {}
-
-// Service
-
-service CustomerManagement {
-
-    Customer Create (1: CustomerParams params)
-        throws (
-            2: InvalidPartyStatus    invalid_party_status
-            3: InvalidShopStatus     invalid_shop_status
-            4: ShopNotFound          shop_not_found
-            5: PartyNotFound         party_not_found
-            6: OperationNotPermitted operation_not_permitted
-        )
-
-    Customer Get (1: CustomerID id, 2: EventRange range)
-        throws (
-            2: CustomerNotFound not_found
-        )
-
-    void Delete (1: CustomerID id)
-        throws (
-            2: CustomerNotFound      not_found
-            3: InvalidPartyStatus    invalid_party_status
-            4: InvalidShopStatus     invalid_shop_status
-        )
-
-    CustomerBinding StartBinding (1: CustomerID customer_id, 2: CustomerBindingParams params)
-        throws (
-            2: CustomerNotFound      customer_not_found
-            3: InvalidPartyStatus    invalid_party_status
-            4: InvalidShopStatus     invalid_shop_status
-            5: InvalidContractStatus invalid_contract_status
-            6: OperationNotPermitted operation_not_permitted
-        )
-
-    CustomerBinding GetActiveBinding (1: CustomerID customer_id)
-        throws (
-            2: CustomerNotFound      customer_not_found
-            3: InvalidCustomerStatus invalid_customer_status
-        )
-
-    Events GetEvents (1: CustomerID customer_id, 2: EventRange range)
-        throws (
-            2: CustomerNotFound customer_not_found
-            3: EventNotFound    event_not_found
-        )
-
-    /* terms */
-
-    domain.TermSet ComputeTerms (
-        1: CustomerID customer_id,
-        2: PartyRevisionParam party_revision_param
-    )
-        throws (2: CustomerNotFound ex2)
-
-}
-
-/* Recurrent Payment Tool */
-
-// Types
-typedef domain.RecurrentPaymentToolID RecurrentPaymentToolID
-
-// Model
-struct RecurrentPaymentTool {
-    1:  required RecurrentPaymentToolID     id
-    2:  required ShopID                     shop_id
-    3:  required PartyID                    party_id
-    11: optional PartyRevision              party_revision
-    4:  required domain.DataRevision        domain_revision
-    6:  required RecurrentPaymentToolStatus status
-    7:  required base.Timestamp             created_at
-    8:  required DisposablePaymentResource  payment_resource
-    9:  optional domain.Token               rec_token
-    10: optional domain.PaymentRoute        route
-    12: optional domain.Cash                minimal_payment_cost
-}
-
-struct RecurrentPaymentToolParams {
-    5: optional RecurrentPaymentToolID    id
-    1: required PartyID                   party_id
-    4: optional PartyRevision             party_revision
-    6: optional domain.DataRevision       domain_revision
-    2: required ShopID                    shop_id
-    3: required DisposablePaymentResource payment_resource
-}
-
-// Statuses
-struct RecurrentPaymentToolCreated   {}
-struct RecurrentPaymentToolAcquired  {}
-struct RecurrentPaymentToolAbandoned {}
-struct RecurrentPaymentToolFailed    { 1: required domain.OperationFailure failure }
-
-union RecurrentPaymentToolStatus {
-    1: RecurrentPaymentToolCreated   created
-    2: RecurrentPaymentToolAcquired  acquired
-    3: RecurrentPaymentToolAbandoned abandoned
-    4: RecurrentPaymentToolFailed    failed
-}
-
-// Events
-typedef list<RecurrentPaymentToolEvent> RecurrentPaymentToolEvents
-
-/*
- * События, связанные непосредственно с получением рекуррентных токенов
- */
-
-struct RecurrentPaymentToolEventData {
-    1: required list<RecurrentPaymentToolChange> changes
-}
-
-struct RecurrentPaymentToolEvent {
-    1: required base.EventID                     id
-    2: required base.Timestamp                   created_at
-    3: required RecurrentPaymentToolID           source
-    5: optional base.SequenceID                  sequence
-    4: required list<RecurrentPaymentToolChange> payload
-}
-
-struct RecurrentPaymentToolSessionChange {
-    1: required SessionChangePayload payload
-}
-
-union RecurrentPaymentToolChange {
-    1: RecurrentPaymentToolHasCreated       rec_payment_tool_created
-    6: RecurrentPaymentToolRiskScoreChanged rec_payment_tool_risk_score_changed
-    7: RecurrentPaymentToolRouteChanged     rec_payment_tool_route_changed
-    2: RecurrentPaymentToolHasAcquired      rec_payment_tool_acquired
-    3: RecurrentPaymentToolHasAbandoned     rec_payment_tool_abandoned
-    4: RecurrentPaymentToolHasFailed        rec_payment_tool_failed
-    5: RecurrentPaymentToolSessionChange    rec_payment_tool_session_changed
-}
-
-/*
- * Создано рекуррентное платежное средство
- */
-struct RecurrentPaymentToolHasCreated {
-    1: required RecurrentPaymentTool rec_payment_tool
-    /** deprecated */
-    /** Оценка риска платежного средства. */
-    2: optional domain.RiskScore     risk_score
-    /** Выбранный маршрут обработки платежного средства. */
-    3: optional domain.PaymentRoute  route
-}
-
-/**
- * Событие об изменении оценки риска платежного средства.
- */
-struct RecurrentPaymentToolRiskScoreChanged {
-    /** Оценка риска платежного средства. */
-    1: required domain.RiskScore risk_score
-}
-
-/**
- * Событие об изменении маршрута обработки платежного средства.
- */
-struct RecurrentPaymentToolRouteChanged {
-    /** Выбранный маршрут обработки платежного средства. */
-    1: required domain.PaymentRoute route
-}
-
-/*
- * Получен рекуррентный токен => теперь этим платежным средством можно платить
- */
-struct RecurrentPaymentToolHasAcquired {
-    1: required domain.Token token
-}
-
-/*
- * Рекуррентное платежное средство отозвано
- */
-struct RecurrentPaymentToolHasAbandoned {}
-
-/*
- * В процессе получения рекуррентного платежного средства произошла ошибка
- */
-struct RecurrentPaymentToolHasFailed {
-    1: required domain.OperationFailure failure
-}
-
-
-// Exceptions
-exception InvalidBinding                    {}
-exception BindingNotFound                   {}
-exception RecurrentPaymentToolNotFound      {}
-exception InvalidPaymentMethod              {}
-exception InvalidRecurrentPaymentToolStatus {
-    1: required RecurrentPaymentToolStatus status
-}
-
-service RecurrentPaymentTools {
-    RecurrentPaymentTool Create (1: RecurrentPaymentToolParams params)
-        throws (
-            2: InvalidPartyStatus    invalid_party_status
-            3: InvalidShopStatus     invalid_shop_status
-            4: ShopNotFound          shop_not_found
-            5: PartyNotFound         party_not_found
-            6: InvalidContractStatus invalid_contract_status
-            7: OperationNotPermitted operation_not_permitted
-            8: InvalidPaymentMethod  invalid_payment_method
-        )
-
-    RecurrentPaymentTool Abandon (1: RecurrentPaymentToolID id)
-        throws (
-            2: RecurrentPaymentToolNotFound      rec_payment_tool_not_found
-            3: InvalidRecurrentPaymentToolStatus invalid_rec_payment_tool_status
-        )
-
-    RecurrentPaymentTool Get (1: RecurrentPaymentToolID id)
-        throws (
-            2: RecurrentPaymentToolNotFound rec_payment_tool_not_found
-        )
-
-    RecurrentPaymentToolEvents GetEvents (1: RecurrentPaymentToolID id, 2: EventRange range)
-        throws (
-            2: RecurrentPaymentToolNotFound rec_payment_tool_not_found
-            3: EventNotFound                event_not_found
-        )
-}
-
 /* Party management service definitions */
 
 // Types
 
 typedef domain.PartyID PartyID
-typedef domain.PartyRevision PartyRevision
 typedef domain.ShopID  ShopID
-typedef domain.ContractID  ContractID
-typedef domain.ContractorID ContractorID
 typedef domain.WalletID WalletID
-typedef domain.ContractTemplateRef ContractTemplateRef
 typedef domain.PaymentInstitutionRef PaymentInstitutionRef
-
-// Deprecated
-typedef domain.PayoutToolID PayoutToolID
 
 struct Varset {
     1: optional domain.CategoryRef category
     2: optional domain.CurrencyRef currency
     3: optional domain.Cash amount
     4: optional domain.PaymentMethodRef payment_method
-    6: optional domain.WalletID wallet_id
-    8: optional domain.ShopID shop_id
-    9: optional domain.ContractorIdentificationLevel identification_level
-    10: optional domain.PaymentTool payment_tool
-    11: optional domain.PartyID party_id
-    12: optional domain.BinData bin_data
-
-    // Reserved
-    // 5
+    5: optional domain.WalletID wallet_id
+    6: optional domain.ShopID shop_id
+    8: optional domain.PaymentTool payment_tool
+    9: optional domain.PartyID party_id
+    10: optional domain.BinData bin_data
 }
 
-struct ComputeShopTermsVarset {
-    3: optional domain.Cash amount
-    10: optional domain.PaymentTool payment_tool
-
-    // Reserved
-    // 5
-}
-
-struct ComputeContractTermsVarset {
-    2: optional domain.CurrencyRef currency
-    3: optional domain.Cash amount
-    8: optional domain.ShopID shop_id
-    10: optional domain.PaymentTool payment_tool
-    6: optional domain.WalletID wallet_id
-    12: optional domain.BinData bin_data
-
-    // Reserved
-    // 5
-}
-
-
-struct PartyParams {
-    1: required domain.PartyContactInfo contact_info
-}
-
-// Deprecated
-struct PayoutToolParams {
-    1: required domain.CurrencyRef currency
-    2: required domain.PayoutToolInfo tool_info
-}
-
-struct ShopParams {
-    1: optional domain.CategoryRef category
-    2: required domain.ShopLocation location
-    3: required domain.ShopDetails details
-    4: required ContractID contract_id
-}
-
-struct ShopAccountParams {
-    1: required domain.CurrencyRef currency
-}
-
-struct ContractParams {
-    4: optional ContractorID contractor_id
-    2: optional ContractTemplateRef template
-    3: optional PaymentInstitutionRef payment_institution
-
-    // depricated
-    1: optional domain.Contractor contractor
-}
-
-struct ContractAdjustmentParams {
-    1: required ContractTemplateRef template
-}
-
-union PartyModification {
-    8: ContractorModificationUnit contractor_modification
-    4: ContractModificationUnit contract_modification
-    6: ShopModificationUnit shop_modification
-    7: WalletModificationUnit wallet_modification
-    9: AdditionalInfoModificationUnit additional_info_modification
-}
-
-struct ContractorModificationUnit {
-    1: required ContractorID id
-    2: required ContractorModification modification
-}
-
-struct AdditionalInfoModificationUnit {
-    1: optional string party_name
-    2: optional list<string> manager_contact_emails
-    3: optional string comment
-}
-
-union ContractorModification {
-    1: domain.Contractor creation
-    2: domain.ContractorIdentificationLevel identification_level_modification
-    3: ContractorIdentityDocumentsModification identity_documents_modification
-}
-
-struct ContractorIdentityDocumentsModification {
-    1: required list<domain.IdentityDocumentToken> identity_documents
-}
-
-struct ContractModificationUnit {
-    1: required ContractID id
-    2: required ContractModification modification
-}
-
-union ContractModification {
-    1: ContractParams creation
-    2: ContractTermination termination
-    3: ContractAdjustmentModificationUnit adjustment_modification
-    5: domain.LegalAgreement legal_agreement_binding
-    6: domain.ReportPreferences report_preferences_modification
-    7: ContractorID contractor_modification
-
-    // Deprecated
-    4: PayoutToolModificationUnit payout_tool_modification
-}
-
-struct ContractTermination {
-    2: optional string reason
-}
-
-struct ContractAdjustmentModificationUnit {
-    1: required domain.ContractAdjustmentID adjustment_id
-    2: required ContractAdjustmentModification modification
-}
-
-union ContractAdjustmentModification {
-    1: ContractAdjustmentParams creation
-}
-
-// Deprecated
-struct PayoutToolModificationUnit {
-    1: required domain.PayoutToolID payout_tool_id
-    2: required PayoutToolModification modification
-}
-
-// Deprecated
-union PayoutToolModification {
-    1: PayoutToolParams creation
-    2: domain.PayoutToolInfo info_modification
-}
-
-typedef list<PartyModification> PartyChangeset
-
-struct ShopModificationUnit {
-    1: required ShopID id
-    2: required ShopModification modification
-}
-
-union ShopModification {
-    5: ShopParams creation
-    6: domain.CategoryRef category_modification
-    7: domain.ShopDetails details_modification
-    8: ShopContractModification contract_modification
-    11: domain.ShopLocation location_modification
-    12: ShopAccountParams shop_account_creation
-    14: set<domain.TurnoverLimit> turnover_limits_modification
-
-    /* deprecated */
-    10: ProxyModification proxy_modification
-    9: domain.PayoutToolID payout_tool_modification
-    13: ScheduleModification payout_schedule_modification
-}
-
-struct ShopContractModification {
-    1: required ContractID contract_id
-
-    // Deprecated
-    2: optional domain.PayoutToolID payout_tool_id
-}
-
-struct ScheduleModification {
-    1: optional domain.BusinessScheduleRef schedule
-}
-
-/* deprecated */
-struct ProxyModification {
-    1: optional domain.Proxy proxy
-}
-
-struct WalletModificationUnit {
-    1: required WalletID id
-    2: required WalletModification modification
-}
-
-union WalletModification {
-    1: WalletParams creation
-    2: WalletAccountParams account_creation
-}
-
-struct WalletParams {
-    1: optional string name
-    2: required ContractID contract_id
-}
-
-struct WalletAccountParams {
-    1: required domain.CurrencyRef currency
-}
-
-// Claims
-
-typedef base.ClaimID ClaimID
-typedef base.ClaimRevision ClaimRevision
-
-struct Claim {
-    1: required ClaimID id
-    2: required ClaimStatus status
-    3: optional PartyChangeset changeset
-    4: required ClaimRevision revision
-    5: required base.Timestamp created_at
-    6: optional base.Timestamp updated_at
-    7: optional ClaimManagementClaimRef caused_by
-}
-
-// NOTE: Type for ClaimID and ClaimRevision must be in sync
-// with ClaimManagement's ClaimID and ClaimRevision
-struct ClaimManagementClaimRef {
-    1: required ClaimID id
-    2: required ClaimRevision revision
-}
-
-union ClaimStatus {
-    1: ClaimPending pending
-    2: ClaimAccepted accepted
-    3: ClaimDenied denied
-    4: ClaimRevoked revoked
-}
-
-struct ClaimPending {}
-
-struct ClaimAccepted {
-    2: optional ClaimEffects effects
-}
-
-struct ClaimDenied {
-    1: optional string reason
-}
-
-struct ClaimRevoked {
-    1: optional string reason
-}
-
-// Claim effects
-
-typedef list<ClaimEffect> ClaimEffects
-
-union ClaimEffect {
-    /* 1: PartyEffect Reserved for future */
-    2: ContractEffectUnit contract_effect
-    3: ShopEffectUnit shop_effect
-    4: ContractorEffectUnit contractor_effect
-    5: WalletEffectUnit wallet_effect
-    6: AdditionalInfoEffectUnit additional_info_effect
-}
-
-struct ContractEffectUnit {
-    1: required ContractID contract_id
-    2: required ContractEffect effect
-}
-
-union ContractEffect {
-    1: domain.Contract created
-    2: domain.ContractStatus status_changed
-    3: domain.ContractAdjustment adjustment_created
-    5: domain.LegalAgreement legal_agreement_bound
-    6: domain.ReportPreferences report_preferences_changed
-    7: ContractorID contractor_changed
-
-    // Deprecated
-    4: domain.PayoutTool payout_tool_created
-    8: PayoutToolInfoChanged payout_tool_info_changed
-}
-
-struct ShopEffectUnit {
-    1: required ShopID shop_id
-    2: required ShopEffect effect
-}
-
-union ShopEffect {
-    1: domain.Shop created
-    2: domain.CategoryRef category_changed
-    3: domain.ShopDetails details_changed
-    4: ShopContractChanged contract_changed
-    7: domain.ShopLocation location_changed
-    8: domain.ShopAccount account_created
-    10: set<domain.TurnoverLimit> turnover_limits_changed
-
-    /* deprecated */
-    6: ShopProxyChanged proxy_changed
-    5: domain.PayoutToolID payout_tool_changed
-    9: ScheduleChanged payout_schedule_changed
-}
-
-struct ShopContractChanged {
-    1: required ContractID contract_id
-
-    // Deprecated
-    2: optional domain.PayoutToolID payout_tool_id
-}
-
-struct ScheduleChanged {
-    1: optional domain.BusinessScheduleRef schedule
-}
-
-struct ContractorEffectUnit {
-    1: required ContractorID id
-    2: required ContractorEffect effect
-}
-
-union ContractorEffect {
-    1: domain.PartyContractor created
-    2: domain.ContractorIdentificationLevel identification_level_changed
-    3: ContractorIdentityDocumentsChanged identity_documents_changed
-}
-
-struct ContractorIdentityDocumentsChanged {
-    1: required list<domain.IdentityDocumentToken> identity_documents
-}
-
-// Deprecated
-struct PayoutToolInfoChanged {
-    1: required domain.PayoutToolID payout_tool_id
-    2: required domain.PayoutToolInfo info
-}
-
-struct WalletEffectUnit {
-    1: required WalletID id
-    2: required WalletEffect effect
-}
-
-union WalletEffect {
-    1: domain.Wallet created
-    2: domain.WalletAccount account_created
-}
-
-struct AdditionalInfoEffectUnit {
-    1: AdditionalInfoEffect effect
-}
-
-union AdditionalInfoEffect {
-    1: string party_name
-    2: domain.PartyContactInfo contact_info
-    3: string party_comment
-}
-
-/* deprecated */
-struct ShopProxyChanged {
-    1: optional domain.Proxy proxy
+struct ProviderDetails {
+    1: required domain.ProviderRef ref
+    2: required string name
+    3: optional string description
 }
 
 struct AccountState {
@@ -2262,100 +1516,6 @@ struct AccountState {
     2: required domain.Amount own_amount
     3: required domain.Amount available_amount
     4: required domain.Currency currency
-}
-
-// Events
-struct PartyEventData {
-    1: required list<PartyChange> changes
-    2: optional msgpack.Value state_snapshot
-}
-
-// changes, marked by '#' may affect Party state and may produce PartyRevisionChanged change as well
-union PartyChange {
-    1: PartyCreated         party_created           // #
-    4: domain.Blocking      party_blocking          // #
-    5: domain.Suspension    party_suspension        // #
-    6: ShopBlocking         shop_blocking           // #
-    7: ShopSuspension       shop_suspension         // #
-    12: WalletBlocking      wallet_blocking         // #
-    13: WalletSuspension    wallet_suspension       // #
-    2: Claim                claim_created
-    3: ClaimStatusChanged   claim_status_changed    // #
-    8: ClaimUpdated         claim_updated
-    9: PartyMetaSet         party_meta_set
-    10: domain.PartyMetaNamespace party_meta_removed
-    11: PartyRevisionChanged revision_changed
-}
-
-struct PartyCreated {
-    1: required PartyID id
-    7: required domain.PartyContactInfo contact_info
-    8: required base.Timestamp created_at
-    9: optional string party_name
-    10: optional string comment
-}
-
-struct ShopBlocking {
-    1: required ShopID shop_id
-    2: required domain.Blocking blocking
-}
-
-struct ShopSuspension {
-    1: required ShopID shop_id
-    2: required domain.Suspension suspension
-}
-
-struct WalletBlocking {
-    1: required WalletID wallet_id
-    2: required domain.Blocking blocking
-}
-
-struct WalletSuspension {
-    1: required WalletID wallet_id
-    2: required domain.Suspension suspension
-}
-
-struct ClaimStatusChanged {
-    1: required ClaimID id
-    2: required ClaimStatus status
-    3: required ClaimRevision revision
-    4: required base.Timestamp changed_at
-}
-
-struct ClaimUpdated {
-    1: required ClaimID id
-    2: required PartyChangeset changeset
-    3: required ClaimRevision revision
-    4: required base.Timestamp updated_at
-}
-
-struct PartyMetaSet {
-    1: required domain.PartyMetaNamespace ns
-    2: required domain.PartyMetaData data
-}
-
-struct PartyRevisionChanged {
-    1: required base.Timestamp timestamp
-    2: required domain.PartyRevision revision
-}
-
-union PartyRevisionParam {
-    1: base.Timestamp timestamp
-    2: domain.PartyRevision revision
-}
-/*
- * Контракт магазина
- */
-struct ShopContract {
-    1: required domain.Shop shop
-    2: required domain.Contract contract
-    3: optional domain.PartyContractor contractor
-}
-
-struct ProviderDetails {
-    1: required domain.ProviderRef ref
-    2: required string name
-    3: optional string description
 }
 
 struct ProviderTerminal {
@@ -2385,95 +1545,6 @@ struct ProviderTerminal {
 // Exceptions
 
 exception PartyExists {}
-exception ContractNotFound {}
-exception ClaimNotFound {}
-exception InvalidClaimRevision {}
-
-exception InvalidClaimStatus {
-    1: required ClaimStatus status
-}
-
-exception ChangesetConflict { 1: required ClaimID conflicted_id }
-exception InvalidChangeset { 1: required InvalidChangesetReason reason }
-
-union InvalidChangesetReason {
-    1: InvalidContract invalid_contract
-    2: InvalidShop invalid_shop
-    3: InvalidWallet invalid_wallet
-    4: InvalidContractor invalid_contractor
-}
-
-struct InvalidContract {
-    1: required ContractID id
-    2: required InvalidContractReason reason
-}
-
-struct InvalidShop {
-    1: required ShopID id
-    2: required InvalidShopReason reason
-}
-
-struct InvalidWallet {
-    1: required WalletID id
-    2: required InvalidWalletReason reason
-}
-
-struct InvalidContractor {
-    1: required ContractorID id
-    2: required InvalidContractorReason reason
-}
-
-union InvalidContractReason {
-    1: ContractID not_exists
-    2: ContractID already_exists
-    3: domain.ContractStatus invalid_status
-    4: domain.ContractAdjustmentID contract_adjustment_already_exists
-    7: InvalidObjectReference invalid_object_reference
-    8: ContractorNotExists contractor_not_exists
-
-    // Deprecated
-    5: domain.PayoutToolID payout_tool_not_exists
-    6: domain.PayoutToolID payout_tool_already_exists
-}
-
-union InvalidShopReason {
-    1: ShopID not_exists
-    2: ShopID already_exists
-    3: ShopID no_account
-    4: InvalidStatus invalid_status
-    5: ContractTermsViolated contract_terms_violated
-    7: InvalidObjectReference invalid_object_reference
-
-    // Deprecated
-    6: ShopPayoutToolInvalid payout_tool_invalid
-}
-
-union InvalidWalletReason {
-    1: WalletID not_exists
-    2: WalletID already_exists
-    3: WalletID no_account
-    4: InvalidStatus invalid_status
-    5: ContractTermsViolated contract_terms_violated
-}
-
-union InvalidContractorReason {
-    1: ContractorID not_exists
-    2: ContractorID already_exists
-}
-
-struct ContractorNotExists {
-    1: optional ContractorID id
-}
-
-struct ContractTermsViolated {
-    1: required ContractID contract_id
-    2: required domain.TermSet terms
-}
-
-// Deprecated
-struct ShopPayoutToolInvalid {
-    1: optional domain.PayoutToolID payout_tool_id
-}
 
 struct InvalidObjectReference {
     1: optional domain.Reference ref
@@ -2485,11 +1556,7 @@ exception ShopAccountNotFound {}
 
 exception WalletAccountNotFound {}
 
-exception PartyMetaNamespaceNotFound {}
-
 exception PaymentInstitutionNotFound {}
-
-exception ContractTemplateNotFound {}
 
 exception ProviderNotFound {}
 
@@ -2501,184 +1568,23 @@ exception GlobalsNotFound {}
 
 exception RuleSetNotFound {}
 
+exception TermSetHierarchyNotFound {}
 
 // Service
 
 // @NOTE: Argument and exception tags start with 2 for historical reasons
 
 service PartyManagement {
-
-    /* Party */
-
-    void Create (2: PartyID party_id, 3: PartyParams params)
-        throws (2: PartyExists ex2)
-
-    domain.Party Get (2: PartyID party_id)
-        throws (2: PartyNotFound ex2)
-
-    PartyRevision GetRevision (2: PartyID party_id)
-        throws (2: PartyNotFound ex2)
-
-    domain.Party Checkout (2: PartyID party_id, 3: PartyRevisionParam revision)
-        throws (2: PartyNotFound ex2, 3: InvalidPartyRevision ex3)
-
-    void Suspend (2: PartyID party_id)
-        throws (2: PartyNotFound ex2, 3: InvalidPartyStatus ex3)
-
-    void Activate (2: PartyID party_id)
-        throws (2: PartyNotFound ex2, 3: InvalidPartyStatus ex3)
-
-    void Block (2: PartyID party_id, 3: string reason)
-        throws (2: PartyNotFound ex2, 3: InvalidPartyStatus ex3)
-
-    void Unblock (2: PartyID party_id, 3: string reason)
-        throws (2: PartyNotFound ex2, 3: InvalidPartyStatus ex3)
-
-    /* Party Status */
-
-    domain.PartyStatus GetStatus (2: PartyID party_id)
-        throws (2: PartyNotFound ex2)
-
-    /* Party Meta */
-
-    domain.PartyMeta GetMeta (2: PartyID party_id)
-        throws (2: PartyNotFound ex2)
-
-    domain.PartyMetaData GetMetaData (2: PartyID party_id, 3: domain.PartyMetaNamespace ns)
-        throws (2: PartyNotFound ex2, 3: PartyMetaNamespaceNotFound ex3)
-
-    void SetMetaData (2: PartyID party_id, 3: domain.PartyMetaNamespace ns, 4: domain.PartyMetaData data)
-        throws (2: PartyNotFound ex2)
-
-    void RemoveMetaData (2: PartyID party_id, 3: domain.PartyMetaNamespace ns)
-        throws (2: PartyNotFound ex2, 3: PartyMetaNamespaceNotFound ex3)
-
-    /* Contract */
-
-    domain.Contract GetContract (2: PartyID party_id, 3: ContractID contract_id)
-        throws (
-            2: PartyNotFound ex2,
-            3: ContractNotFound ex3
-        )
-
-    domain.TermSet ComputeContractTerms (
-        2: PartyID party_id,
-        3: ContractID contract_id,
-        4: base.Timestamp timestamp
-        5: PartyRevisionParam party_revision
-        6: domain.DataRevision domain_revision
-        7: ComputeContractTermsVarset varset
-    )
-        throws (
-            2: PartyNotFound ex2,
-            3: PartyNotExistsYet ex3
-            4: ContractNotFound ex4
-        )
-
-    /* Shop */
-
-    domain.Shop GetShop (2: PartyID party_id, 3: ShopID id)
-        throws (2: PartyNotFound ex2, 3: ShopNotFound ex3)
-
-    ShopContract GetShopContract(2: PartyID party_id, 3: ShopID id)
-        throws (2: PartyNotFound ex2, 3: ShopNotFound ex3, 4: ContractNotFound ex4)
-
-    void SuspendShop (2: PartyID party_id, 3: ShopID id)
-        throws (2: PartyNotFound ex2, 3: ShopNotFound ex3, 4: InvalidShopStatus ex4)
-
-    void ActivateShop (2: PartyID party_id, 3: ShopID id)
-        throws (2: PartyNotFound ex2, 3: ShopNotFound ex3, 4: InvalidShopStatus ex4)
-
-    void BlockShop (2: PartyID party_id, 3: ShopID id, 4: string reason)
-        throws (2: PartyNotFound ex2, 3: ShopNotFound ex3, 4: InvalidShopStatus ex4)
-
-    void UnblockShop (2: PartyID party_id, 3: ShopID id, 4: string reason)
-        throws (2: PartyNotFound ex2, 3: ShopNotFound ex3, 4: InvalidShopStatus ex4)
-
-    domain.TermSet ComputeShopTerms (
-        2: PartyID party_id,
-        3: ShopID id,
-        4: base.Timestamp timestamp
-        5: PartyRevisionParam party_revision
-        6: ComputeShopTermsVarset varset
-    )
-        throws (
-            2: PartyNotFound ex2,
-            3: PartyNotExistsYet ex3,
-            4: ShopNotFound ex4
-        )
-
-    /* Claim */
-
-    Claim CreateClaim (2: PartyID party_id, 3: PartyChangeset changeset)
-        throws (
-            2: PartyNotFound ex2,
-            3: InvalidPartyStatus ex3,
-            4: ChangesetConflict ex4,
-            5: InvalidChangeset ex5,
-            6: base.InvalidRequest ex6
-        )
-
-    Claim GetClaim (2: PartyID party_id, 3: ClaimID id)
-        throws (2: PartyNotFound ex2, 3: ClaimNotFound ex3)
-
-    list<Claim> GetClaims (2: PartyID party_id)
-        throws (2: PartyNotFound ex2)
-
-    void AcceptClaim (2: PartyID party_id, 3: ClaimID id, 4: ClaimRevision revision)
-        throws (
-            2: PartyNotFound ex2,
-            3: ClaimNotFound ex3,
-            4: InvalidClaimStatus ex4,
-            5: InvalidClaimRevision ex5,
-            6: InvalidChangeset ex6
-        )
-
-    void UpdateClaim (2: PartyID party_id, 3: ClaimID id, 4: ClaimRevision revision, 5: PartyChangeset changeset)
-        throws (
-            2: PartyNotFound ex2,
-            3: InvalidPartyStatus ex3,
-            4: ClaimNotFound ex4,
-            5: InvalidClaimStatus ex5,
-            6: InvalidClaimRevision ex6,
-            7: ChangesetConflict ex7,
-            8: InvalidChangeset ex8,
-            9: base.InvalidRequest ex9
-        )
-
-    void DenyClaim (2: PartyID party_id, 3: ClaimID id, 4: ClaimRevision revision, 5: string reason)
-        throws (
-            2: PartyNotFound ex2,
-            3: ClaimNotFound ex3,
-            4: InvalidClaimStatus ex4,
-            5: InvalidClaimRevision ex5
-        )
-
-    void RevokeClaim (2: PartyID party_id, 3: ClaimID id, 4: ClaimRevision revision, 5: string reason)
-        throws (
-            2: PartyNotFound ex2,
-            3: InvalidPartyStatus ex3,
-            4: ClaimNotFound ex4,
-            5: InvalidClaimStatus ex5,
-            6: InvalidClaimRevision ex6
-        )
-
-    /* Event polling */
-
-    Events GetEvents (2: PartyID party_id, 3: EventRange range)
-        throws (
-            2: PartyNotFound ex2,
-            3: EventNotFound ex3,
-            4: base.InvalidRequest ex4
-        )
-
     /* Accounts */
 
-    domain.ShopAccount GetShopAccount (2: PartyID party_id, 3: ShopID shop_id)
-        throws (2: PartyNotFound ex2, 3: ShopNotFound ex3, 4: ShopAccountNotFound ex4)
+    domain.ShopAccount GetShopAccount (1: PartyID party_id, 2: ShopID shop_id)
+        throws (1: PartyNotFound ex1, 2: ShopNotFound ex2, 3: ShopAccountNotFound ex3)
 
-    AccountState GetAccountState (2: PartyID party_id, 3: domain.AccountID account_id)
-        throws (2: PartyNotFound ex2, 3: AccountNotFound ex3)
+    domain.WalletAccount GetWalletAccount (1: PartyID party_id, 2: WalletID wallet_id)
+        throws (1: PartyNotFound ex1, 2: WalletNotFound ex2, 3: WalletAccountNotFound ex3)
+
+    AccountState GetAccountState (1: PartyID party_id, 2: domain.AccountID account_id)
+        throws (1: PartyNotFound ex1, 2: AccountNotFound ex12)
 
     /* Provider */
 
@@ -2756,31 +1662,11 @@ service PartyManagement {
             2: PartyNotFound ex2,
             3: PaymentInstitutionNotFound ex3
         )
-}
 
-
-service PartyConfigManagement {
     domain.TermSet ComputeTerms (
         1: domain.TermSetHierarchyRef ref,
         2: domain.DataRevision revision,
         3: Varset varset
     )
-        throws ()
-
-    /* Accounts */
-
-    AccountState GetAccountState (1: PartyID party_id, 2: domain.AccountID account_id)
-        throws (1: PartyNotFound ex1, 2: AccountNotFound ex2)
-
-    list<domain.ShopAccount> GetShopAccounts (1: PartyID party_id, 2: ShopID shop_id)
-        throws (1: PartyNotFound ex1, 2: ShopNotFound ex2)
-
-    domain.ShopAccount GetShopAccount (1: PartyID party_id, 2: ShopID shop_id, 3: domain.CurrencyRef currency)
-        throws (1: PartyNotFound ex1, 2: ShopNotFound ex2, 3: ShopAccountNotFound ex3)
-
-    list<domain.WalletAccount> GetWalletAccounts (1: PartyID party_id, 2: WalletID wallet_id)
-        throws (1: PartyNotFound ex1, 2: WalletNotFound ex2)
-
-    domain.WalletAccount GetWalletAccount (1: PartyID party_id, 2: WalletID wallet_id, 3: domain.CurrencyRef currency)
-        throws (1: PartyNotFound ex1, 2: WalletNotFound ex2, 3: WalletAccountNotFound ex3)
+        throws (1: TermSetHierarchyNotFound ex1)
 }

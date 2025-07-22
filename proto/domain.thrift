@@ -142,20 +142,20 @@ typedef string IPAddress
 
 struct Invoice {
     1 : required InvoiceID id
-    2 : required PartyID owner_id
-    13: optional PartyRevision party_revision
-    3 : required ShopID shop_id
-    4 : required base.Timestamp created_at
+    2 : required DataRevision domain_revision
+    3 : required PartyID owner_id
+    4 : required ShopID shop_id
+    5 : required base.Timestamp created_at
     6 : required InvoiceStatus status
     7 : required InvoiceDetails details
     8 : required base.Timestamp due
-    10: required Cash cost
-    11: optional InvoiceContext context
-    12: optional InvoiceTemplateID template_id
-    14: optional string external_id
-    15: optional InvoiceClientInfo client_info
-    16: optional Allocation allocation
-    17: optional list<InvoiceMutation> mutations
+    9 : required Cash cost
+    10: optional InvoiceContext context
+    11: optional InvoiceTemplateID template_id
+    12: optional string external_id
+    13: optional InvoiceClientInfo client_info
+    14: optional Allocation allocation
+    15: optional list<InvoiceMutation> mutations
 }
 
 union InvoiceMutation {
@@ -313,20 +313,19 @@ struct InvoicePayment {
     1:  required InvoicePaymentID id
     2:  required base.Timestamp created_at
     3:  required InvoicePaymentStatus status
-    6:  optional InvoicePaymentContext context
-    8:  required Cash cost
-    23: optional Cash changed_cost
-    10: required DataRevision domain_revision
-    13: required InvoicePaymentFlow flow
-    14: required Payer payer
-    21: optional PayerSessionInfo payer_session_info
-    15: optional PartyRevision party_revision
-    16: optional PartyID owner_id
-    17: optional ShopID shop_id
-    18: optional bool make_recurrent
-    19: optional string external_id
-    20: optional base.Timestamp processing_deadline
-    22: optional InvoicePaymentRegistrationOrigin registration_origin
+    4:  optional InvoicePaymentContext context
+    5:  required Cash cost
+    6:  optional Cash changed_cost
+    7:  required DataRevision domain_revision
+    8:  required InvoicePaymentFlow flow
+    9:  required Payer payer
+    10: optional PayerSessionInfo payer_session_info
+    12: optional PartyID owner_id
+    13: optional ShopID shop_id
+    14: optional bool make_recurrent
+    15: optional string external_id
+    16: optional base.Timestamp processing_deadline
+    17: optional InvoicePaymentRegistrationOrigin registration_origin
 }
 
 struct InvoicePaymentPending   {}
@@ -363,14 +362,14 @@ struct InvoiceTemplate {
     1:  required InvoiceTemplateID id
     2:  required PartyID owner_id
     3:  required ShopID shop_id
-    5:  required LifetimeInterval invoice_lifetime
-    9:  required string product # for backward compatibility
-    11: optional string name
-    10: optional string description
-    12: optional base.Timestamp created_at
-    8:  required InvoiceTemplateDetails details
-    7:  optional InvoiceContext context
-    13: optional list<InvoiceMutationParams> mutations
+    4:  required LifetimeInterval invoice_lifetime
+    5:  required string product # for backward compatibility
+    6:  optional string name
+    7:  optional string description
+    8:  optional base.Timestamp created_at
+    9:  required InvoiceTemplateDetails details
+    10: optional InvoiceContext context
+    11: optional list<InvoiceMutationParams> mutations
 }
 
 union InvoiceMutationParams {
@@ -387,7 +386,7 @@ struct RandomizationMutationParams {
     /**
      * По умолчанию полагается допустимым отклонение в обе стороны
      */
-    7: optional DeviationDirection direction
+    3: optional DeviationDirection direction
     4: optional Amount min_amount_condition
     5: optional Amount max_amount_condition
     6: optional Amount amount_multiplicity_condition
@@ -423,11 +422,11 @@ struct InvoiceTemplateCostUnlimited {}
  */
 union InvoicePaymentStatus {
     1: InvoicePaymentPending pending
-    4: InvoicePaymentProcessed processed
-    2: InvoicePaymentCaptured captured
-    5: InvoicePaymentCancelled cancelled
-    6: InvoicePaymentRefunded refunded
-    3: InvoicePaymentFailed failed
+    2: InvoicePaymentProcessed processed
+    3: InvoicePaymentCaptured captured
+    4: InvoicePaymentCancelled cancelled
+    5: InvoicePaymentRefunded refunded
+    6: InvoicePaymentFailed failed
     7: InvoicePaymentChargedBack charged_back
 }
 
@@ -435,7 +434,7 @@ union InvoicePaymentStatus {
  * Информация о клиенте, которую передал мерчант
  */
 struct InvoiceClientInfo {
-    2: optional ClientTrustLevel trust_level
+    1: optional ClientTrustLevel trust_level
 }
 
 enum ClientTrustLevel {
@@ -491,21 +490,12 @@ union TargetInvoicePaymentStatus {
 
 union Payer {
     1: PaymentResourcePayer payment_resource
-    2: CustomerPayer        customer
-    3: RecurrentPayer       recurrent
+    2: RecurrentPayer       recurrent
 }
 
 struct PaymentResourcePayer {
     1: required DisposablePaymentResource resource
     2: required ContactInfo               contact_info
-}
-
-struct CustomerPayer {
-    1: required CustomerID             customer_id
-    2: required CustomerBindingID      customer_binding_id
-    3: required RecurrentPaymentToolID rec_payment_tool_id
-    4: required PaymentTool            payment_tool
-    5: required ContactInfo            contact_info
 }
 
 struct RecurrentPayer {
@@ -567,7 +557,6 @@ struct InvoicePaymentAdjustment {
     5: required string reason
     6: required FinalCashFlow new_cash_flow
     7: required FinalCashFlow old_cash_flow_inverse
-    8: optional PartyRevision party_revision
     9: optional InvoicePaymentAdjustmentState state
 }
 
@@ -651,7 +640,6 @@ struct InvoicePaymentChargeback {
      6: required Cash                            body
      7: required InvoicePaymentChargebackStage   stage
      8: required DataRevision                    domain_revision
-     9: optional PartyRevision                   party_revision
     10: optional InvoicePaymentChargebackContext context
     11: optional string                          external_id
 }
@@ -728,7 +716,6 @@ struct InvoicePaymentRefund {
     2 : required InvoicePaymentRefundStatus status
     3 : required base.Timestamp created_at
     4 : required DataRevision domain_revision
-    7 : optional PartyRevision party_revision
     6 : optional Cash cash
     5 : optional string reason
     8 : optional InvoiceCart cart
@@ -782,37 +769,6 @@ struct Suspended {
 /* Parties */
 
 typedef base.ID PartyID
-typedef i64 PartyRevision
-
-typedef string PartyMetaNamespace
-typedef msgpack.Value PartyMetaData
-typedef map<PartyMetaNamespace, PartyMetaData> PartyMeta
-
-/** Участник. */
-struct Party {
-    1: required PartyID id
-    7: required PartyContactInfo contact_info
-    8: required base.Timestamp created_at
-    2: required Blocking blocking
-    3: required Suspension suspension
-    9: required map<ContractorID, PartyContractor> contractors
-    4: required map<ContractID, Contract> contracts
-    5: required map<ShopID, Shop> shops
-    10: required map<WalletID, Wallet> wallets
-    6: required PartyRevision revision
-    11: optional string party_name
-    12: optional string comment
-}
-
-/** Статусы участника **/
-/** Данная структура используется только для получения статусов Участника **/
-
-struct PartyStatus {
-    1: required PartyID id
-    2: required Blocking blocking
-    3: required Suspension suspension
-    4: required PartyRevision revision
-}
 
 struct PartyContactInfo {
     1: required string registration_email
@@ -823,62 +779,14 @@ struct PartyContactInfo {
 
 typedef base.ID ShopID
 
-/** Магазин мерчанта. */
-struct Shop {
-    1: required ShopID id
-   11: required base.Timestamp created_at
-    2: required Blocking blocking
-    3: required Suspension suspension
-    4: required ShopDetails details
-   10: required ShopLocation location
-    5: required CategoryRef category
-    6: optional ShopAccount account
-    7: required ContractID contract_id
-   13: optional set<TurnoverLimit> turnover_limits
-
-   //Reserved
-   // 8
-   // 12
-}
-
 struct ShopAccount {
     1: required CurrencyRef currency
     2: required AccountID settlement
     3: required AccountID guarantee
-
-    // Deprecated
-    4: optional AccountID payout
-}
-
-struct ShopDetails {
-    1: required string name
-    2: optional string description
 }
 
 union ShopLocation {
     1: string url
-}
-
-/** RBKM Wallets **/
-
-typedef base.ID WalletID
-
-struct Wallet {
-    1: required WalletID id
-    2: optional string name
-    3: required base.Timestamp created_at
-    4: required Blocking blocking
-    5: required Suspension suspension
-    6: required ContractID contract
-    7: optional WalletAccount account
-}
-
-struct WalletAccount {
-    1: required CurrencyRef currency
-    2: required AccountID settlement
-
-    // Deprecated
-    3: optional AccountID payout
 }
 
 /* Инспекция платежа */
@@ -892,74 +800,7 @@ enum RiskScore {
 
 typedef base.ID ScoreID
 
-/* Contracts */
-
-typedef base.ID ContractorID
-typedef base.Opaque IdentityDocumentToken
-
-struct PartyContractor {
-    1: required ContractorID id
-    2: required Contractor contractor
-    3: required ContractorIdentificationLevel status
-    4: required list<IdentityDocumentToken> identity_documents
-}
-
-/** Лицо, выступающее стороной договора. */
-union Contractor {
-    2: RegisteredUser registered_user
-    1: LegalEntity legal_entity
-    3: PrivateEntity private_entity
-
-   // Reserved
-   // 4
-}
-
-struct RegisteredUser {
-    1: required string email
-}
-
-union LegalEntity {
-    1: RussianLegalEntity russian_legal_entity
-    2: InternationalLegalEntity international_legal_entity
-}
-
-// TODO refactor with RepresentativePerson
-/** Юридическое лицо-резидент РФ */
-struct RussianLegalEntity {
-    /* Наименование */
-    1: required string registered_name
-    /* ОГРН */
-    2: required string registered_number
-    /* ИНН/КПП */
-    3: required string inn
-    /* Адрес места нахождения */
-    4: required string actual_address
-    /* Адрес для отправки корреспонденции (почтовый) */
-    5: required string post_address
-    /* Наименование должности ЕИО/представителя */
-    6: required string representative_position
-    /* ФИО ЕИО/представителя */
-    7: required string representative_full_name
-    /* Наименование документа, на основании которого действует ЕИО/представитель */
-    8: required string representative_document
-    /* Реквизиты юр.лица */
-    9: required RussianBankAccount russian_bank_account
-}
-
-struct InternationalLegalEntity {
-    /* Наименование */
-    1: required string legal_name
-    /* Торговое наименование (если применимо) */
-    2: optional string trading_name
-    /* Адрес места регистрации */
-    3: required string registered_address
-    /* Адрес места нахождения (если отличается от регистрации)*/
-    4: optional string actual_address
-    /* Регистрационный номер */
-    5: optional string registered_number
-    /* Страна Мерчанта */
-    6: optional CountryRef country
-}
+//
 
 struct CountryRef {
     1: required CountryCode id
@@ -983,12 +824,6 @@ struct TradeBloc {
     2: optional string description
 }
 
-enum ContractorIdentificationLevel {
-    none = 100
-    partial = 200
-    full = 300
-}
-
 /** Банковский счёт. */
 
 struct RussianBankAccount {
@@ -1001,15 +836,15 @@ struct RussianBankAccount {
 struct InternationalBankAccount {
 
     // common
-    6: optional string                   number
-    7: optional InternationalBankDetails bank
-    8: optional InternationalBankAccount correspondent_account
+    1: optional string                   number
+    2: optional InternationalBankDetails bank
+    3: optional InternationalBankAccount correspondent_account
 
     // sources
     4: optional string iban           // International Bank Account Number (ISO 13616)
 
     // deprecated
-    1: optional string account_holder // we have `InternationalLegalEntity.legal_name` for that purpose
+    5: optional string account_holder // we have `InternationalLegalEntity.legal_name` for that purpose
 }
 
 struct InternationalBankDetails {
@@ -1024,109 +859,6 @@ struct InternationalBankDetails {
     5: optional string    aba_rtn     // ABA Routing Transit Number
 
 }
-
-struct WalletInfo {
-    1: required WalletID wallet_id
-}
-
-union PrivateEntity {
-    1: RussianPrivateEntity russian_private_entity
-}
-
-struct RussianPrivateEntity {
-    1: required string first_name
-    2: required string second_name
-    3: required string middle_name
-    4: required ContactInfo contact_info
-}
-
-// Deprecated
-typedef base.ID PayoutToolID
-
-// Deprecated
-struct PayoutTool {
-    1: required PayoutToolID id
-    4: required base.Timestamp created_at
-    2: required CurrencyRef currency
-    3: required PayoutToolInfo payout_tool_info
-}
-
-// Deprecated
-union PayoutToolInfo {
-    1: RussianBankAccount russian_bank_account
-    2: InternationalBankAccount international_bank_account
-    3: WalletInfo wallet_info
-    4: PaymentInstitutionAccount payment_institution_account
-
-    // Reserved
-    // 5
-}
-
-struct PaymentInstitutionAccount {
-}
-
-typedef base.ID ContractID
-
-/** Договор */
-struct Contract {
-    1: required ContractID id
-    14: optional ContractorID contractor_id
-    12: optional PaymentInstitutionRef payment_institution
-    11: required base.Timestamp created_at
-    4: optional base.Timestamp valid_since
-    5: optional base.Timestamp valid_until
-    6: required ContractStatus status
-    7: required TermSetHierarchyRef terms
-    8: required list<ContractAdjustment> adjustments
-    10: optional LegalAgreement legal_agreement
-    13: optional ReportPreferences report_preferences
-
-    // Deprecated
-    3: optional Contractor contractor
-    9: optional list<PayoutTool> payout_tools
-}
-
-/** Юридическое соглашение */
-struct LegalAgreement {
-    1: required base.Timestamp signed_at
-    2: required string legal_agreement_id
-    3: optional base.Timestamp valid_until
-}
-
-struct ReportPreferences {
-    1: optional ServiceAcceptanceActPreferences service_acceptance_act_preferences
-}
-
-struct ServiceAcceptanceActPreferences {
-    1: required BusinessScheduleRef schedule
-    2: required Representative signer
-}
-
-struct Representative {
-    /* Наименование должности ЕИО/представителя */
-    1: required string position
-    /* ФИО ЕИО/представителя */
-    2: required string full_name
-    /* Документ, на основании которого действует ЕИО/представитель */
-    3: required RepresentativeDocument document
-}
-
-union RepresentativeDocument {
-    1: ArticlesOfAssociation articles_of_association    // устав
-    2: LegalAgreement power_of_attorney                // доверенность
-}
-
-struct ArticlesOfAssociation {}
-
-union ContractStatus {
-    1: ContractActive active
-    2: ContractTerminated terminated
-    3: ContractExpired expired
-}
-
-struct ContractActive {}
-struct ContractTerminated { 1: required base.Timestamp terminated_at }
-struct ContractExpired {}
 
 /* Categories */
 
@@ -1144,17 +876,6 @@ struct Category {
     3: optional CategoryType type = CategoryType.test
 }
 
-struct ContractTemplateRef { 1: required ObjectID id }
-
-/** Шаблон договора или поправки **/
-struct ContractTemplate {
-    4: optional string name
-    5: optional string description
-    1: optional Lifetime valid_since
-    2: optional Lifetime valid_until
-    3: required TermSetHierarchyRef terms
-}
-
 union Lifetime {
     1: base.Timestamp timestamp
     2: LifetimeInterval interval
@@ -1167,27 +888,6 @@ struct LifetimeInterval {
     4: optional i16 hours
     5: optional i16 minutes
     6: optional i16 seconds
-}
-
-union ContractTemplateSelector {
-    1: list<ContractTemplateDecision> decisions
-    2: ContractTemplateRef value
-}
-
-struct ContractTemplateDecision {
-    1: required Predicate if_
-    2: required ContractTemplateSelector then_
-}
-
-/** Поправки к договору **/
-typedef base.ID ContractAdjustmentID
-
-struct ContractAdjustment {
-    1: required ContractAdjustmentID id
-    5: required base.Timestamp created_at
-    2: optional base.Timestamp valid_since
-    3: optional base.Timestamp valid_until
-    4: required TermSetHierarchyRef terms
 }
 
 /** Условия **/
@@ -1204,21 +904,13 @@ struct TermSet {
     2: optional RecurrentPaytoolsServiceTerms recurrent_paytools
     4: optional ReportsServiceTerms reports
     5: optional WalletServiceTerms wallets
-
-    //Reserved
-    // 3
-}
-
-struct TimedTermSet {
-    1: required base.TimestampInterval action_time
-    2: required TermSet terms
 }
 
 struct TermSetHierarchy {
     3: optional string name
     4: optional string description
     1: optional TermSetHierarchyRef parent_terms
-    2: required list<TimedTermSet> term_sets
+    2: required list<TermSet> term_sets
 }
 
 struct TermSetHierarchyRef { 1: required ObjectID id }
@@ -1290,7 +982,6 @@ struct WalletServiceTerms {
     2: optional CashLimitSelector wallet_limit
     3: optional TurnoverLimitSelector turnover_limit
     4: optional WithdrawalServiceTerms withdrawals
-    6: optional W2WServiceTerms w2w
 }
 
 /** Withdrawal service terms **/
@@ -1302,49 +993,6 @@ struct WithdrawalServiceTerms {
     3: optional CashFlowSelector cash_flow
     4: optional AttemptLimitSelector attempt_limit
     5: optional PaymentMethodSelector methods
-}
-
-/** W2W service terms **/
-
-struct W2WServiceTerms {
-    1: optional Predicate allow
-    2: optional CurrencySelector currencies
-    3: optional CashLimitSelector cash_limit
-    4: optional CashFlowSelector cash_flow
-    5: optional FeeSelector fees
-}
-
-/*
- * Payout methods
- *
- * NOTE Deprecated. Payout objects and relevant refs and data structs
- * are scheduled for removal in future versions of protocol.
- */
-
-enum PayoutMethod {
-    russian_bank_account
-    international_bank_account
-    wallet_info
-    payment_institution_account
-}
-
-// Deprecated
-struct PayoutMethodRef { 1: required PayoutMethod id }
-
-/** Способ вывода, категория средства вывода. */
-struct PayoutMethodDefinition {
-    1: required string name
-    2: required string description
-}
-
-union PayoutMethodSelector {
-    1: list<PayoutMethodDecision> decisions
-    2: set<PayoutMethodRef> value
-}
-
-struct PayoutMethodDecision {
-    1: required Predicate if_
-    2: required PayoutMethodSelector then_
 }
 
 /* Reports service terms */
@@ -1801,16 +1449,11 @@ struct BankCardTokenService {
   2: optional string description
 }
 
-
-typedef base.ID CustomerID
-typedef base.ID CustomerBindingID
-typedef base.ID RecurrentPaymentToolID
-
 union PaymentTool {
-    7: GenericPaymentTool generic
-    1: BankCard bank_card
-    2: PaymentTerminal payment_terminal
-    3: DigitalWallet digital_wallet
+    1: GenericPaymentTool generic
+    2: BankCard bank_card
+    3: PaymentTerminal payment_terminal
+    4: DigitalWallet digital_wallet
     5: MobileCommerce mobile_commerce
     6: CryptoCurrencyRef crypto_currency
 }
@@ -2435,18 +2078,18 @@ struct ProvisionTermSet {
 }
 
 struct PaymentsProvisionTerms {
-    11: optional Predicate allow
-    14: optional Predicate global_allow
-    1: optional CurrencySelector currencies
-    2: optional CategorySelector categories
-    3: optional PaymentMethodSelector payment_methods
+    1: optional Predicate allow
+    2: optional Predicate global_allow
+    3: optional CurrencySelector currencies
+    4: optional CategorySelector categories
+    5: optional PaymentMethodSelector payment_methods
     6: optional CashLimitSelector cash_limit
-    4: optional CashFlowSelector cash_flow
-    5: optional PaymentHoldsProvisionTerms holds
-    7: optional PaymentRefundsProvisionTerms refunds
+    7: optional CashFlowSelector cash_flow
+    8: optional PaymentHoldsProvisionTerms holds
+    9: optional PaymentRefundsProvisionTerms refunds
     10: optional PaymentChargebackProvisionTerms chargebacks
-    12: optional RiskScoreSelector risk_coverage
-    13: optional TurnoverLimitSelector turnover_limits
+    11: optional RiskScoreSelector risk_coverage
+    12: optional TurnoverLimitSelector turnover_limits
 }
 
 union RiskScoreSelector {
@@ -2497,15 +2140,12 @@ struct WalletProvisionTerms {
 }
 
 struct WithdrawalProvisionTerms {
-    5: optional Predicate allow
-    7: optional Predicate global_allow
-    1: optional CurrencySelector currencies
-    3: optional CashLimitSelector cash_limit
-    4: optional CashFlowSelector cash_flow
+    1: optional Predicate allow
+    2: optional Predicate global_allow
+    3: optional CurrencySelector currencies
+    4: optional CashLimitSelector cash_limit
+    5: optional CashFlowSelector cash_flow
     6: optional TurnoverLimitSelector turnover_limit
-
-    // Reserved
-    // 2
 }
 
 union CashValueSelector {
@@ -2530,16 +2170,6 @@ union PaymentSystemSelector {
 struct PaymentSystemDecision {
     1: required Predicate if_
     2: required PaymentSystemSelector then_
-}
-
-union ProviderSelector {
-    1: list<ProviderDecision> decisions
-    2: set<ProviderRef> value
-}
-
-struct ProviderDecision {
-    1: required Predicate if_
-    2: required ProviderSelector then_
 }
 
 /** Inspectors */
@@ -2619,19 +2249,12 @@ union Predicate {
 union Condition {
     1: CategoryRef category_is
     2: CurrencyRef currency_is
-    4: CashRange cost_in
-   11: Cash cost_is_multiple_of
-    3: PaymentToolCondition payment_tool
-    5: ShopLocation shop_location_is
-    6: PartyCondition party
-    8: ContractorIdentificationLevel identification_level_is
-   10: BinDataCondition bin_data
-
-   // Legacy
-    9: P2PToolCondition p2p_tool
-
-   // Deprecated
-   7: PayoutMethodRef payout_method_is
+    3: CashRange cost_in
+    4: Cash cost_is_multiple_of
+    5: PaymentToolCondition payment_tool
+    6: ShopLocation shop_location_is
+    7: PartyCondition party
+    8: BinDataCondition bin_data
 }
 
 struct BinDataCondition {
@@ -2644,39 +2267,30 @@ union StringCondition {
     2: string equals
 }
 
-// Legacy
-struct P2PToolCondition {
-    1: optional PaymentToolCondition sender_is
-    2: optional PaymentToolCondition receiver_is
-}
-
 union PaymentToolCondition {
     1: BankCardCondition bank_card
-    3: DigitalWalletCondition digital_wallet
-    2: PaymentTerminalCondition payment_terminal
+    2: DigitalWalletCondition digital_wallet
+    3: PaymentTerminalCondition payment_terminal
     4: CryptoCurrencyCondition crypto_currency
     5: MobileCommerceCondition mobile_commerce
     6: GenericPaymentToolCondition generic
 }
 
 struct BankCardCondition {
-    3: optional BankCardConditionDefinition definition
+    1: optional BankCardConditionDefinition definition
 }
 
 union BankCardConditionDefinition {
-    2: BankRef issuer_bank_is
-    3: PaymentSystemCondition payment_system
-    4: Residence issuer_country_is
-    5: bool empty_cvv_is
-    6: BankCardCategoryRef category_is
-
-    // Reserved
-    // 1
+    1: BankRef issuer_bank_is
+    2: PaymentSystemCondition payment_system
+    3: Residence issuer_country_is
+    4: bool empty_cvv_is
+    5: BankCardCategoryRef category_is
 }
 
 struct PaymentSystemCondition {
-    4: optional PaymentSystemRef      payment_system_is
-    5: optional BankCardTokenServiceRef token_service_is
+    1: optional PaymentSystemRef      payment_system_is
+    2: optional BankCardTokenServiceRef token_service_is
     3: optional TokenizationMethod    tokenization_method_is
 }
 
@@ -2685,7 +2299,7 @@ struct PaymentTerminalCondition {
 }
 
 union PaymentTerminalConditionDefinition {
-    2: PaymentServiceRef payment_service_is
+    1: PaymentServiceRef payment_service_is
 }
 
 struct DigitalWalletCondition {
@@ -2709,7 +2323,7 @@ struct MobileCommerceCondition {
 }
 
 union MobileCommerceConditionDefinition {
-    2: MobileOperatorRef operator_is
+    1: MobileOperatorRef operator_is
 }
 
 struct GenericResourceCondition {
@@ -2727,10 +2341,11 @@ struct PartyCondition {
     2: optional PartyConditionDefinition definition
 }
 
+typedef base.ID WalletID
+
 union PartyConditionDefinition {
     1: ShopID shop_is
     2: WalletID wallet_is
-    3: ContractID contract_is
 }
 
 struct CriterionRef { 1: required ObjectID id }
@@ -2828,35 +2443,22 @@ struct PaymentInstitutionRef { 1: required ObjectID id }
 struct PaymentInstitution {
     1: required string name
     2: optional string description
-    9: optional CalendarRef calendar
-    3: required SystemAccountSetSelector system_account_set
-    4: required ContractTemplateSelector default_contract_template
+    3: optional CalendarRef calendar
+    4: required SystemAccountSetSelector system_account_set
     6: required InspectorSelector inspector
     7: required PaymentInstitutionRealm realm
     8: required set<Residence> residences
     /* TODO: separated system accounts for wallets look weird */
-    11: optional SystemAccountSetSelector wallet_system_account_set
-    12: optional string identity
-    16: optional RoutingRules payment_routing_rules
-    19: optional RoutingRules withdrawal_routing_rules
-    21: optional PaymentSystemSelector payment_system
-
-    // Deprecated
-    5: optional ProviderSelector providers
-
-    // Reserved
-    // 13
-    // 17
+    9: optional SystemAccountSetSelector wallet_system_account_set
+    10: optional string identity
+    11: optional RoutingRules payment_routing_rules
+    12: optional RoutingRules withdrawal_routing_rules
+    13: optional PaymentSystemSelector payment_system
 }
 
 enum PaymentInstitutionRealm {
     test
     live
-}
-
-struct ContractPaymentInstitutionDefaults {
-    1: required PaymentInstitutionRef test
-    2: required PaymentInstitutionRef live
 }
 
 /* Routing rule sets */
@@ -2901,9 +2503,9 @@ struct RoutingCandidate {
     1: optional string description
     2: required Predicate allowed
     3: required TerminalRef terminal
-    5: optional i32 priority = CANDIDATE_PRIORITY
-    6: optional RoutingPin pin
-    4: optional i32 weight = CANDIDATE_WEIGHT
+    4: optional i32 priority = CANDIDATE_PRIORITY
+    5: optional RoutingPin pin
+    6: optional i32 weight = CANDIDATE_WEIGHT
 }
 
 /* Root config */
@@ -2911,11 +2513,8 @@ struct RoutingCandidate {
 struct GlobalsRef {}
 
 struct Globals {
-
-    4: required ExternalAccountSetSelector external_account_set
-    8: optional set<PaymentInstitutionRef> payment_institutions
-    42: optional ContractPaymentInstitutionDefaults contract_payment_institution_defaults
-    43: optional set<IdentityProviderRef> identity_providers
+    1: required ExternalAccountSetSelector external_account_set
+    2: optional set<PaymentInstitutionRef> payment_institutions
 }
 
 /** Dummy (for integrity test purpose) */
@@ -2945,11 +2544,6 @@ struct DummyLinkObject {
 
 /* Type enumerations */
 
-struct ContractTemplateObject {
-    1: required ContractTemplateRef ref
-    2: required ContractTemplate data
-}
-
 struct TermSetHierarchyObject {
     1: required TermSetHierarchyRef ref
     2: required TermSetHierarchy data
@@ -2978,12 +2572,6 @@ struct CalendarObject {
 struct PaymentMethodObject {
     1: required PaymentMethodRef ref
     2: required PaymentMethodDefinition data
-}
-
-// Deprecated
-struct PayoutMethodObject {
-    1: required PayoutMethodRef ref
-    2: required PayoutMethodDefinition data
 }
 
 struct BankObject {
@@ -3091,21 +2679,6 @@ struct TradeBlocObject {
     2: required TradeBloc data
 }
 
-struct IdentityProviderObject {
-    1: required IdentityProviderRef ref
-    2: required IdentityProvider data
-}
-
-struct IdentityProviderRef {
-    1: required string id
-}
-
-struct IdentityProvider {
-    1: required PaymentInstitutionRef payment_institution
-    2: required ContractTemplateRef contract_template
-    3: required ContractorIdentificationLevel contractor_level
-}
-
 struct LimitConfigObject {
     1: required LimitConfigRef ref
     2: required limiter_config.LimitConfig data
@@ -3116,36 +2689,21 @@ struct LimitConfigRef {
 }
 
 typedef base.ID ShopConfigID
-typedef base.ID WalletConfigID
-typedef i64 ShopConfigRevision
-typedef i64 WalletConfigRevision
-
-struct Details {
-    1: required string name
-    2: optional string description
-}
-
-struct ShopCurrencyConfig {
-    1: required CurrencyRef currency
-    2: required AccountID settlement
-    3: required AccountID guarantee
-    4: optional TermSetHierarchyRef terms
-}
 
 /** Магазин мерчанта. */
 struct ShopConfig {
-    1: required ShopConfigID id
-    2: required base.Timestamp created_at
-    3: required Blocking blocking
+    1: required string name
+    2: optional string description
+    3: required Blocking block
     4: required Suspension suspension
-    5: required Details details
-    6: required ShopLocation location
-    7: required CategoryRef category
-    8: optional map<CurrencyRef, ShopCurrencyConfig> currency_configs
-    9: optional set<TurnoverLimit> turnover_limits
-    10: required PaymentInstitutionRef payment_institution
-    11: optional TermSetHierarchyRef terms
-    12: required PartyID party_id
+    5: required PaymentInstitutionRef payment_institution
+    6: optional TermSetHierarchyRef terms
+    7: required ShopAccount account
+    8: required PartyID party_id
+
+    9: required ShopLocation location
+    10: required CategoryRef category
+    11: optional set<TurnoverLimit> turnover_limits
 }
 
 struct ShopConfigObject {
@@ -3157,23 +2715,22 @@ struct ShopConfigRef {
     1: required ShopConfigID id
 }
 
-struct WalletCurrencyConfig {
+typedef base.ID WalletConfigID
+
+struct WalletAccount {
     1: required CurrencyRef currency
     2: required AccountID settlement
-    3: optional TermSetHierarchyRef terms
 }
 
 struct WalletConfig {
-    1: required WalletConfigID id
-    2: optional string name
-    3: required base.Timestamp created_at
-    4: required Blocking blocking
-    5: required Suspension suspension
-    6: required PaymentInstitutionRef payment_institution
-    7: optional TermSetHierarchyRef terms
-    8: optional map<CurrencyRef, WalletCurrencyConfig> currency_configs
-    9: optional Details details
-    10: required PartyID party_id
+    1: required string name
+    2: optional string description
+    3: required Blocking block
+    4: required Suspension suspension
+    5: required PaymentInstitutionRef payment_institution
+    6: optional TermSetHierarchyRef terms
+    7: required WalletAccount account
+    9: required PartyID party_id
 }
 
 struct WalletConfigObject {
@@ -3187,15 +2744,13 @@ struct WalletConfigRef {
 
 /** Участник. */
 struct PartyConfig {
-    1: required PartyID id
-    2: required Blocking blocking
-    3: required Suspension suspension
-    4: required list<ShopConfigRef> shops
-    5: required list<WalletConfigRef> wallets
+    1: required string name
+    2: optional string description
+    3: required Blocking block
+    4: required Suspension suspension
+    5: required list<ShopConfigRef> shops
+    6: required list<WalletConfigRef> wallets
     7: required PartyContactInfo contact_info
-    8: required base.Timestamp created_at
-    9: optional string party_name
-    10: optional string comment
 }
 
 struct PartyConfigObject {
@@ -3225,7 +2780,6 @@ union Reference {
     4: CalendarRef calendar
     5: PaymentMethodRef payment_method
     6: BankRef bank
-    7: ContractTemplateRef contract_template
     8: TermSetHierarchyRef term_set_hierarchy
     9: PaymentInstitutionRef payment_institution
     10: ProviderRef provider
@@ -3247,14 +2801,13 @@ union Reference {
     26: CryptoCurrencyRef crypto_currency
     27: CountryRef country
     28: TradeBlocRef trade_bloc
-    29: IdentityProviderRef identity_provider
-    30: LimitConfigRef limit_config
-    31: DummyRef dummy
-    32: DummyLinkRef dummy_link
+    29: LimitConfigRef limit_config
+    30: DummyRef dummy
+    31: DummyLinkRef dummy_link
 
-    33: PartyConfigRef party_config
-    34: ShopConfigRef shop_config
-    35: WalletConfigRef wallet_config
+    32: PartyConfigRef party_config
+    33: ShopConfigRef shop_config
+    34: WalletConfigRef wallet_config
 }
 
 union DomainObject {
@@ -3264,7 +2817,6 @@ union DomainObject {
     4: CalendarObject calendar
     5: PaymentMethodObject payment_method
     6: BankObject bank
-    7: ContractTemplateObject contract_template
     8: TermSetHierarchyObject term_set_hierarchy
     9: PaymentInstitutionObject payment_institution
     10: ProviderObject provider
@@ -3286,14 +2838,13 @@ union DomainObject {
     26: CryptoCurrencyObject crypto_currency
     27: CountryObject country
     28: TradeBlocObject trade_bloc
-    29: IdentityProviderObject identity_provider
-    30: LimitConfigObject limit_config
-    31: DummyObject dummy
-    32: DummyLinkObject dummy_link
+    29: LimitConfigObject limit_config
+    30: DummyObject dummy
+    31: DummyLinkObject dummy_link
 
-    33: PartyConfigObject party_config
-    34: ShopConfigObject shop_config
-    35: WalletConfigObject wallet_config
+    32: PartyConfigObject party_config
+    33: ShopConfigObject shop_config
+    34: WalletConfigObject wallet_config
 }
 
 union ReflessDomainObject {
@@ -3303,7 +2854,6 @@ union ReflessDomainObject {
     4: Calendar calendar
     5: PaymentMethodDefinition payment_method
     6: Bank bank
-    7: ContractTemplate contract_template
     8: TermSetHierarchy term_set_hierarchy
     9: PaymentInstitution payment_institution
     10: Provider provider
@@ -3325,14 +2875,13 @@ union ReflessDomainObject {
     26: CryptoCurrency crypto_currency
     27: Country country
     28: TradeBloc trade_bloc
-    29: IdentityProvider identity_provider
-    30: limiter_config.LimitConfig limit_config
-    31: Dummy dummy
-    32: DummyLink dummy_link
+    29: limiter_config.LimitConfig limit_config
+    30: Dummy dummy
+    31: DummyLink dummy_link
 
-    33: PartyConfig party_config
-    34: ShopConfig shop_config
-    35: WalletConfig wallet_config
+    32: PartyConfig party_config
+    33: ShopConfig shop_config
+    34: WalletConfig wallet_config
 }
 
 enum DomainObjectType {
@@ -3342,7 +2891,6 @@ enum DomainObjectType {
     calendar = 4
     payment_method = 5
     bank = 6
-    contract_template = 7
     term_set_hierarchy = 8
     payment_institution = 9
     provider = 10
@@ -3364,14 +2912,13 @@ enum DomainObjectType {
     crypto_currency = 26
     country = 27
     trade_bloc = 28
-    identity_provider = 29
-    limit_config = 30
-    dummy = 31
-    dummy_link = 32
+    limit_config = 29
+    dummy = 30
+    dummy_link = 31
 
-    party_config = 33
-    shop_config = 34
-    wallet_config = 35
+    party_config = 32
+    shop_config = 33
+    wallet_config = 34
 }
 
 /* Domain */
