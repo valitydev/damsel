@@ -14,4 +14,5 @@ jobs:
       server-password: ${{ secrets.OSSRH_TOKEN }}
       deploy-secret-key: ${{ secrets.OSSRH_GPG_SECRET_KEY }}
       deploy-secret-key-password: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
+      github-token: ${{ secrets.GITHUB_TOKEN }}
       mm-webhook-url: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
