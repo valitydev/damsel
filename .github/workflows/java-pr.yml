@@ -8,5 +8,3 @@ on:
 jobs:
   build:
     uses: valitydev/java-workflow/.github/workflows/maven-thrift-build.yml@v3
-    secrets:
-      java-version: 21
