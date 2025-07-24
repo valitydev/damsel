@@ -1675,15 +1675,6 @@ service PartyManagement {
 
     /* Payment institutions */
 
-    domain.TermSet ComputePaymentInstitutionTerms (
-        1: PaymentInstitutionRef ref,
-        2: Varset varset
-    )
-        throws (
-            1: PartyNotFound ex1,
-            2: PaymentInstitutionNotFound ex2
-        )
-
     domain.PaymentInstitution ComputePaymentInstitution (
         1: PaymentInstitutionRef ref,
         2: domain.DataRevision domain_revision,
