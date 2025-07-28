@@ -156,6 +156,12 @@ struct Invoice {
 
 union PaymentResource {
     1: domain.DisposablePaymentResource disposable_payment_resource
+    2: RecurrentPaymentResource recurrent_payment_resource
+}
+
+struct RecurrentPaymentResource {
+    1: required domain.PaymentTool payment_tool
+    2: required domain.Token rec_token
 }
 
 struct InvoicePayment {
