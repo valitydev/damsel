@@ -910,7 +910,7 @@ struct TermSetHierarchy {
     3: optional string name
     4: optional string description
     1: optional TermSetHierarchyRef parent_terms
-    2: required list<TermSet> term_sets
+    2: required TermSet term_set
 }
 
 struct TermSetHierarchyRef { 1: required ObjectID id }
