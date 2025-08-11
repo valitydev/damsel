@@ -143,8 +143,8 @@ typedef string IPAddress
 struct Invoice {
     1 : required InvoiceID id
     2 : required DataRevision domain_revision
-    3 : required PartyID owner_id
-    4 : required ShopID shop_id
+    3 : required PartyConfigRef party_ref
+    4 : required ShopConfigRef shop_ref
     5 : required base.Timestamp created_at
     6 : required InvoiceStatus status
     7 : required InvoiceDetails details
@@ -269,8 +269,8 @@ union AllocationTransactionTarget {
 }
 
 struct AllocationTransactionTargetShop {
-    1: required PartyID owner_id
-    2: required ShopID shop_id
+    1: required PartyConfigRef party_ref
+    2: required ShopConfigRef shop_ref
 }
 
 struct AllocationTransactionBodyTotal {
@@ -320,8 +320,8 @@ struct InvoicePayment {
     8:  required InvoicePaymentFlow flow
     9:  required Payer payer
     10: optional PayerSessionInfo payer_session_info
-    12: optional PartyID owner_id
-    13: optional ShopID shop_id
+    12: optional PartyConfigRef party_ref
+    13: optional ShopConfigRef shop_ref
     14: optional bool make_recurrent
     15: optional string external_id
     16: optional base.Timestamp processing_deadline
@@ -360,8 +360,8 @@ typedef base.ID InvoiceTemplateID
 
 struct InvoiceTemplate {
     1:  required InvoiceTemplateID id
-    2:  required PartyID owner_id
-    3:  required ShopID shop_id
+    2:  required PartyConfigRef party_ref
+    3:  required ShopConfigRef shop_ref
     4:  required LifetimeInterval invoice_lifetime
     5:  required string product # for backward compatibility
     6:  optional string name
@@ -1913,8 +1913,8 @@ struct MerchantTransactionAccount {
 }
 
 struct MerchantTransactionAccountOwner {
-    1: required PartyID party_id
-    2: required ShopID shop_id
+    1: required PartyConfigRef party_ref
+    2: required ShopConfigRef shop_ref
 }
 
 struct ProviderTransactionAccount {
@@ -2337,7 +2337,7 @@ union GenericPaymentToolCondition {
 }
 
 struct PartyCondition {
-    1: required PartyID id
+    1: required PartyConfigRef party_ref
     2: optional PartyConditionDefinition definition
 }
 
@@ -2699,7 +2699,7 @@ struct ShopConfig {
     5: required PaymentInstitutionRef payment_institution
     6: optional TermSetHierarchyRef terms
     7: required ShopAccount account
-    8: required PartyID party_id
+    8: required PartyConfigRef party_ref
 
     9: required ShopLocation location
     10: required CategoryRef category
@@ -2730,7 +2730,7 @@ struct WalletConfig {
     5: required PaymentInstitutionRef payment_institution
     6: optional TermSetHierarchyRef terms
     7: required WalletAccount account
-    9: required PartyID party_id
+    9: required PartyConfigRef party_ref
 }
 
 struct WalletConfigObject {
@@ -2748,9 +2748,7 @@ struct PartyConfig {
     2: optional string description
     3: required Blocking block
     4: required Suspension suspension
-    5: required list<ShopConfigRef> shops
-    6: required list<WalletConfigRef> wallets
-    7: required PartyContactInfo contact_info
+    5: required PartyContactInfo contact_info
 }
 
 struct PartyConfigObject {
