@@ -177,8 +177,8 @@ struct SearchFullResponse {
  * Описание ребра графа ссылок между объектами домена.
  */
 struct ReferenceEdge {
-    1: required domain.Reference from
-    2: required domain.Reference to
+    1: required domain.Reference source
+    2: required domain.Reference target
 }
 
 /**
