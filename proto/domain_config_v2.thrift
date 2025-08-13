@@ -175,8 +175,8 @@ struct SearchFullResponse {
 
 struct VersionedObjectWithReferences {
     1: required VersionedObject object
-    2: required list<VersionedObject> referenced_by
-    3: required list<VersionedObject> references_to
+    2: required set<VersionedObject> referenced_by
+    3: required set<VersionedObject> references_to
 }
 
 /**
