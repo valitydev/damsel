@@ -868,6 +868,40 @@ struct TurnoverLimitValue {
 
 typedef map<domain.PaymentRoute, list<TurnoverLimitValue>> RouteLimitContext
 
+/* Значение до события, на момент события и их разница. */
+struct AmountChange {
+    1: required domain.Amount value_before      // значение до события
+    2: required domain.Amount value_current     // значение на момент события
+    3: required domain.Amount value_change      // разница: current - before (может быть < 0)
+}
+
+/* Статус до события и на момент события. */
+struct StatusChange {
+    1: optional domain.InvoicePaymentStatus status_before
+    2: required domain.InvoicePaymentStatus status_current
+}
+
+/* Состояние платежа и его изменения на момент события (event_id). */
+struct InvoicePaymentStateDiff {
+    1:  required base.EventID event_id
+    2:  required domain.InvoiceID invoice_id
+    3:  required domain.InvoicePaymentID payment_id
+
+    // Основные суммы
+    4:  required AmountChange amount             // сумма платежа
+    5:  required AmountChange fee                // комиссия мерчанту
+    6:  required AmountChange provider_fee       // комиссия провайдера
+    7:  required AmountChange guarantee_deposit  // гарантийный депозит/холд
+    8:  required domain.CurrencySymbolicCode currency
+
+    // Статус
+    9:  required StatusChange status
+
+    // Метаданные
+    10: optional base.EventID previous_event_id  // предыдущий event по этому платежу
+    12: optional domain.ProviderRef provider_ref
+    13: optional domain.TerminalRef terminal_ref
+}
 
 // Exceptions
 
@@ -1053,6 +1087,17 @@ service Invoicing {
             1: InvoiceNotFound ex1,
             2: InvoicePaymentNotFound ex2,
             3: RouteNotChosen ex3
+        )
+
+    /* Возвращает состояние платежа и его изменения на момент события (event_id) */
+    InvoicePaymentStateDiff GetInvoicePaymentStateDiff (
+        2: domain.InvoiceID invoice_id,
+        3: base.EventID event_id
+    )
+        throws (
+            2: InvoiceNotFound ex2,
+            3: EventNotFound ex3,
+            4: base.InvalidRequest ex4
         )
 
     /* Terms */
