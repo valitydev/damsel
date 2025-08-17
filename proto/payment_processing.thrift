@@ -504,8 +504,8 @@ struct EventRange {
 typedef domain.InvoiceMutationParams InvoiceMutationParams
 
 struct InvoiceParams {
-    1: required PartyID party_id
-    2: required ShopID shop_id
+    1: required domain.PartyConfigRef party_id
+    2: required domain.ShopConfigRef shop_id
     3: required domain.InvoiceDetails details
     4: required base.Timestamp due
     5: required domain.Cash cost
@@ -527,8 +527,8 @@ struct InvoiceWithTemplateParams {
 
 struct InvoiceTemplateCreateParams {
     10: required domain.InvoiceTemplateID      template_id
-    1:  required PartyID                       party_id
-    2:  required ShopID                        shop_id
+    1:  required domain.PartyConfigRef         party_id
+    2:  required domain.ShopConfigRef          shop_id
     4:  required domain.LifetimeInterval       invoice_lifetime
     7:  required string                        product # for backward compatibility
     11: optional string                        name
@@ -1488,8 +1488,6 @@ service InvoiceTemplating {
 
 // Types
 
-typedef domain.PartyID PartyID
-typedef domain.ShopID  ShopID
 typedef domain.WalletID WalletID
 typedef domain.PaymentInstitutionRef PaymentInstitutionRef
 
@@ -1501,7 +1499,7 @@ struct Varset {
     5: optional domain.WalletID wallet_id
     6: optional domain.ShopID shop_id
     8: optional domain.PaymentTool payment_tool
-    9: optional domain.PartyID party_id
+    9: optional domain.PartyConfigRef party_ref
     10: optional domain.BinData bin_data
 }
 
@@ -1579,12 +1577,12 @@ service PartyManagement {
 
     /**
      * В функциях `GetShopAccount`, `GetWalletAccount` и
-     * `GetAccountState` `party_id` необходим для проверки
+     * `GetAccountState` `party_ref` необходим для проверки
      * принадлежности объекта для указанной версии.
      */
     domain.ShopAccount GetShopAccount (
-        1: PartyID party_id,
-        2: ShopID shop_id,
+        1: domain.PartyConfigRef party_ref,
+        2: domain.ShopConfigRef shop_ref,
         3: domain.DataRevision domain_revision
     )
         throws (
@@ -1594,8 +1592,8 @@ service PartyManagement {
         )
 
     domain.WalletAccount GetWalletAccount (
-        1: PartyID party_id,
-        2: WalletID wallet_id,
+        1: domain.PartyConfigRef party_ref,
+        2: domain.WalletConfigRef wallet_ref,
         3: domain.DataRevision domain_revision
     )
         throws (
@@ -1605,7 +1603,7 @@ service PartyManagement {
         )
 
     AccountState GetAccountState (
-        1: PartyID party_id,
+        1: domain.PartyConfigRef party_ref,
         2: domain.AccountID account_id,
         3: domain.DataRevision domain_revision
     )

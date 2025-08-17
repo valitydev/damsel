@@ -9,8 +9,8 @@ namespace erlang dmsl.paytool_provider
     Например, как gatewayMerchantID для GooglePay или YandexPay
 */
 struct MerchantID {
-  1: required domain.PartyID party_id
-  2: required domain.ShopID shop_id
+  1: required domain.PartyConfigRef party_ref
+  2: required domain.ShopConfigRef shop_ref
   3: optional domain.PaymentInstitutionRealm realm
 }
 

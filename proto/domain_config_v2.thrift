@@ -173,6 +173,47 @@ struct SearchFullResponse {
     3: optional ContinuationToken continuation_token
 }
 
+struct VersionedObjectWithReferences {
+    1: required VersionedObject object
+    2: required set<VersionedObject> referenced_by
+    3: required set<VersionedObject> references_to
+}
+
+/**
+ * Описание ребра графа ссылок между объектами домена.
+ */
+struct ReferenceEdge {
+    1: required domain.Reference source
+    2: required domain.Reference target
+}
+
+/**
+ * Запрос на получение графа связанных объектов.
+ */
+struct RelatedGraphRequest {
+    1: required domain.Reference ref
+    2: optional Version version
+    // Тип объекта, для которого нужно получить граф, если не указан, то будет получен граф всех типов объектов
+    3: optional domain.DomainObjectType type
+    // Включить в ответе сущности, которые референсят ref
+    // [Entities] -> ref
+    4: optional bool include_inbound = true
+    // Включить в ответе сущности, которые референсит ref
+    // ref -> [Entities]
+    5: optional bool include_outbound = true
+    // Глубина обхода графа
+    // Например, depth = 2 означает, что будут включены сущности, которые референсят сущности референсящие ref
+    6: optional i32 depth = 1
+}
+
+/**
+ * Граф объектов и их связей.
+ */
+struct RelatedGraph {
+    1: required set<LimitedVersionedObject> nodes
+    2: required set<ReferenceEdge> edges
+}
+
 /**
  * Объект не найден в домене
  */
@@ -268,6 +309,9 @@ service RepositoryClient {
     list<VersionedObject> CheckoutObjects (1: VersionReference version_ref, 2: list<domain.Reference> object_refs)
         throws (1: VersionNotFound ex1)
 
+    VersionedObjectWithReferences CheckoutObjectWithReferences (1: VersionReference version_ref, 2: domain.Reference object_ref)
+        throws (1: VersionNotFound ex1, 2: ObjectNotFound ex2)
+
     /**
      * Возвращает снепшот домена определенной или последней версии
      * DEPRECATED: используйте CheckoutObjects
@@ -324,4 +368,14 @@ service Repository {
         1: SearchRequestParams request_params
     )
         throws (1: ObjectTypeNotFound ex1)
+
+    /**
+     * Возвращает граф объектов, связанных с указанным объектом.
+     * Можно запрашивать входящие и/или исходящие связи, а также ограничивать глубину обхода.
+     */
+    RelatedGraph GetRelatedGraph (1: RelatedGraphRequest request)
+        throws (
+            1: ObjectNotFound ex1,
+            2: VersionNotFound ex2
+        )
 }

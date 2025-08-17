@@ -11,8 +11,8 @@ struct Withdrawal {
     5: optional base.Timestamp created_at
     // Source ?
     2: required Destination destination
-    3: optional domain.PartyID sender
-    4: optional domain.PartyID receiver
+    3: optional domain.PartyConfigRef sender
+    4: optional domain.PartyConfigRef receiver
     6: optional AuthData auth_data
 }
 
