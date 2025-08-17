@@ -8,8 +8,6 @@ typedef base.Timestamp Timestamp
 typedef base.InvalidRequest InvalidRequest
 typedef i64 ReportID
 typedef base.ID FileID
-typedef domain.PartyID PartyID
-typedef domain.ShopID ShopID
 typedef string URL
 
 /**
@@ -37,8 +35,8 @@ struct ReportTimeRange {
 }
 
 struct ReportRequest {
-    1: required PartyID party_id
-    2: required ShopID shop_id
+    1: required domain.PartyConfigRef party_ref
+    2: required domain.ShopConfigRef shop_ref
     3: required ReportTimeRange time_range
 }
 
@@ -124,14 +122,14 @@ service Reporting {
   *
   * ReportNotFound, если отчет не найден
   */
-  Report GetReport(1: PartyID party_id, 2: ShopID shop_id, 3: ReportID report_id) throws (1: ReportNotFound ex1)
+  Report GetReport(1: domain.PartyConfigRef party_ref, 2: domain.ShopConfigRef shop_ref, 3: ReportID report_id) throws (1: ReportNotFound ex1)
 
   /**
   * Запрос на отмену отчета
   *
   * ReportNotFound, если отчет не найден
   */
-  void cancelReport(1: PartyID party_id, 2: ShopID shop_id, 3: ReportID report_id) throws (1: ReportNotFound ex1)
+  void cancelReport(1: domain.PartyConfigRef party_ref, 2: domain.ShopConfigRef shop_ref, 3: ReportID report_id) throws (1: ReportNotFound ex1)
 
   /**
   * Сгенерировать ссылку на файл

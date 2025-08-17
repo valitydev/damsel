@@ -40,11 +40,11 @@ struct PaymentInfo {
 }
 
 struct Party {
-    1: required domain.PartyID party_id
+    1: required domain.PartyConfigRef party_ref
 }
 
 struct Shop {
-    1: required domain.ShopID       id
+    1: required domain.ShopConfigRef shop_ref
     2: required domain.Category     category
     3: required string              name
     4: optional string              description

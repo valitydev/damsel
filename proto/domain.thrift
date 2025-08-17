@@ -768,8 +768,6 @@ struct Suspended {
 
 /* Parties */
 
-typedef base.ID PartyID
-
 struct PartyContactInfo {
     1: required string registration_email
     2: optional list<string> manager_contact_emails
@@ -811,12 +809,10 @@ struct Country {
     2: optional set<TradeBlocRef> trade_blocs
 }
 
-typedef base.ID TradeBlocID
-
 /* Экономическая зона/блок Мерчанта: напр. ЕЭЗ */
 /* См. https://en.wikipedia.org/wiki/Trade_bloc */
 struct TradeBlocRef {
-    1: required TradeBlocID id
+    1: required base.ID id
 }
 
 struct TradeBloc {
@@ -2688,8 +2684,6 @@ struct LimitConfigRef {
     1: required LimitConfigID id
 }
 
-typedef base.ID ShopConfigID
-
 /** Магазин мерчанта. */
 struct ShopConfig {
     1: required string name
@@ -2712,10 +2706,8 @@ struct ShopConfigObject {
 }
 
 struct ShopConfigRef {
-    1: required ShopConfigID id
+    1: required base.ID id
 }
-
-typedef base.ID WalletConfigID
 
 struct WalletAccount {
     1: required CurrencyRef currency
@@ -2739,7 +2731,7 @@ struct WalletConfigObject {
 }
 
 struct WalletConfigRef {
-    1: required WalletConfigID id
+    1: required base.ID id
 }
 
 /** Участник. */
@@ -2757,7 +2749,7 @@ struct PartyConfigObject {
 }
 
 struct PartyConfigRef {
-    1: required PartyID id
+    1: required base.ID id
 }
 
 /* There are 3 requirements on Reference and DomainObject unions:

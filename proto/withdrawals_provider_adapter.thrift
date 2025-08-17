@@ -97,8 +97,8 @@ struct Withdrawal {
     2: required Cash body
     3: required Destination destination
     8: optional domain.PaymentService payment_service
-    4: optional domain.PartyID sender
-    5: optional domain.PartyID receiver
+    4: optional domain.PartyConfigRef sender
+    5: optional domain.PartyConfigRef receiver
     6: optional Quote quote
     9: optional withdrawals_domain.AuthData auth_data
 }

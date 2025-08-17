@@ -14,7 +14,7 @@ exception LimitExceeded {}
 
 struct Webhook {
     1: required WebhookID id
-    2: required domain.PartyID party_id
+    2: required domain.PartyConfigRef party_ref
     3: required EventFilter event_filter
     4: required Url url
     5: required Key pub_key
@@ -22,7 +22,7 @@ struct Webhook {
 }
 
 struct WebhookParams {
-    1: required domain.PartyID party_id
+    1: required domain.PartyConfigRef party_ref
     2: required EventFilter event_filter
     3: required Url url
 }
@@ -33,7 +33,7 @@ union EventFilter {
 
 struct InvoiceEventFilter {
     1: required set<InvoiceEventType> types
-    2: required domain.ShopID shop_id
+    2: required domain.ShopConfigRef shop_ref
 }
 
 union InvoiceEventType {
@@ -120,7 +120,7 @@ struct InvoicePaymentRefundSucceeded {}
 struct InvoicePaymentRefundFailed {}
 
 service WebhookManager {
-    list<Webhook> GetList(1: domain.PartyID party_id)
+    list<Webhook> GetList(1: domain.PartyConfigRef party_ref)
     Webhook Get(1: WebhookID webhook_id) throws (1: WebhookNotFound ex1)
     Webhook Create(1: WebhookParams webhook_params) throws (1: LimitExceeded ex1)
     void Delete(1: WebhookID webhook_id) throws (1: WebhookNotFound ex1)
