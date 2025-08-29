@@ -1494,8 +1494,8 @@ struct Varset {
     2: optional domain.CurrencyRef currency
     3: optional domain.Cash amount
     4: optional domain.PaymentMethodRef payment_method
-    5: optional base.ID wallet_id
-    6: optional base.ID shop_id
+    5: optional domain.WalletConfigRef wallet_ref
+    6: optional domain.ShopConfigRef shop_ref
     8: optional domain.PaymentTool payment_tool
     9: optional domain.PartyConfigRef party_ref
     10: optional domain.BinData bin_data
