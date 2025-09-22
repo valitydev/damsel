@@ -1487,7 +1487,6 @@ service InvoiceTemplating {
 /* Party management service definitions */
 
 // Types
-
 typedef domain.PaymentInstitutionRef PaymentInstitutionRef
 
 struct Varset {
