@@ -1373,15 +1373,15 @@ struct TurnoverLimit {
     1: required LimitConfigRef ref
 
     /**
-     * Версия конфигурации, объект которой нужно брать для расчета указанного лимита.
-     */
-    2: required DataRevision domain_revision
-
-    /**
      * Допустимая верхняя граница.
      * Лимит считается исчерпанным, если значение _строго больше_ верхней границы.
      */
-    3: required Amount upper_boundary
+    2: required Amount upper_boundary
+
+    /**
+     * Версия конфигурации, объект которой нужно брать для расчета указанного лимита.
+     */
+    3: required DataRevision domain_revision
 }
 
 union TurnoverLimitSelector {
