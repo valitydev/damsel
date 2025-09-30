@@ -30,15 +30,13 @@ struct TimeRangeTypeInterval {
 
 struct LimitConfig {
     1: required string processor_type
-    2: required base.Timestamp created_at
-    3: required base.Timestamp started_at
-    4: required ShardSize shard_size
-    5: required TimeRangeType time_range_type
-    6: required LimitContextType context_type
-    7: optional LimitType type
-    8: optional set<LimitScopeType> scopes
-    9: optional string description
-    10: optional OperationLimitBehaviour op_behaviour
+    2: required ShardSize shard_size
+    3: required TimeRangeType time_range_type
+    4: required LimitContextType context_type
+    5: optional LimitType type
+    6: optional set<LimitScopeType> scopes
+    7: optional string description
+    8: optional OperationLimitBehaviour op_behaviour
     /**
      * Convert operation's amount if its context currency differs from
      * limit-turnover metric (see `LimitTurnoverAmount`).
@@ -47,7 +45,7 @@ struct LimitConfig {
      * throws `InvalidOperationCurrency` exception (see
      * limiter-proto).
      */
-    11: optional CurrencyConversion currency_conversion
+    9: optional CurrencyConversion currency_conversion
 }
 
 struct CurrencyConversion {}

@@ -1370,7 +1370,7 @@ struct CashLimitDecision {
 typedef limiter_config.LimitConfigID LimitConfigID
 
 struct TurnoverLimit {
-    1: required LimitConfigID id
+    1: required LimitConfigRef ref
 
     /**
      * Допустимая верхняя граница.
@@ -1379,10 +1379,9 @@ struct TurnoverLimit {
     2: required Amount upper_boundary
 
     /**
-     * Версия конфигурации, объект которой нужно брать для расчета лимитов с таким идентификатором.
-     * Обязательна после процесса миграции на конфигурацию лимитов через доминанту.
+     * Версия конфигурации, объект которой нужно брать для расчета указанного лимита.
      */
-    3: optional DataRevision domain_revision
+    3: required DataRevision domain_revision
 }
 
 union TurnoverLimitSelector {
