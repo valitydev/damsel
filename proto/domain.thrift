@@ -2690,7 +2690,7 @@ struct ShopConfig {
     3: required Blocking block
     4: required Suspension suspension
     5: required PaymentInstitutionRef payment_institution
-    6: optional TermSetHierarchyRef terms
+    6: required TermSetHierarchyRef terms
     7: required ShopAccount account
     8: required PartyConfigRef party_ref
 
@@ -2719,7 +2719,7 @@ struct WalletConfig {
     3: required Blocking block
     4: required Suspension suspension
     5: required PaymentInstitutionRef payment_institution
-    6: optional TermSetHierarchyRef terms
+    6: required TermSetHierarchyRef terms
     7: required WalletAccount account
     9: required PartyConfigRef party_ref
 }
