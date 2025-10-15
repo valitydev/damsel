@@ -207,6 +207,51 @@ struct RelatedGraphRequest {
 }
 
 /**
+ * Запрос на получение графа связанных объектов для нескольких объектов.
+ */
+struct MultipleRelatedGraphRequest {
+    1: required list<domain.Reference> refs
+    2: optional Version version
+    // Тип объекта, для которого нужно получить граф, если не указан, то будет получен граф всех типов объектов
+    3: optional domain.DomainObjectType type
+    // Включить в ответе сущности, которые референсят ref
+    // [Entities] -> ref
+    4: optional bool include_inbound = true
+    // Включить в ответе сущности, которые референсит ref
+    // ref -> [Entities]
+    5: optional bool include_outbound = true
+    // Глубина обхода графа
+    // Например, depth = 2 означает, что будут включены сущности, которые референсят сущности референсящие ref
+    6: optional i32 depth = 1
+}
+
+/**
+ * Запрос на получение графа связанных объектов.
+ */
+struct SearchRelatedGraphRequest {
+    /**
+     * PostgreSQL tsquery expression for searching objects.
+     * See: https://www.postgresql.org/docs/current/textsearch-intro.html
+     * If query is '*', it matches everything.
+     */
+    1: required string query
+    // Тип объекта искомого с помощью query
+    2: required domain.DomainObjectType searched_type
+    3: optional Version version
+    // Тип объекта, для которого нужно получить граф, если не указан, то будет получен граф всех типов объектов
+    4: optional domain.DomainObjectType returned_type
+    // Включить в ответе сущности, которые референсят ref
+    // [Entities] -> ref
+    5: optional bool include_inbound = true
+    // Включить в ответе сущности, которые референсит ref
+    // ref -> [Entities]
+    6: optional bool include_outbound = true
+    // Глубина обхода графа
+    // Например, depth = 2 означает, что будут включены сущности, которые референсят сущности референсящие ref
+    7: optional i32 depth = 1
+}
+
+/**
  * Граф объектов и их связей.
  */
 struct RelatedGraph {
@@ -374,6 +419,26 @@ service Repository {
      * Можно запрашивать входящие и/или исходящие связи, а также ограничивать глубину обхода.
      */
     RelatedGraph GetRelatedGraph (1: RelatedGraphRequest request)
+        throws (
+            1: ObjectNotFound ex1,
+            2: VersionNotFound ex2
+        )
+
+    /**
+     * Возвращает граф объектов, связанных с искомыми объектами.
+     * Можно запрашивать входящие и/или исходящие связи, а также ограничивать глубину обхода.
+     */
+    RelatedGraph GetMultipleRelatedGraph (1: MultipleRelatedGraphRequest request)
+        throws (
+            1: ObjectNotFound ex1,
+            2: VersionNotFound ex2
+        )
+
+    /**
+     * Возвращает граф объектов, связанных с искомыми объектами.
+     * Можно запрашивать входящие и/или исходящие связи, а также ограничивать глубину обхода.
+     */
+    RelatedGraph SearchRelatedGraph (1: SearchRelatedGraphRequest request)
         throws (
             1: ObjectNotFound ex1,
             2: VersionNotFound ex2
