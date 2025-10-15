@@ -193,7 +193,7 @@ struct ReferenceEdge {
 struct RelatedGraphRequest {
     1: required domain.Reference ref
     2: optional Version version
-    // Тип объекта, для которого нужно получить граф, если не указан, то будет получен граф всех типов объектов
+    // Тип объектов которую будут возвращены в качестве узлов графа, если не указан, то будет получен граф всех типов объектов
     3: optional domain.DomainObjectType type
     // Включить в ответе сущности, которые референсят ref
     // [Entities] -> ref
@@ -212,7 +212,7 @@ struct RelatedGraphRequest {
 struct MultipleRelatedGraphRequest {
     1: required list<domain.Reference> refs
     2: optional Version version
-    // Тип объекта, для которого нужно получить граф, если не указан, то будет получен граф всех типов объектов
+    // Тип объектов которую будут возвращены в качестве узлов графа, если не указан, то будет получен граф всех типов объектов
     3: optional domain.DomainObjectType type
     // Включить в ответе сущности, которые референсят ref
     // [Entities] -> ref
@@ -238,7 +238,7 @@ struct SearchRelatedGraphRequest {
     // Тип объекта искомого с помощью query
     2: required domain.DomainObjectType searched_type
     3: optional Version version
-    // Тип объекта, для которого нужно получить граф, если не указан, то будет получен граф всех типов объектов
+    // Тип объектов которую будут возвращены в качестве узлов графа, если не указан, то будет получен граф всех типов объектов
     4: optional domain.DomainObjectType returned_type
     // Включить в ответе сущности, которые референсят ref
     // [Entities] -> ref
