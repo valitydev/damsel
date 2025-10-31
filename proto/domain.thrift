@@ -323,6 +323,7 @@ struct InvoicePayment {
     12: optional PartyConfigRef party_ref
     13: optional ShopConfigRef shop_ref
     14: optional bool make_recurrent
+    18: optional bool skipped_recurrent
     15: optional string external_id
     16: optional base.Timestamp processing_deadline
     17: optional InvoicePaymentRegistrationOrigin registration_origin
@@ -2070,7 +2071,7 @@ struct ProvisionTermSet {
     1: optional PaymentsProvisionTerms payments
     2: optional RecurrentPaytoolsProvisionTerms recurrent_paytools
     3: optional WalletProvisionTerms wallet
-    4: optional HiddenRecurrentProvisionTerms hidden_recurrent
+    4: optional SkippedRecurrentProvisionTerms skipped_recurrent
 }
 
 struct PaymentsProvisionTerms {
@@ -2130,7 +2131,7 @@ struct RecurrentPaytoolsProvisionTerms {
     4: optional RiskScoreSelector     risk_coverage
 }
 
-struct HiddenRecurrentProvisionTerms {}
+struct SkippedRecurrentProvisionTerms {}
 
 struct WalletProvisionTerms {
     1: optional TurnoverLimitSelector turnover_limit
