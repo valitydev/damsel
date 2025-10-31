@@ -2070,6 +2070,7 @@ struct ProvisionTermSet {
     1: optional PaymentsProvisionTerms payments
     2: optional RecurrentPaytoolsProvisionTerms recurrent_paytools
     3: optional WalletProvisionTerms wallet
+    4: optional HiddenRecurrentProvisionTerms hidden_recurrent
 }
 
 struct PaymentsProvisionTerms {
@@ -2128,6 +2129,8 @@ struct RecurrentPaytoolsProvisionTerms {
     3: required PaymentMethodSelector payment_methods
     4: optional RiskScoreSelector     risk_coverage
 }
+
+struct HiddenRecurrentProvisionTerms {}
 
 struct WalletProvisionTerms {
     1: optional TurnoverLimitSelector turnover_limit
