@@ -2445,7 +2445,6 @@ struct PaymentInstitution {
     8: required set<Residence> residences
     /* TODO: separated system accounts for wallets look weird */
     9: optional SystemAccountSetSelector wallet_system_account_set
-    10: optional string identity
     11: optional RoutingRules payment_routing_rules
     12: optional RoutingRules withdrawal_routing_rules
     13: optional PaymentSystemSelector payment_system
