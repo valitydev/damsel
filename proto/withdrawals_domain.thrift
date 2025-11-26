@@ -14,6 +14,12 @@ struct Withdrawal {
     3: optional domain.PartyConfigRef sender
     4: optional domain.PartyConfigRef receiver
     6: optional AuthData auth_data
+    7: optional ContactInfo contact_info
+}
+
+struct ContactInfo {
+    1: optional string phone_number
+    2: optional string email
 }
 
 union AuthData {
