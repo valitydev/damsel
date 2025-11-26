@@ -101,6 +101,7 @@ struct Withdrawal {
     5: optional domain.PartyConfigRef receiver
     6: optional Quote quote
     9: optional withdrawals_domain.AuthData auth_data
+    10: optional withdrawals_domain.ContactInfo contact_info
 }
 
 typedef withdrawals_domain.Destination Destination
