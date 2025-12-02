@@ -15,8 +15,8 @@ namespace erlang dmsl.merchstat
 struct StatPayment {
     1 : required domain.InvoicePaymentID id
     2 : required domain.InvoiceID invoice_id
-    3 : required domain.PartyConfigRef owner_id
-    4 : required domain.ShopConfigRef shop_id
+    3 : required domain.PartyConfigRef party_ref
+    4 : required domain.ShopConfigRef shop_ref
     5 : required base.Timestamp created_at
     6 : required InvoicePaymentStatus status
     7 : required domain.Amount amount
@@ -160,8 +160,8 @@ struct DigitalWallet {
 */
 struct StatInvoice {
     1 : required domain.InvoiceID id
-    2 : required domain.PartyConfigRef owner_id
-    3 : required domain.ShopConfigRef shop_id
+    2 : required domain.PartyConfigRef party_ref
+    3 : required domain.ShopConfigRef shop_ref
     4 : required base.Timestamp created_at
     5 : required InvoiceStatus status
     6 : required string product
@@ -204,8 +204,8 @@ struct StatRefund {
     1 : required domain.InvoicePaymentRefundID id
     2 : required domain.InvoicePaymentID payment_id
     3 : required domain.InvoiceID invoice_id
-    4 : required domain.PartyConfigRef owner_id
-    5 : required domain.ShopConfigRef shop_id
+    4 : required domain.PartyConfigRef party_ref
+    5 : required domain.ShopConfigRef shop_ref
     6 : required InvoicePaymentRefundStatus status
     7 : required base.Timestamp created_at
     8 : required domain.Amount amount
@@ -240,8 +240,8 @@ struct StatChargeback {
     1: required domain.InvoiceID                        invoice_id
     2: required domain.InvoicePaymentID                 payment_id
     3: required domain.InvoicePaymentChargebackID       chargeback_id
-    4: required domain.PartyConfigRef                   party_id
-    5: required domain.ShopConfigRef                    shop_id
+    4: required domain.PartyConfigRef                   party_ref
+    5: required domain.ShopConfigRef                    shop_ref
     6: required domain.InvoicePaymentChargebackStatus   chargeback_status
     7: required base.Timestamp                          created_at
     8: optional domain.InvoicePaymentChargebackReason   chargeback_reason
