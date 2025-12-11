@@ -600,6 +600,7 @@ struct InvoicePaymentParamsFlowHold {
 }
 
 struct Invoice {
+    3: required base.EventID latest_event_id
     1: required domain.Invoice invoice
     2: required list<InvoicePayment> payments
 }
