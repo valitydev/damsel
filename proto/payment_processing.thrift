@@ -199,6 +199,7 @@ struct InvoicePaymentRouteChanged {
     2: optional set<domain.PaymentRoute> candidates
     3: optional map<domain.PaymentRoute, domain.PaymentRouteScores> scores
     4: optional RouteLimitContext limits
+    5: optional RouteDecisionContext decision
 }
 
 /**
@@ -870,6 +871,9 @@ struct TurnoverLimitValue {
 
 typedef map<domain.PaymentRoute, list<TurnoverLimitValue>> RouteLimitContext
 
+struct RouteDecisionContext {
+    1:  optional bool skip_recurrent
+}
 
 // Exceptions
 
