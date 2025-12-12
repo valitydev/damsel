@@ -505,8 +505,8 @@ struct EventRange {
 typedef domain.InvoiceMutationParams InvoiceMutationParams
 
 struct InvoiceParams {
-    1: required domain.PartyConfigRef party_id
-    2: required domain.ShopConfigRef shop_id
+    1: required domain.PartyConfigRef party_ref
+    2: required domain.ShopConfigRef shop_ref
     3: required domain.InvoiceDetails details
     4: required base.Timestamp due
     5: required domain.Cash cost
@@ -528,8 +528,8 @@ struct InvoiceWithTemplateParams {
 
 struct InvoiceTemplateCreateParams {
     10: required domain.InvoiceTemplateID      template_id
-    1:  required domain.PartyConfigRef         party_id
-    2:  required domain.ShopConfigRef          shop_id
+    1:  required domain.PartyConfigRef         party_ref
+    2:  required domain.ShopConfigRef          shop_ref
     4:  required domain.LifetimeInterval       invoice_lifetime
     7:  required string                        product # for backward compatibility
     11: optional string                        name
@@ -1493,8 +1493,6 @@ service InvoiceTemplating {
 /* Party management service definitions */
 
 // Types
-
-typedef domain.WalletID WalletID
 typedef domain.PaymentInstitutionRef PaymentInstitutionRef
 
 struct Varset {
@@ -1502,8 +1500,8 @@ struct Varset {
     2: optional domain.CurrencyRef currency
     3: optional domain.Cash amount
     4: optional domain.PaymentMethodRef payment_method
-    5: optional domain.WalletID wallet_id
-    6: optional domain.ShopID shop_id
+    5: optional domain.WalletConfigRef wallet_ref
+    6: optional domain.ShopConfigRef shop_ref
     8: optional domain.PaymentTool payment_tool
     9: optional domain.PartyConfigRef party_ref
     10: optional domain.BinData bin_data

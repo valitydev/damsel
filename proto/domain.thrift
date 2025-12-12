@@ -776,8 +776,6 @@ struct PartyContactInfo {
 
 /* Shops */
 
-typedef base.ID ShopID
-
 struct ShopAccount {
     1: required CurrencyRef currency
     2: required AccountID settlement
@@ -2342,11 +2340,9 @@ struct PartyCondition {
     2: optional PartyConditionDefinition definition
 }
 
-typedef base.ID WalletID
-
 union PartyConditionDefinition {
-    1: ShopID shop_is
-    2: WalletID wallet_is
+    1: ShopConfigRef shop_is
+    2: WalletConfigRef wallet_is
 }
 
 struct CriterionRef { 1: required ObjectID id }
