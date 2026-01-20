@@ -68,8 +68,28 @@ struct Invoice {
     5: optional domain.InvoiceClientInfo client_info
 }
 
+struct ShopContext {
+    1: required Party party
+    2: required Shop shop
+}
+
+struct InspectUserContext {
+    1: required domain.ContactInfo user_info
+    2: required list<ShopContext> shop_list
+}
+
+struct BlockedShops {
+    1: required list<ShopContext> shop_list
+}
+
 service InspectorProxy {
     domain.RiskScore InspectPayment (1: Context context)
+        throws (1: base.InvalidRequest ex1)
+
+    /**
+    * Проверяет какие магазины недоступны для оплаты пользователю
+    **/
+    BlockedShops InspectUser (1: InspectUserContext context)
         throws (1: base.InvalidRequest ex1)
 
     /**
