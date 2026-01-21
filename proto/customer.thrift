@@ -231,40 +231,6 @@ struct BankCardInfo {
     4: required list<domain.ProviderRef> recurrent_providers
 }
 
-/* Ошибки каскадирования */
-
-/**
- * Результат попытки провести рекуррентный платёж через провайдера.
- */
-struct RecurrentAttemptResult {
-    1: required domain.ProviderRef provider_ref
-    2: required domain.TerminalRef terminal_ref
-    3: required RecurrentAttemptStatus status
-}
-
-union RecurrentAttemptStatus {
-    1: RecurrentAttemptSucceeded succeeded
-    2: RecurrentAttemptFailed failed
-}
-
-struct RecurrentAttemptSucceeded {}
-
-struct RecurrentAttemptFailed {
-    1: required domain.OperationFailure failure
-    /** Флаг, указывающий, является ли ошибка hard decline (каскадирование не должно продолжаться) */
-    2: required bool is_hard_decline
-}
-
-/**
- * Результат каскадирования рекуррентных платежей.
- */
-struct RecurrentCascadeResult {
-    /** Список попыток по всем провайдерам */
-    1: required list<RecurrentAttemptResult> attempts
-    /** Флаг успешности хотя бы одной попытки */
-    2: required bool success
-}
-
 /* Исключения */
 
 exception CustomerNotFound {}
@@ -274,11 +240,6 @@ exception CustomerAlreadyExists {
 }
 
 exception BankCardNotFound {}
-
-exception RecurrentCascadeExhausted {
-    /** Список всех попыток, которые были предприняты */
-    1: required list<RecurrentAttemptResult> attempts
-}
 
 exception InvalidRecurrentParent {
     1: optional string reason
