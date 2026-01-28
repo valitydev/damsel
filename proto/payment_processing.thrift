@@ -1507,6 +1507,7 @@ struct Varset {
     8: optional domain.PaymentTool payment_tool
     9: optional domain.PartyConfigRef party_ref
     10: optional domain.BinData bin_data
+    11: optional domain.DataRevision domain_revision
 }
 
 struct ProviderDetails {
@@ -1580,6 +1581,35 @@ exception TermSetHierarchyNotFound {}
 
 service PartyManagement {
     /* Accounts */
+
+    /**
+     * Функции `*ForVarset` повторяют логику аналогичных функций без этог
+     * суффикса с той лишь разницей что формируют контекст для вычисления
+     * необходимых параметров и версий объектов на основе предоставленных
+     * переменных в аргументе `Varset`.
+     *
+     * В случае отсутствия необходимых идентификаторов объектов для вычисления
+     * результата, возвращается соответствующее исключение `*NotFound`.
+     */
+    domain.ShopAccount GetShopAccountForVarset (1: Varset varset)
+        throws (
+            1: PartyNotFound ex1,
+            2: ShopNotFound ex2,
+            3: ShopAccountNotFound ex3
+        )
+
+    domain.WalletAccount GetWalletAccountForVarset (1: Varset varset)
+        throws (
+            1: PartyNotFound ex1,
+            2: WalletNotFound ex2,
+            3: WalletAccountNotFound ex3
+        )
+
+    AccountState GetAccountStateForVarset (1: domain.AccountID account_id, 2: Varset varset)
+        throws (
+            1: PartyNotFound ex1,
+            2: AccountNotFound ex2
+        )
 
     /**
      * В функциях `GetShopAccount`, `GetWalletAccount` и
