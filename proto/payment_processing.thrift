@@ -1583,29 +1583,36 @@ service PartyManagement {
     /* Accounts */
 
     /**
-     * Функции `*ForVarset` повторяют логику аналогичных функций без этог
-     * суффикса с той лишь разницей что формируют контекст для вычисления
-     * необходимых параметров и версий объектов на основе предоставленных
-     * переменных в аргументе `Varset`.
-     *
-     * В случае отсутствия необходимых идентификаторов объектов для вычисления
-     * результата, возвращается соответствующее исключение `*NotFound`.
+     * Функции `*ForVersion` повторяют логику аналогичных функций без этого
+     * суффикса.
      */
-    domain.ShopAccount GetShopAccountForVarset (1: Varset varset)
+    domain.ShopAccount GetShopAccountForVersion (
+        1: domain.PartyConfigRef party_ref,
+        2: domain.ShopConfigRef shop_ref,
+        3: domain_config_v2.VersionReference version_ref
+    )
         throws (
             1: PartyNotFound ex1,
             2: ShopNotFound ex2,
             3: ShopAccountNotFound ex3
         )
 
-    domain.WalletAccount GetWalletAccountForVarset (1: Varset varset)
+    domain.WalletAccount GetWalletAccountForVersion (
+        1: domain.PartyConfigRef party_ref,
+        2: domain.WalletConfigRef wallet_ref,
+        3: domain_config_v2.VersionReference version_ref
+    )
         throws (
             1: PartyNotFound ex1,
             2: WalletNotFound ex2,
             3: WalletAccountNotFound ex3
         )
 
-    AccountState GetAccountStateForVarset (1: domain.AccountID account_id, 2: Varset varset)
+    AccountState GetAccountStateForVersion (
+        1: domain.PartyConfigRef party_ref,
+        2: domain.AccountID account_id,
+        3: domain_config_v2.VersionReference version_ref
+    )
         throws (
             1: PartyNotFound ex1,
             2: AccountNotFound ex2
