@@ -8,6 +8,7 @@ include "user_interaction.thrift"
 include "timeout_behaviour.thrift"
 include "repairing.thrift"
 include "msgpack.thrift"
+include "domain_config_v2.thrift"
 
 namespace java dev.vality.damsel.payment_processing
 namespace erlang dmsl.payproc
