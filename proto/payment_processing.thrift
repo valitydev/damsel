@@ -8,7 +8,6 @@ include "user_interaction.thrift"
 include "timeout_behaviour.thrift"
 include "repairing.thrift"
 include "msgpack.thrift"
-include "domain_config_v2.thrift"
 
 namespace java dev.vality.damsel.payment_processing
 namespace erlang dmsl.payproc
@@ -1586,10 +1585,9 @@ service PartyManagement {
      * Функции `*ForVersion` повторяют логику аналогичных функций без этого
      * суффикса.
      */
-    domain.ShopAccount GetShopAccountForVersion (
+    domain.ShopAccount GetShopAccountForLatestVersion (
         1: domain.PartyConfigRef party_ref,
-        2: domain.ShopConfigRef shop_ref,
-        3: domain_config_v2.VersionReference version_ref
+        2: domain.ShopConfigRef shop_ref
     )
         throws (
             1: PartyNotFound ex1,
@@ -1597,10 +1595,9 @@ service PartyManagement {
             3: ShopAccountNotFound ex3
         )
 
-    domain.WalletAccount GetWalletAccountForVersion (
+    domain.WalletAccount GetWalletAccountForLatestVersion (
         1: domain.PartyConfigRef party_ref,
-        2: domain.WalletConfigRef wallet_ref,
-        3: domain_config_v2.VersionReference version_ref
+        2: domain.WalletConfigRef wallet_ref
     )
         throws (
             1: PartyNotFound ex1,
@@ -1608,10 +1605,9 @@ service PartyManagement {
             3: WalletAccountNotFound ex3
         )
 
-    AccountState GetAccountStateForVersion (
+    AccountState GetAccountStateForLatestVersion (
         1: domain.PartyConfigRef party_ref,
-        2: domain.AccountID account_id,
-        3: domain_config_v2.VersionReference version_ref
+        2: domain.AccountID account_id
     )
         throws (
             1: PartyNotFound ex1,
