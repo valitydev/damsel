@@ -1582,8 +1582,9 @@ service PartyManagement {
     /* Accounts */
 
     /**
-     * Функции `*ForVersion` повторяют логику аналогичных функций без этого
-     * суффикса.
+     * Функции `*ForLatestVersion` повторяют логику аналогичных функций без
+     * этого суффикса, а в качестве номера версии неявно используют последнюю на
+     * данный момент.
      */
     domain.ShopAccount GetShopAccountForLatestVersion (
         1: domain.PartyConfigRef party_ref,
