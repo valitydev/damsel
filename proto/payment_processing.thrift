@@ -1582,11 +1582,11 @@ service PartyManagement {
     /* Accounts */
 
     /**
-     * Функции `*ForLatestVersion` повторяют логику аналогичных функций без
+     * Функции `*Simple` повторяют логику аналогичных функций без
      * этого суффикса, а в качестве номера версии неявно используют последнюю на
      * данный момент.
      */
-    domain.ShopAccount GetShopAccountForLatestVersion (
+    domain.ShopAccount GetShopAccountSimple (
         1: domain.PartyConfigRef party_ref,
         2: domain.ShopConfigRef shop_ref
     )
@@ -1596,7 +1596,7 @@ service PartyManagement {
             3: ShopAccountNotFound ex3
         )
 
-    domain.WalletAccount GetWalletAccountForLatestVersion (
+    domain.WalletAccount GetWalletAccountSimple (
         1: domain.PartyConfigRef party_ref,
         2: domain.WalletConfigRef wallet_ref
     )
@@ -1606,7 +1606,7 @@ service PartyManagement {
             3: WalletAccountNotFound ex3
         )
 
-    AccountState GetAccountStateForLatestVersion (
+    AccountState GetAccountStateSimple (
         1: domain.PartyConfigRef party_ref,
         2: domain.AccountID account_id
     )
