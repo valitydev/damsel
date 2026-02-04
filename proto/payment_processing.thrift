@@ -1582,6 +1582,40 @@ service PartyManagement {
     /* Accounts */
 
     /**
+     * Функции `*Simple` повторяют логику аналогичных функций без
+     * этого суффикса, а в качестве номера версии неявно используют последнюю на
+     * данный момент.
+     */
+    domain.ShopAccount GetShopAccountSimple (
+        1: domain.PartyConfigRef party_ref,
+        2: domain.ShopConfigRef shop_ref
+    )
+        throws (
+            1: PartyNotFound ex1,
+            2: ShopNotFound ex2,
+            3: ShopAccountNotFound ex3
+        )
+
+    domain.WalletAccount GetWalletAccountSimple (
+        1: domain.PartyConfigRef party_ref,
+        2: domain.WalletConfigRef wallet_ref
+    )
+        throws (
+            1: PartyNotFound ex1,
+            2: WalletNotFound ex2,
+            3: WalletAccountNotFound ex3
+        )
+
+    AccountState GetAccountStateSimple (
+        1: domain.PartyConfigRef party_ref,
+        2: domain.AccountID account_id
+    )
+        throws (
+            1: PartyNotFound ex1,
+            2: AccountNotFound ex2
+        )
+
+    /**
      * В функциях `GetShopAccount`, `GetWalletAccount` и
      * `GetAccountState` `party_ref` необходим для проверки
      * принадлежности объекта для указанной версии.
