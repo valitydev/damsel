@@ -225,7 +225,7 @@ struct InvalidateRecurrentTokenParams {
  */
 struct BankCardInfo {
     1: required BankCardID id
-    2: required string card_mask
+    2: optional string card_mask
     3: required base.Timestamp created_at
     /** Список провайдеров, для которых есть рекуррентные токены */
     4: required list<domain.ProviderRef> recurrent_providers
