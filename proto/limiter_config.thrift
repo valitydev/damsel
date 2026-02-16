@@ -29,6 +29,11 @@ struct TimeRangeTypeInterval {
 }
 
 struct LimitConfig {
+    /**
+     * Available values:
+     * "TurnoverProcessor" - regular turnover processor
+     * FIXME Maybe migrate to enum or union and softly deprecate string field
+     */
     1: required string processor_type
     2: required base.Timestamp started_at
     3: required ShardSize shard_size
@@ -47,6 +52,13 @@ struct LimitConfig {
      * limiter-proto).
      */
     10: optional CurrencyConversion currency_conversion
+    /**
+     * Specifies behavior for metric change finalization.
+     *
+     * Defaults to normal: commits provided changes, and reverts them on
+     * rollback.
+     */
+    11: optional LimitFinalizationBehaviour finalization_behaviour
 }
 
 struct CurrencyConversion {}
@@ -145,3 +157,39 @@ union OperationBehaviour {
 
 struct Subtraction {}
 struct Addition {}
+
+struct LimitFinalizationBehaviour {
+    1: optional FinalizationBehaviourSelector invoice_payment
+}
+
+struct Normal {}
+struct Reverse {}
+
+union FinalizationBehaviour {
+    1: Normal normal
+    2: Reverse reverse
+}
+
+union FinalizationBehaviourSelector {
+    1: FinalizationBehaviourDecision decision
+    2: FinalizationBehaviour value
+}
+
+struct FinalizationBehaviourDecision {
+  1: Predicate if_
+  2: FinalizationBehaviourSelector then_
+}
+
+union Predicate {
+    1: bool constant
+    2: Condition condition
+    3: Predicate is_not
+    4: set<Predicate> all_of
+    5: set<Predicate> any_of
+}
+
+union Condition {
+  // TODO
+  // payment_session_result_is
+  1: bool session_success
+}
