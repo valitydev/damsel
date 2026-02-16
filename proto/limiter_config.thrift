@@ -176,8 +176,8 @@ union FinalizationBehaviourSelector {
 }
 
 struct FinalizationBehaviourDecision {
-  1: Predicate if_
-  2: FinalizationBehaviourSelector then_
+    1: Predicate if_
+    2: FinalizationBehaviourSelector then_
 }
 
 union Predicate {
@@ -189,7 +189,12 @@ union Predicate {
 }
 
 union Condition {
-  // TODO
-  // payment_session_result_is
-  1: bool session_success
+    1: PaymentSessionRouteCondition payment_session
+}
+
+struct PaymentSessionRouteCondition {
+    /**
+     * When in provided context payment uses same route as it's current payment session's one
+     */
+    1: bool route_used
 }
