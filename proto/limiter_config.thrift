@@ -159,42 +159,16 @@ struct Subtraction {}
 struct Addition {}
 
 struct LimitFinalizationBehaviour {
-    1: optional FinalizationBehaviourSelector invoice_payment
+    1: optional FinalizationBehaviour invoice_payment
 }
-
-struct Normal {}
-struct Reverse {}
 
 union FinalizationBehaviour {
     1: Normal normal
-    2: Reverse reverse
+    2: ContextDependent invertable
 }
 
-union FinalizationBehaviourSelector {
-    1: FinalizationBehaviourDecision decision
-    2: FinalizationBehaviour value
-}
-
-struct FinalizationBehaviourDecision {
-    1: Predicate if_
-    2: FinalizationBehaviourSelector then_
-}
-
-union Predicate {
-    1: bool constant
-    2: Condition condition
-    3: Predicate is_not
-    4: set<Predicate> all_of
-    5: set<Predicate> any_of
-}
-
-union Condition {
-    1: PaymentSessionRouteCondition payment_session
-}
-
-struct PaymentSessionRouteCondition {
-    /**
-     * When in provided context payment uses same route as it's current payment session's one
-     */
-    1: bool route_used
+struct Normal {}
+struct Inversed {}
+union ContextDependent {
+    1: Inversed session_presence
 }
