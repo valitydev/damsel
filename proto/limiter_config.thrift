@@ -163,11 +163,6 @@ union LimitFinalizationBehaviour {
     2: ContextDependent invertable
 }
 
-union FinalizationBehaviour {
-    1: Normal normal
-    2: ContextDependent invertable
-}
-
 struct Normal {}
 struct Inversed {}
 union ContextDependent {
