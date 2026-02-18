@@ -158,8 +158,9 @@ union OperationBehaviour {
 struct Subtraction {}
 struct Addition {}
 
-struct LimitFinalizationBehaviour {
-    1: optional FinalizationBehaviour invoice_payment
+union LimitFinalizationBehaviour {
+    1: Normal normal
+    2: ContextDependent invertable
 }
 
 union FinalizationBehaviour {
