@@ -2760,7 +2760,6 @@ struct Partner {
     1: required string name
     2: optional string description
     3: required set<ProviderRef> providers
-    4: optional set<TerminalRef> exclude_terminals
 }
 
 struct PartnerObject {
