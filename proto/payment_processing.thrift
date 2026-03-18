@@ -8,6 +8,7 @@ include "user_interaction.thrift"
 include "timeout_behaviour.thrift"
 include "repairing.thrift"
 include "msgpack.thrift"
+include "customer.thrift"
 
 namespace java dev.vality.damsel.payment_processing
 namespace erlang dmsl.payproc
@@ -558,6 +559,12 @@ struct InvoicePaymentParams {
     5: optional string external_id
     6: optional domain.InvoicePaymentContext context
     7: optional base.Timestamp processing_deadline
+    /**
+     * Customer to associate this payment with.
+     * When set alongside make_recurrent=true, hellgate persists the resulting recurrent token
+     * to BankCardStorage under this customer after a successful payment.
+     */
+    9: optional customer.CustomerID customer_id
 }
 
 struct RegisterInvoicePaymentParams {

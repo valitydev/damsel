@@ -327,6 +327,14 @@ struct InvoicePayment {
     15: optional string external_id
     16: optional base.Timestamp processing_deadline
     17: optional InvoicePaymentRegistrationOrigin registration_origin
+    /**
+     * Customer ID associated with this payment.
+     * Set when the payment is created with a customer context (via InvoicePaymentParams.customer_id).
+     * Used by hellgate for recurrent cascade: looking up BankCard tokens and persisting
+     * new recurrent tokens after make_recurrent payments.
+     * Type matches customer.CustomerID (typedef base.ID).
+     */
+    19: optional base.ID customer_id
 }
 
 struct InvoicePaymentPending   {}
