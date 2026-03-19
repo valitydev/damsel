@@ -2764,6 +2764,21 @@ struct PartyConfigRef {
     1: required base.ID id
 }
 
+struct Partner {
+    1: required string name
+    2: optional string description
+    3: required set<ProviderRef> providers
+}
+
+struct PartnerObject {
+    1: required PartnerRef ref
+    2: required Partner data
+}
+
+struct PartnerRef {
+    1: required base.ID id
+}
+
 /* There are 3 requirements on Reference and DomainObject unions:
  * - all field types must be unique,
  * - all corresponding field names in both unions must match,
@@ -2810,6 +2825,7 @@ union Reference {
     32: PartyConfigRef party_config
     33: ShopConfigRef shop_config
     34: WalletConfigRef wallet_config
+    35: PartnerRef partner
 }
 
 union DomainObject {
@@ -2847,6 +2863,7 @@ union DomainObject {
     32: PartyConfigObject party_config
     33: ShopConfigObject shop_config
     34: WalletConfigObject wallet_config
+    35: PartnerObject partner
 }
 
 union ReflessDomainObject {
@@ -2884,6 +2901,7 @@ union ReflessDomainObject {
     32: PartyConfig party_config
     33: ShopConfig shop_config
     34: WalletConfig wallet_config
+    35: Partner partner
 }
 
 enum DomainObjectType {
@@ -2921,6 +2939,7 @@ enum DomainObjectType {
     party_config = 32
     shop_config = 33
     wallet_config = 34
+    partner = 35
 }
 
 /* Domain */
