@@ -148,6 +148,7 @@ union InvoicePaymentChangePayload {
     16: InvoicePaymentCashChanged           invoice_payment_cash_changed
     17: InvoicePaymentShopLimitInitiated    invoice_payment_shop_limit_initiated
     18: InvoicePaymentShopLimitApplied      invoice_payment_shop_limit_applied
+    19: InvoicePaymentCascadeTokensLoaded   invoice_payment_cascade_tokens_loaded
 }
 
 /**
@@ -467,6 +468,13 @@ struct InvoicePaymentAdjustmentStatusChanged {
  */
 struct InvoicePaymentRecTokenAcquired {
     1: required domain.Token token
+}
+
+/**
+ * Событие о загрузке каскадных рекуррентных токенов из хранилища.
+ */
+struct InvoicePaymentCascadeTokensLoaded {
+    1: required list<customer.RecurrentToken> tokens
 }
 
 struct InvoicePaymentCaptureStarted {
