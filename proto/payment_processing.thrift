@@ -8,6 +8,7 @@ include "user_interaction.thrift"
 include "timeout_behaviour.thrift"
 include "repairing.thrift"
 include "msgpack.thrift"
+include "customer.thrift"
 
 namespace java dev.vality.damsel.payment_processing
 namespace erlang dmsl.payproc
@@ -147,6 +148,7 @@ union InvoicePaymentChangePayload {
     16: InvoicePaymentCashChanged           invoice_payment_cash_changed
     17: InvoicePaymentShopLimitInitiated    invoice_payment_shop_limit_initiated
     18: InvoicePaymentShopLimitApplied      invoice_payment_shop_limit_applied
+    19: InvoicePaymentCascadeTokensLoaded   invoice_payment_cascade_tokens_loaded
 }
 
 /**
@@ -468,6 +470,13 @@ struct InvoicePaymentRecTokenAcquired {
     1: required domain.Token token
 }
 
+/**
+ * Событие о загрузке каскадных рекуррентных токенов из хранилища.
+ */
+struct InvoicePaymentCascadeTokensLoaded {
+    1: required list<customer.RecurrentToken> tokens
+}
+
 struct InvoicePaymentCaptureStarted {
     1: required InvoicePaymentCaptureData data
 }
@@ -558,6 +567,12 @@ struct InvoicePaymentParams {
     5: optional string external_id
     6: optional domain.InvoicePaymentContext context
     7: optional base.Timestamp processing_deadline
+    /**
+     * Customer to associate this payment with.
+     * When set alongside make_recurrent=true, hellgate persists the resulting recurrent token
+     * to BankCardStorage under this customer after a successful payment.
+     */
+    9: optional customer.CustomerID customer_id
 }
 
 struct RegisterInvoicePaymentParams {
