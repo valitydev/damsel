@@ -139,6 +139,8 @@ struct Customer {
     5: optional domain.ContactInfo contact_info
     /** Метаданные Customer (произвольные данные мерчанта) */
     6: optional domain.Metadata metadata
+    /** Внешний идентификатор Customer */
+    7: optional string external_id
 }
 
 /**
@@ -178,6 +180,8 @@ struct CustomerParams {
     2: optional domain.ContactInfo contact_info
     /** Метаданные Customer */
     3: optional domain.Metadata metadata
+    /** Внешний идентификатор Customer */
+    4: optional string external_id
 }
 
 /**
@@ -295,6 +299,15 @@ service CustomerManagement {
             1: CustomerNotFound not_found
             2: InvalidRecurrentParent invalid_parent
         )
+
+    /**
+     * Получить Customer по external_id и party.
+     */
+    CustomerState GetByExternalID(
+        1: string external_id,
+        2: domain.PartyConfigRef party_ref
+    )
+        throws (1: CustomerNotFound not_found)
 
     /**
      * Удалить Customer (soft delete).
