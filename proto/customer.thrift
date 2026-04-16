@@ -139,6 +139,8 @@ struct Customer {
     5: optional domain.ContactInfo contact_info
     /** Метаданные Customer (произвольные данные мерчанта) */
     6: optional domain.Metadata metadata
+    /** Внешний идентификатор Customer */
+    7: optional string external_id
 }
 
 /**
@@ -178,6 +180,8 @@ struct CustomerParams {
     2: optional domain.ContactInfo contact_info
     /** Метаданные Customer */
     3: optional domain.Metadata metadata
+    /** Внешний идентификатор Customer */
+    4: optional string external_id
 }
 
 /**
