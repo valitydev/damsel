@@ -301,6 +301,15 @@ service CustomerManagement {
         )
 
     /**
+     * Получить Customer по external_id и party.
+     */
+    CustomerState GetByExternalID(
+        1: string external_id,
+        2: domain.PartyConfigRef party_ref
+    )
+        throws (1: CustomerNotFound not_found)
+
+    /**
      * Удалить Customer (soft delete).
      */
     void Delete(1: CustomerID customer_id)
