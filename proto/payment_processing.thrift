@@ -1522,6 +1522,7 @@ struct Varset {
     8: optional domain.PaymentTool payment_tool
     9: optional domain.PartyConfigRef party_ref
     10: optional domain.BinData bin_data
+    11: optional domain.ClientTrustLevel trust_level
 }
 
 struct ProviderDetails {
