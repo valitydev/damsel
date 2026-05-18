@@ -2264,6 +2264,7 @@ union Condition {
     6: ShopLocation shop_location_is
     7: PartyCondition party
     8: BinDataCondition bin_data
+    9: ClientTrustLevel trust_level_is
 }
 
 struct BinDataCondition {
