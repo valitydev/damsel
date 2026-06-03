@@ -10,7 +10,4 @@ permissions:
 
 jobs:
   publish:
-    name: Publish
-    runs-on: ubuntu-latest
-    steps:
-      - uses: valitydev/action-frontend/proto-publish@v3
+    uses: valitydev/action-frontend/.github/workflows/proto-publish.yml@v3
