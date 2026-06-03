@@ -1,21 +1,16 @@
-name: 'Frontend: Publish'
+name: "Frontend: Publish"
 
 on:
   push:
-    branches: ['master', 'main']
+    branches: ["master", "main"]
+
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
   publish:
     name: Publish
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: valitydev/action-setup-thrift@v1
-      - uses: valitydev/action-frontend/setup-install@v2
-        with:
-          npm-not-ci: true
-      - name: Build
-        run: npm run codegen
-      - uses: valitydev/action-frontend/publish@v2
-        with:
-          npm-token: ${{ secrets.NPM_TOKEN }}
+      - uses: valitydev/action-frontend/proto-publish@v3
