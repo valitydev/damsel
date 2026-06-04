@@ -3,7 +3,6 @@ name: "Frontend: Publish"
 on:
   push:
     branches: ["master", "main"]
-  pull_request:
 
 permissions:
   contents: read
@@ -11,4 +10,4 @@ permissions:
 
 jobs:
   publish:
-    uses: ./.github/workflows/proto-publish.yml
+    uses: valitydev/action-frontend/.github/workflows/proto-publish.yml@v3
