@@ -17,6 +17,7 @@ jobs:
       - uses: valitydev/action-frontend/setup-install@v3
         with:
           release: true
+          node-version: "lts/*"
       - name: Build
         run: npm run codegen
       - name: Publish
