@@ -2711,6 +2711,10 @@ struct ShopConfig {
     9: required ShopLocation location
     10: required CategoryRef category
     11: optional set<TurnoverLimit> turnover_limits
+    /**
+     * FIXME Maybe `checkout_host` w/ host only?
+     */
+    12: optional string checkout_base_url
 }
 
 struct ShopConfigObject {
