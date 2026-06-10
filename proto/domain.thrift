@@ -796,6 +796,11 @@ union ShopLocation {
     1: string url
 }
 
+union ShopCheckoutLocation {
+    // Список базовых адресов страниц для оплаты, в виде полноценных URL
+    1: list<string> base_urls
+}
+
 /* Инспекция платежа */
 
 enum RiskScore {
@@ -2711,10 +2716,7 @@ struct ShopConfig {
     9: required ShopLocation location
     10: required CategoryRef category
     11: optional set<TurnoverLimit> turnover_limits
-    /**
-     * FIXME Maybe `checkout_host` w/ host only?
-     */
-    12: optional string checkout_base_url
+    12: optional ShopCheckoutLocation checkout_location
 }
 
 struct ShopConfigObject {
