@@ -796,9 +796,12 @@ union ShopLocation {
     1: string url
 }
 
-union ShopCheckoutLocation {
-    // Список базовых адресов страниц для оплаты, в виде полноценных URL
-    1: list<string> base_urls
+struct ShopCheckoutLocation {
+    1: required list<CheckoutLocation> locations
+}
+
+struct CheckoutLocation {
+    1: required string base_url
 }
 
 /* Инспекция платежа */
