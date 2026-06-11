@@ -176,6 +176,11 @@ struct InvoicePayment {
     8: optional bool                    make_recurrent
     12: optional bool                   skip_recurrent
     9: optional base.Timestamp          processing_deadline
+    /**
+    * Сумма платежа в исходной валюте
+    * для случаев, когда валюта терминала отличается от валюты магазина
+    */
+    13: optional Cash                   original_cost
 }
 
 struct InvoicePaymentRefund {

@@ -335,6 +335,11 @@ struct InvoicePayment {
      * Type matches customer.CustomerID (typedef base.ID).
      */
     19: optional base.ID customer_id
+    /**
+    * Сумма платежа, сконвертированная в валюту терминала
+    * для случаев, когда валюта терминала отличается от валюты магазина
+    */
+    20: optional Cash target_cost
 }
 
 struct InvoicePaymentPending   {}

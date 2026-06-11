@@ -149,6 +149,7 @@ union InvoicePaymentChangePayload {
     17: InvoicePaymentShopLimitInitiated    invoice_payment_shop_limit_initiated
     18: InvoicePaymentShopLimitApplied      invoice_payment_shop_limit_applied
     19: InvoicePaymentCascadeTokensLoaded   invoice_payment_cascade_tokens_loaded
+    20: InvoicePaymentCurrencyChanged       invoice_payment_currency_changed
 }
 
 /**
@@ -202,6 +203,16 @@ struct InvoicePaymentRouteChanged {
     3: optional map<domain.PaymentRoute, domain.PaymentRouteScores> scores
     4: optional RouteLimitContext limits
     5: optional RouteDecisionContext decision
+}
+
+/**
+ * Событие об изменении целевой валюты платежа.
+ * Возникает, когда валюта терминала отличается от валюты магазина
+ */
+struct InvoicePaymentCurrencyChanged {
+    1: required domain.CurrencySymbolicCode source_currency
+    2: required domain.CurrencySymbolicCode destination_currency
+    3: required base.Rational exchange_rate
 }
 
 /**
