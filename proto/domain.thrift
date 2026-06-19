@@ -796,6 +796,14 @@ union ShopLocation {
     1: string url
 }
 
+struct ShopCheckoutLocation {
+    1: required list<CheckoutLocation> locations
+}
+
+struct CheckoutLocation {
+    1: required string base_url
+}
+
 /* Инспекция платежа */
 
 enum RiskScore {
@@ -2711,6 +2719,7 @@ struct ShopConfig {
     9: required ShopLocation location
     10: required CategoryRef category
     11: optional set<TurnoverLimit> turnover_limits
+    12: optional ShopCheckoutLocation checkout_location
 }
 
 struct ShopConfigObject {
