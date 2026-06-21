@@ -61,6 +61,7 @@ struct Posting {
     3: required domain.Amount amount
     4: required domain.CurrencySymbolicCode currency_sym_code
     5: required string description
+    6: optional domain.ExchangeContext exchange_context
 }
 
 /**

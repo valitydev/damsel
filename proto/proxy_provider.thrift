@@ -152,11 +152,6 @@ struct Invoice {
     3: required base.Timestamp        due
     7: required domain.InvoiceDetails details
     6: required Cash                  cost
-    /**
-    * Сумма инвойса в исходной валюте
-    * для случаев, когда валюта терминала отличается от валюты магазина
-    */
-    8: optional Cash                  original_cost
 }
 
 union PaymentResource {

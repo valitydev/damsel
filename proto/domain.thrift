@@ -1889,6 +1889,15 @@ struct CashFlowPosting {
     2: required CashFlowAccount destination
     3: required CashVolume volume
     4: optional string details
+    /** заполняется если выполнялась конвертация валюты */
+    /** например, если валюта магазина (операции) отличается от валюты терминала */
+    5: optional ExchangeContext exchange_context
+}
+
+struct ExchangeContext {
+    1: required CurrencySymbolicCode source_currency
+    2: required CurrencySymbolicCode destination_currency
+    3: required base.Rational exchange_rate
 }
 
 /** Полностью вычисленный граф финансовых потоков с проводками всех участников. */
@@ -1900,6 +1909,7 @@ struct FinalCashFlowPosting {
     2: required FinalCashFlowAccount destination
     3: required Cash volume
     4: optional string details
+    5: optional ExchangeContext exchange_context
 }
 
 struct FinalCashFlowAccount {
