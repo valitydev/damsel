@@ -149,7 +149,7 @@ union InvoicePaymentChangePayload {
     17: InvoicePaymentShopLimitInitiated    invoice_payment_shop_limit_initiated
     18: InvoicePaymentShopLimitApplied      invoice_payment_shop_limit_applied
     19: InvoicePaymentCascadeTokensLoaded   invoice_payment_cascade_tokens_loaded
-    20: InvoicePaymentCurrencyChanged       invoice_payment_currency_changed
+    20: InvoicePaymentExchangeContextChanged invoice_payment_currency_changed
 }
 
 /**
