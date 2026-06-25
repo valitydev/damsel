@@ -206,13 +206,13 @@ struct InvoicePaymentRouteChanged {
 }
 
 /**
- * Событие об изменении целевой валюты платежа.
+ * Событие об изменении валютного контекста.
  * Возникает, когда валюта терминала отличается от валюты магазина
+ * source_currency - валюта магазина
+ * destination_currency - валюта терминала
  */
-struct InvoicePaymentCurrencyChanged {
-    1: required domain.CurrencySymbolicCode source_currency
-    2: required domain.CurrencySymbolicCode destination_currency
-    3: required base.Rational exchange_rate
+struct InvoicePaymentExchangeContextChanged {
+    1: required domain.ExchangeContext exchange_context
 }
 
 /**

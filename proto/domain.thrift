@@ -1889,9 +1889,6 @@ struct CashFlowPosting {
     2: required CashFlowAccount destination
     3: required CashVolume volume
     4: optional string details
-    /** заполняется если выполнялась конвертация валюты */
-    /** например, если валюта магазина (операции) отличается от валюты терминала */
-    5: optional ExchangeContext exchange_context
 }
 
 struct ExchangeContext {
@@ -2113,6 +2110,7 @@ struct PaymentsProvisionTerms {
     10: optional PaymentChargebackProvisionTerms chargebacks
     11: optional RiskScoreSelector risk_coverage
     12: optional TurnoverLimitSelector turnover_limits
+    13: optional Predicate allow_exchange
 }
 
 union RiskScoreSelector {
