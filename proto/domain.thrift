@@ -1891,6 +1891,12 @@ struct CashFlowPosting {
     4: optional string details
 }
 
+struct ExchangeContext {
+    1: required CurrencySymbolicCode source_currency
+    2: required CurrencySymbolicCode destination_currency
+    3: required base.Rational exchange_rate
+}
+
 /** Полностью вычисленный граф финансовых потоков с проводками всех участников. */
 typedef list<FinalCashFlowPosting> FinalCashFlow
 
@@ -1900,6 +1906,7 @@ struct FinalCashFlowPosting {
     2: required FinalCashFlowAccount destination
     3: required Cash volume
     4: optional string details
+    5: optional ExchangeContext exchange_context
 }
 
 struct FinalCashFlowAccount {
@@ -2103,6 +2110,7 @@ struct PaymentsProvisionTerms {
     10: optional PaymentChargebackProvisionTerms chargebacks
     11: optional RiskScoreSelector risk_coverage
     12: optional TurnoverLimitSelector turnover_limits
+    13: optional Predicate allow_exchange
 }
 
 union RiskScoreSelector {

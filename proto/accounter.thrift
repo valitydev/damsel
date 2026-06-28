@@ -54,6 +54,10 @@ struct Account {
 *  amount - объем переводимых средств (не может быть отрицательным)
 *  currency_sym_code - код валюты, должен совпадать с кодами задействованных счетов
 *  description - описание проводки
+*  exchange_context - курс валюты, используемый для конвертации исходной суммы операции в валюту терминала
+*    Заполняется только если валюта терминала отличается от валюты операции (платежа) и проводки
+*    source_currency - валюта исходной операции (совпадает с валютой проводки)
+*    destination_currency - валюта терминала
 */
 struct Posting {
     1: required AccountID from_id
@@ -61,6 +65,7 @@ struct Posting {
     3: required domain.Amount amount
     4: required domain.CurrencySymbolicCode currency_sym_code
     5: required string description
+    6: optional domain.ExchangeContext exchange_context
 }
 
 /**
