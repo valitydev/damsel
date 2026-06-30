@@ -796,7 +796,7 @@ union ShopLocation {
     1: string url
 }
 
-struct ShopCheckoutLocation {
+struct CheckoutLocations {
     1: required list<CheckoutLocation> locations
 }
 
@@ -2727,7 +2727,7 @@ struct ShopConfig {
     9: required ShopLocation location
     10: required CategoryRef category
     11: optional set<TurnoverLimit> turnover_limits
-    12: optional ShopCheckoutLocation checkout_location
+    12: optional CheckoutLocations checkout_locations
 }
 
 struct ShopConfigObject {
@@ -2771,6 +2771,7 @@ struct PartyConfig {
     3: required Blocking block
     4: required Suspension suspension
     5: required PartyContactInfo contact_info
+    6: optional CheckoutLocations checkout_locations
 }
 
 struct PartyConfigObject {
