@@ -61,6 +61,10 @@ union FinishStatus {
 
 struct Success {
     1: optional domain.TransactionInfo trx_info
+    /**
+     * Измененная сумма операции.
+     */
+    2: optional Cash changed_cash
 }
 
 /**
