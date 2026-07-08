@@ -61,10 +61,6 @@ union FinishStatus {
 
 struct Success {
     1: optional domain.TransactionInfo trx_info
-    /**
-     * Измененная сумма операции.
-     */
-    2: optional Cash changed_cash
 }
 
 /**
@@ -158,6 +154,7 @@ struct ProcessResult {
     1: required Intent                 intent
     2: optional InternalState          next_state
     3: optional domain.TransactionInfo trx
+    4: optional Cash                   changed_body
 }
 
 struct Quote {
@@ -185,6 +182,7 @@ struct CallbackResult {
     2: optional InternalState    next_state
     3: required CallbackResponse response
     4: optional domain.TransactionInfo trx
+    5: optional Cash changed_body
 }
 
 service Adapter {
