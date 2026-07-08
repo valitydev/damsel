@@ -587,6 +587,7 @@ union InvoicePaymentAdjustmentStatus {
 union InvoicePaymentAdjustmentState {
     1: InvoicePaymentAdjustmentCashFlowState cash_flow
     2: InvoicePaymentAdjustmentStatusChangeState status_change
+    3: InvoicePaymentAdjustmentTransactionInfoState transaction_info
 }
 
 struct InvoicePaymentAdjustmentCashFlowState {
@@ -595,6 +596,10 @@ struct InvoicePaymentAdjustmentCashFlowState {
 
 struct InvoicePaymentAdjustmentStatusChangeState {
     1: required InvoicePaymentAdjustmentStatusChange scenario
+}
+
+struct InvoicePaymentAdjustmentTransactionInfoState {
+    1: required InvoicePaymentAdjustmentTransactionInfo scenario
 }
 
 /**
@@ -616,6 +621,14 @@ struct InvoicePaymentAdjustmentCashFlow {
 struct InvoicePaymentAdjustmentStatusChange {
     /** Статус, в который необходимо перевести платёж. */
     1: required InvoicePaymentStatus target_status
+}
+
+/**
+ * Параметры поправки к платежу, используемые для изменения информации о транзакции у провайдера.
+ */
+struct InvoicePaymentAdjustmentTransactionInfo {
+    /** Данные о связанной транзакции у провайдера. */
+    1: required TransactionInfo trx
 }
 
 /**

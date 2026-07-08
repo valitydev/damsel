@@ -841,6 +841,7 @@ struct InvoicePaymentAdjustmentParams {
 union InvoicePaymentAdjustmentScenario {
     1: domain.InvoicePaymentAdjustmentCashFlow cash_flow
     2: domain.InvoicePaymentAdjustmentStatusChange status_change
+    3: domain.InvoicePaymentAdjustmentTransactionInfo transaction_info
 }
 
 /* Сценарий, проверяющий состояние упавшей машины и, в случае если
