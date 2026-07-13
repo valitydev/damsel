@@ -154,7 +154,7 @@ struct ProcessResult {
     1: required Intent                 intent
     2: optional InternalState          next_state
     3: optional domain.TransactionInfo trx
-    4: optional Cash                   changed_body
+    4: optional Cash                   new_body
 }
 
 struct Quote {
@@ -182,7 +182,7 @@ struct CallbackResult {
     2: optional InternalState    next_state
     3: required CallbackResponse response
     4: optional domain.TransactionInfo trx
-    5: optional Cash changed_body
+    5: optional Cash             new_body
 }
 
 service Adapter {
