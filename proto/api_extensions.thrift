@@ -69,3 +69,41 @@ service InvoiceTemplating {
             4: payment_processing.InvalidShopStatus ex4
         )
 }
+
+typedef map<string, string> UrlParams
+
+struct InvoiceWithTemplateParams {
+    1: required domain.InvoiceTemplateID template_id
+    2: optional domain.Cash cost
+    3: optional domain.InvoiceContext context
+    4: required domain.InvoiceID id
+    5: optional string external_id
+    6: optional UrlParams url_params
+}
+
+struct InvoiceAccessToken {
+    1: required string payload
+}
+
+struct InvoiceUrl {
+    1: required string url
+}
+
+struct InvoiceAndToken {
+    1: required domain.Invoice invoice
+    2: required InvoiceAccessToken invoice_access_token
+    3: required InvoiceUrl invoice_url
+}
+
+service Invoicing {
+
+    InvoiceAndToken CreateWithTemplate (1: InvoiceWithTemplateParams params)
+        throws (
+            1: base.InvalidRequest ex1,
+            2: payment_processing.InvalidPartyStatus ex2,
+            3: payment_processing.InvalidShopStatus ex3,
+            4: payment_processing.InvoiceTemplateNotFound ex4,
+            5: payment_processing.InvoiceTemplateRemoved ex5,
+            6: payment_processing.InvoiceTermsViolated ex6
+        )
+}
