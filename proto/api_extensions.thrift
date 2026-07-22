@@ -76,9 +76,8 @@ struct InvoiceWithTemplateParams {
     1: required domain.InvoiceTemplateID template_id
     2: optional domain.Cash cost
     3: optional domain.InvoiceContext context
-    4: required domain.InvoiceID id
-    5: optional string external_id
-    6: optional UrlParams url_params
+    4: optional string external_id
+    5: optional UrlParams url_params
 }
 
 struct InvoiceAccessToken {
