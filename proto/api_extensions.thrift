@@ -30,9 +30,14 @@ struct AccessToken {
     1: required string payload
 }
 
+struct InvoiceUrl {
+    1: required string url
+}
+
 struct InvoiceTemplateAndToken {
     1: required domain.InvoiceTemplate invoice_template
     2: required AccessToken invoice_template_access_token
+    3: required InvoiceUrl invoice_template_url
 }
 
 service InvoiceTemplating {
