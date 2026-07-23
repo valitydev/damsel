@@ -5,6 +5,8 @@ include "payment_processing.thrift"
 namespace java dev.vality.damsel.api_extensions
 namespace erlang dmsl.api_ext
 
+typedef map<string, string> InvoiceUrlParams
+
 // Based on `payment_processing.InvoiceTemplateCreateParams`
 struct InvoiceTemplateCreateParams {
     1: optional string external_id
@@ -15,6 +17,7 @@ struct InvoiceTemplateCreateParams {
     6: optional string description
     7: required domain.InvoiceTemplateDetails details
     8: required domain.InvoiceContext context
+    9: optional InvoiceUrlParams url_params
 }
 
 // Based on `payment_processing.InvoiceTemplateUpdateParams`
@@ -30,9 +33,14 @@ struct AccessToken {
     1: required string payload
 }
 
+struct InvoiceTemplateUrl {
+    1: required string url
+}
+
 struct InvoiceTemplateAndToken {
     1: required domain.InvoiceTemplate invoice_template
     2: required AccessToken invoice_template_access_token
+    3: required InvoiceTemplateUrl invoice_template_url
 }
 
 service InvoiceTemplating {
@@ -67,5 +75,12 @@ service InvoiceTemplating {
             2: payment_processing.InvoiceTemplateRemoved ex2,
             3: payment_processing.InvalidPartyStatus ex3,
             4: payment_processing.InvalidShopStatus ex4
+        )
+
+    InvoiceTemplateUrl CreateUrl (1: domain.InvoiceTemplateID id, 2: InvoiceUrlParams url_params)
+        throws (
+            1: payment_processing.InvoiceTemplateNotFound ex1,
+            2: payment_processing.InvoiceTemplateRemoved ex2,
+            3: base.InvalidRequest ex3
         )
 }
