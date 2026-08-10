@@ -2777,6 +2777,31 @@ struct WalletConfigRef {
     1: required base.ID id
 }
 
+struct ExternalPaymentRoute {
+    1: required ShopConfigRef shop
+}
+
+struct ExternalWithdrawalRoute {
+    1: required WalletConfigRef wallet
+}
+
+struct ExternalPartyRoutes {
+    1: required string name
+    2: optional string description
+    3: required PartyConfigRef party_ref
+    4: required map<string, ExternalPaymentRoute> payment_routes
+    5: required map<string, ExternalWithdrawalRoute> withdrawal_routes
+}
+
+struct ExternalPartyRoutesObject {
+    1: required ExternalPartyRoutesRef ref
+    2: required ExternalPartyRoutes data
+}
+
+struct ExternalPartyRoutesRef {
+    1: required base.ID id
+}
+
 /** Участник. */
 struct PartyConfig {
     1: required string name
@@ -2858,6 +2883,7 @@ union Reference {
     33: ShopConfigRef shop_config
     34: WalletConfigRef wallet_config
     35: PartnerRef partner
+    36: ExternalPartyRoutesRef external_party_routes
 }
 
 union DomainObject {
@@ -2896,6 +2922,7 @@ union DomainObject {
     33: ShopConfigObject shop_config
     34: WalletConfigObject wallet_config
     35: PartnerObject partner
+    36: ExternalPartyRoutesObject external_party_routes
 }
 
 union ReflessDomainObject {
@@ -2934,6 +2961,7 @@ union ReflessDomainObject {
     33: ShopConfig shop_config
     34: WalletConfig wallet_config
     35: Partner partner
+    36: ExternalPartyRoutes external_party_routes
 }
 
 enum DomainObjectType {
@@ -2972,6 +3000,7 @@ enum DomainObjectType {
     shop_config = 33
     wallet_config = 34
     partner = 35
+    external_party_routes = 36
 }
 
 /* Domain */
