@@ -2785,12 +2785,14 @@ struct ExternalWithdrawalRoute {
     1: required WalletConfigRef wallet
 }
 
+typedef string PartyRouteID
+
 struct ExternalPartyRoutes {
     1: required string name
     2: optional string description
     3: required PartyConfigRef party_ref
-    4: required map<string, ExternalPaymentRoute> payment_routes
-    5: required map<string, ExternalWithdrawalRoute> withdrawal_routes
+    4: required map<PartyRouteID, ExternalPaymentRoute> payment_routes
+    5: required map<PartyRouteID, ExternalWithdrawalRoute> withdrawal_routes
 }
 
 struct ExternalPartyRoutesObject {
