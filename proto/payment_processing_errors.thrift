@@ -172,7 +172,7 @@ union TermsViolated {
 }
 
 struct LimitOverflowFailure {
-    1: limiter_config.LimitConfigID limit_id
+    1: limiter_config.LimitConfigID limit_config_id
 }
 
 struct GeneralFailure {}
