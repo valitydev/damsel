@@ -1,5 +1,3 @@
-include "limiter_config.thrift"
-
 namespace java dev.vality.damsel.payment_processing.errors
 namespace erlang dmsl.payproc_error
 
@@ -156,23 +154,18 @@ union RoutesRejected {
     // использованию маршрута с такими лимитами
     1: GeneralFailure limit_misconfiguration
     // Отвергнуты из-за превышения лимита
-    5: LimitOverflowFailure limit_overflow
+    2: GeneralFailure limit_overflow
     // Адаптер не доступен согласно полученной стате от FaultDetector'а
     3: GeneralFailure adapter_unavailable
     // Согласно той же статистике конверсия провайдера упала ниже критического
     // порога и потому соответствующий маршрут/маршруты были отвергнуты
     4: GeneralFailure provider_conversion_is_too_low
-
-    // Deprecated, use LimitOverflowFailure instead
-    2: GeneralFailure limit_overflow_legacy
 }
 
 union TermsViolated {
     1: GeneralFailure insufficient_merchant_funds
 }
 
-struct LimitOverflowFailure {
-    1: limiter_config.LimitConfigID limit_config_id
+struct GeneralFailure {
+    1: optional string reason_code
 }
-
-struct GeneralFailure {}
