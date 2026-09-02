@@ -101,7 +101,7 @@ namespace erlang dmsl.payproc_error
   * ```
   * domain.Failure{
   *     code = "no_route_found",
-  *     reason = "blah blah who cares, i only want specific limit config id that failed",
+  *     reason = "Limits overflow (over9000, 42, mylimit67)",
   *     sub = domain.SubFailure{
   *         code = "rejected",
   *         sub = domain.SubFailure{
