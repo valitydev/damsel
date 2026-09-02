@@ -540,9 +540,20 @@ struct PaymentRoute {
     2: required TerminalRef terminal
 }
 
+/**
+ * Скоры роута. Сравниваются как кортеж в порядке объявления полей, поэтому
+ * позиция поля в объявлении задаёт приоритет критерия: сверху сильнее.
+ */
 struct PaymentRouteScores {
     1: optional i32 availability_condition
     2: optional i32 conversion_condition
+    /**
+     * Ранг привязки плательщика к терминалу (см. RoutingAffinity).
+     * 0 — привязки нет; больше — привязка раньше. Объявлено выше приоритета
+     * и веса намеренно: привязка сильнее перенастройки роутинга, но слабее
+     * критических состояний по FD.
+     */
+    9: optional i32 terminal_affinity
     3: optional i32 terminal_priority_rating
     4: optional i32 route_pin
     5: optional i32 random_condition
@@ -2537,6 +2548,43 @@ struct RoutingPin {
     1: required set<RoutingPinFeature> features
 }
 
+/**
+ * Привязка плательщика к терминалу.
+ *
+ * Плательщик идентифицируется по email через Customer. Терминал, через который
+ * прошёл первый успешный платёж, запоминается; в последующих платежах привязанный
+ * терминал предпочитается приоритету и весу кандидатов, пока доступен.
+ * Ранг получают только кандидаты с этой настройкой; привязка создаётся, только
+ * если выбранный кандидат её нёс.
+ */
+struct RoutingAffinity {
+    /** Время жизни привязки; не задано — бессрочно. */
+    1: optional RoutingAffinityTtl ttl
+}
+
+/**
+ * Вид TTL привязки: от какого момента считать срок.
+ *
+ * Форму срока выбирает оператор через base.Timer:
+ *  - timeout  — привязка истекает, когда с базового момента прошло больше
+ *               timeout секунд;
+ *  - deadline — привязка истекает, если базовый момент раньше deadline
+ *               (абсолютная отсечка, например плановая переразметка с даты).
+ */
+union RoutingAffinityTtl {
+    /**
+     * Жёсткий: базовый момент — создание привязки (bound_at). Истекает
+     * независимо от активности плательщика — периодическая переразметка
+     * по актуальным весам.
+     */
+    1: base.Timer since_bound
+    /**
+     * Скользящий: базовый момент — последний успешный платёж через привязку
+     * (last_used_at). Истекает, только если плательщик через неё не платил.
+     */
+    2: base.Timer since_last_use
+}
+
 struct RoutingCandidate {
     1: optional string description
     2: required Predicate allowed
@@ -2544,6 +2592,7 @@ struct RoutingCandidate {
     4: optional i32 priority = CANDIDATE_PRIORITY
     5: optional RoutingPin pin
     6: optional i32 weight = CANDIDATE_WEIGHT
+    7: optional RoutingAffinity affinity
 }
 
 /* Root config */
