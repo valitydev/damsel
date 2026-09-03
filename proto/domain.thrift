@@ -513,12 +513,61 @@ struct RecurrentPayer {
     3: required ContactInfo            contact_info
 }
 
+/** Данные браузера плательщика. */
+struct BrowserInfo {
+    1: optional string accept_header
+    2: optional string user_agent
+    3: optional string language
+    4: optional string color_depth
+    5: optional string screen_width
+    6: optional string screen_height
+    7: optional string tz_offset
+}
+
+/** Данные платформы плательщика. */
+union DeviceType {
+    1: DeviceTypeDesktop desktop
+    2: DeviceTypeMobile mobile
+    3: DeviceTypeTablet tablet
+    4: DeviceTypeUnknown unknown
+}
+
+struct DeviceTypeDesktop {}
+struct DeviceTypeMobile {}
+struct DeviceTypeTablet {}
+struct DeviceTypeUnknown {}
+
+/** Данные устройства и браузера плательщика. */
+struct DeviceInfo {
+    1: optional DeviceType device_type
+    2: optional string os_name
+    3: optional string os_version
+    4: optional string device_model
+    5: optional string browser_name
+    6: optional string browser_version
+    7: optional string time_zone
+    8: optional list<string> languages
+    9: optional double screen_pixel_ratio
+    10: optional bool web_view
+    11: optional list<UserAgentBrand> user_agent_brands
+}
+
+/** Бренд браузера, сообщённый User-Agent Client Hints API. */
+struct UserAgentBrand {
+    1: optional string brand
+    2: optional string version
+}
+
 struct ClientInfo {
     1: optional IPAddress ip_address
     2: optional Fingerprint fingerprint
     3: optional string url
     4: optional IPAddress peer_ip_address
     5: optional IPAddress user_ip_address
+    6: optional BrowserInfo browser_info
+    7: optional DeviceInfo device_info
+    8: optional string peer_user_agent
+    9: optional string peer_accept_header
 }
 
 struct PayerSessionInfo {
