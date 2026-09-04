@@ -79,18 +79,24 @@ struct ProviderTerminalKey {
 /**
  * Привязка Customer к терминалу.
  *
- * У Customer может быть несколько активных привязок; при выборе роута
- * приоритетна та, что раньше (меньший bind_seq), среди доступных кандидатов.
- * См. domain.RoutingAffinity.
+ * У Customer может быть несколько активных привязок. При выборе роута среди
+ * доступных кандидатов предпочитается привязка, созданная раньше
+ * (с меньшим bind_seq). См. domain.RoutingAffinity.
  */
 struct TerminalAffinity {
     1: required domain.ProviderRef provider_ref
     2: required domain.TerminalRef terminal_ref
-    /** Монотонный порядковый номер привязки: меньше = раньше = приоритетнее */
+    /**
+     * Порядковый номер привязки, растёт монотонно. Чем меньше, тем раньше
+     * создана привязка и тем выше её приоритет.
+     */
     3: required i64 bind_seq
-    /** Время создания привязки; база для TTL since_bound */
+    /** Время создания привязки; точка отсчёта для TTL since_bound */
     4: required base.Timestamp bound_at
-    /** Последний успешный платёж через привязку; база для TTL since_last_use */
+    /**
+     * Время последнего успешного платежа через привязку;
+     * точка отсчёта для TTL since_last_use.
+     */
     5: required base.Timestamp last_used_at
 }
 
@@ -103,8 +109,8 @@ struct TerminalAffinityParams {
     2: required domain.ProviderRef provider_ref
     3: required domain.TerminalRef terminal_ref
     /**
-     * Если задан — истёкшая по нему привязка к тому же терминалу
-     * снимается перед записью новой, и новая получает bind_seq в хвосте.
+     * Если задан и существующая привязка к этому терминалу по нему уже истекла,
+     * она снимается, а вместо неё создаётся новая с очередным bind_seq.
      */
     4: optional domain.RoutingAffinityTtl ttl
 }
@@ -186,9 +192,10 @@ struct Customer {
     /** Внешний идентификатор Customer */
     7: optional string external_id
     /**
-     * Email плательщика, нормализованный (нижний регистр, без пробелов по краям).
-     * Уникален в рамках party_ref. Идентичность плательщика для привязки
-     * к терминалу; не смешивать с external_id — идентификатором от мерчанта.
+     * Email плательщика в нормализованном виде (нижний регистр, без пробелов
+     * по краям). Уникален в рамках party_ref. Служит идентификатором плательщика
+     * для привязки к терминалу; не путать с external_id — идентификатором,
+     * который назначает мерчант.
      */
     8: optional string email
 }
@@ -435,9 +442,9 @@ service CustomerManagement {
 
     /**
      * Найти Customer по email в рамках party или создать, если его нет.
-     * Идемпотентно и безопасно при конкурентных вызовах: арбитр — уникальность
-     * email в рамках party. Email нормализуется сервисом.
-     * Никогда не бросает CustomerEmailConflict.
+     * Операция идемпотентна и безопасна при конкурентных вызовах: единственность
+     * Customer гарантирует уникальность email в рамках party. Email нормализуется
+     * сервисом. CustomerEmailConflict не бросает.
      */
     Customer FindOrCreateByEmail(
         1: domain.PartyConfigRef party_ref,
@@ -456,8 +463,8 @@ service CustomerManagement {
 
     /**
      * Получить активные привязки Customer к терминалам.
-     * Истечение по TTL не учитывается — TTL задаётся кандидатом роутинга
-     * и применяется вызывающей стороной.
+     * Истечение по TTL здесь не проверяется: TTL задаётся в настройках кандидата
+     * роутинга, и учитывать его должна вызывающая сторона.
      */
     list<TerminalAffinity> GetTerminalAffinities(1: CustomerID customer_id)
         throws (1: CustomerNotFound not_found)
