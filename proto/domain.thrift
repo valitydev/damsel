@@ -2830,8 +2830,44 @@ struct ExternalPaymentRoute {
     1: required ShopConfigRef shop
 }
 
+/**
+ * `wallet` — откуда слать
+ * `resource_type` — во что маппить вход (account_number и т.п.).
+ */
 struct ExternalWithdrawalRoute {
     1: required WalletConfigRef wallet
+    2: required DestinationResourceType resource_type
+}
+
+/**
+ * Дискриминатор пайплайна method → WAPI Destination.resource.
+ */
+union DestinationResourceType {
+    /** account_number = PAN */
+    1: BankCardDestinationResourceType bank_card
+
+    /**
+     * payment_service.id = swagger `type` (= ResourceGeneric.provider),
+     * (для mobile account_number → phoneNumber).
+     */
+    2: GenericDestinationResourceType generic
+
+    /**
+     * DigitalWalletDestinationResource{id, provider}.
+     * provider.id = Qiwi / …
+     * account_number → id.
+     */
+    3: DigitalWalletDestinationResourceType digital_wallet
+}
+
+struct BankCardDestinationResourceType {}
+
+struct GenericDestinationResourceType {
+    1: required PaymentServiceRef payment_service
+}
+
+struct DigitalWalletDestinationResourceType {
+    1: required PaymentServiceRef provider
 }
 
 typedef string PartyRouteID
