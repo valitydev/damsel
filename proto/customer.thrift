@@ -74,6 +74,56 @@ struct ProviderTerminalKey {
     2: required domain.TerminalRef terminal_ref
 }
 
+/* Terminal affinity — привязка плательщика к терминалу */
+
+/**
+ * Привязка Customer к терминалу.
+ *
+ * У Customer может быть несколько активных привязок. При выборе роута среди
+ * доступных кандидатов предпочитается привязка, созданная раньше
+ * (с меньшим bind_seq). См. domain.RoutingAffinity.
+ */
+struct TerminalAffinity {
+    1: required domain.ProviderRef provider_ref
+    2: required domain.TerminalRef terminal_ref
+    /**
+     * Порядковый номер привязки, растёт монотонно. Чем меньше, тем раньше
+     * создана привязка и тем выше её приоритет.
+     */
+    3: required i64 bind_seq
+    /** Время создания привязки; точка отсчёта для TTL since_bound */
+    4: required base.Timestamp bound_at
+    /**
+     * Время последнего успешного платежа через привязку;
+     * точка отсчёта для TTL since_last_use.
+     */
+    5: required base.Timestamp last_used_at
+}
+
+/**
+ * Параметры привязки Customer к терминалу.
+ * Операция идемпотентна: повторный вызов не меняет bind_seq, только last_used_at.
+ */
+struct TerminalAffinityParams {
+    1: required CustomerID customer_id
+    2: required domain.ProviderRef provider_ref
+    3: required domain.TerminalRef terminal_ref
+    /**
+     * Если задан и существующая привязка к этому терминалу по нему уже истекла,
+     * она снимается, а вместо неё создаётся новая с очередным bind_seq.
+     */
+    4: optional domain.RoutingAffinityTtl ttl
+}
+
+/**
+ * Параметры снятия привязки.
+ */
+struct ReleaseTerminalAffinityParams {
+    1: required CustomerID customer_id
+    2: required ProviderTerminalKey key
+    3: optional string reason
+}
+
 /**
  * BankCard — самостоятельная сущность банковской карты.
  */
@@ -141,6 +191,13 @@ struct Customer {
     6: optional domain.Metadata metadata
     /** Внешний идентификатор Customer */
     7: optional string external_id
+    /**
+     * Email плательщика в нормализованном виде (нижний регистр, без пробелов
+     * по краям). Уникален в рамках party_ref. Служит идентификатором плательщика
+     * для привязки к терминалу; не путать с external_id — идентификатором,
+     * который назначает мерчант.
+     */
+    8: optional string email
 }
 
 /**
@@ -182,6 +239,8 @@ struct CustomerParams {
     3: optional domain.Metadata metadata
     /** Внешний идентификатор Customer */
     4: optional string external_id
+    /** Email плательщика; нормализуется сервисом. Уникален в рамках party_ref */
+    5: optional string email
 }
 
 /**
@@ -243,6 +302,11 @@ exception CustomerAlreadyExists {
     1: required CustomerID id
 }
 
+/** Email уже занят другим Customer этой party */
+exception CustomerEmailConflict {
+    1: required CustomerID id
+}
+
 exception BankCardNotFound {}
 
 exception InvalidRecurrentParent {
@@ -280,6 +344,7 @@ service CustomerManagement {
         throws (
             1: CustomerAlreadyExists already_exists
             2: base.InvalidRequest invalid_request
+            3: CustomerEmailConflict email_conflict
         )
 
     /**
@@ -374,6 +439,60 @@ service CustomerManagement {
         3: optional ContinuationToken continuation_token
     )
         throws (1: CustomerNotFound not_found)
+
+    /**
+     * Найти Customer по email в рамках party или создать, если его нет.
+     * Операция идемпотентна и безопасна при конкурентных вызовах: единственность
+     * Customer гарантирует уникальность email в рамках party. Email нормализуется
+     * сервисом. CustomerEmailConflict не бросает.
+     */
+    Customer FindOrCreateByEmail(
+        1: domain.PartyConfigRef party_ref,
+        2: string email
+    )
+        throws (1: base.InvalidRequest invalid_request)
+
+    /**
+     * Получить Customer по email и party.
+     */
+    CustomerState GetByEmail(
+        1: domain.PartyConfigRef party_ref,
+        2: string email
+    )
+        throws (1: CustomerNotFound not_found)
+
+    /**
+     * Получить активные привязки Customer к терминалам.
+     * Истечение по TTL здесь не проверяется: TTL задаётся в настройках кандидата
+     * роутинга, и учитывать его должна вызывающая сторона.
+     */
+    list<TerminalAffinity> GetTerminalAffinities(1: CustomerID customer_id)
+        throws (1: CustomerNotFound not_found)
+
+    /**
+     * Привязать Customer к терминалу.
+     * Идемпотентно: повторный вызов не меняет bind_seq, только last_used_at.
+     */
+    TerminalAffinity BindTerminalAffinity(1: TerminalAffinityParams params)
+        throws (
+            1: CustomerNotFound not_found
+            2: base.InvalidRequest invalid_request
+        )
+
+    /**
+     * Снять привязку Customer к терминалу.
+     */
+    void ReleaseTerminalAffinity(1: ReleaseTerminalAffinityParams params)
+        throws (1: CustomerNotFound not_found)
+
+    /**
+     * Снять привязки всех Customer к терминалу.
+     * Административная операция, например при выводе терминала из эксплуатации.
+     */
+    void ReleaseTerminalAffinitiesByTerminal(
+        1: ProviderTerminalKey key,
+        2: optional string reason
+    )
 }
 
 /**

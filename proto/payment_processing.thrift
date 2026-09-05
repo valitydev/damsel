@@ -150,6 +150,7 @@ union InvoicePaymentChangePayload {
     18: InvoicePaymentShopLimitApplied      invoice_payment_shop_limit_applied
     19: InvoicePaymentCascadeTokensLoaded   invoice_payment_cascade_tokens_loaded
     20: InvoicePaymentExchangeContextChanged invoice_payment_exchange_context_changed
+    21: InvoicePaymentTerminalAffinitiesLoaded invoice_payment_terminal_affinities_loaded
 }
 
 /**
@@ -486,6 +487,15 @@ struct InvoicePaymentRecTokenAcquired {
  */
 struct InvoicePaymentCascadeTokensLoaded {
     1: required list<customer.RecurrentToken> tokens
+}
+
+/**
+ * Событие о загрузке привязок плательщика к терминалам из хранилища.
+ * Содержит только действующие (не истёкшие по TTL) привязки. Пустой список —
+ * тоже событие: оно фиксирует, что загрузка для этого платежа уже выполнена.
+ */
+struct InvoicePaymentTerminalAffinitiesLoaded {
+    1: required list<customer.TerminalAffinity> affinities
 }
 
 struct InvoicePaymentCaptureStarted {
@@ -900,6 +910,11 @@ typedef map<domain.PaymentRoute, list<TurnoverLimitValue>> RouteLimitContext
 
 struct RouteDecisionContext {
     1:  optional bool skip_recurrent
+    /**
+     * У выбранного кандидата задана настройка привязки к терминалу
+     * (domain.RoutingAffinity): при успешном платеже привязка будет создана.
+     */
+    2:  optional bool terminal_affinity
 }
 
 // Exceptions

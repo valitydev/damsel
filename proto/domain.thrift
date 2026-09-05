@@ -589,9 +589,20 @@ struct PaymentRoute {
     2: required TerminalRef terminal
 }
 
+/**
+ * Скоры роута. Сравниваются как кортеж в порядке объявления полей, поэтому
+ * чем выше поле объявлено, тем значимее критерий.
+ */
 struct PaymentRouteScores {
     1: optional i32 availability_condition
     2: optional i32 conversion_condition
+    /**
+     * Ранг привязки плательщика к терминалу (см. RoutingAffinity).
+     * 0 — привязки нет; чем больше значение, тем раньше была создана привязка.
+     * Поле намеренно объявлено выше приоритета и веса: привязка важнее
+     * настроек роутинга, но уступает критическим состояниям по fault detector.
+     */
+    9: optional i32 terminal_affinity
     3: optional i32 terminal_priority_rating
     4: optional i32 route_pin
     5: optional i32 random_condition
@@ -2586,6 +2597,46 @@ struct RoutingPin {
     1: required set<RoutingPinFeature> features
 }
 
+/**
+ * Привязка плательщика к терминалу.
+ *
+ * Плательщик идентифицируется по email через Customer. Терминал, через который
+ * прошёл первый успешный платёж, запоминается, и в последующих платежах имеет
+ * преимущество перед приоритетом и весом кандидатов, пока доступен.
+ * Настройка действует только на кандидатов, у которых она задана: остальные
+ * не участвуют в привязке ни при выборе роута, ни при её создании.
+ */
+struct RoutingAffinity {
+    /** Время жизни привязки; если не задано — бессрочно. */
+    1: optional RoutingAffinityTtl ttl
+}
+
+/**
+ * Время жизни привязки: каждый вариант задаёт момент истечения.
+ * Привязка считается истёкшей, как только этот момент наступил.
+ */
+union RoutingAffinityTtl {
+    /**
+     * Абсолютная отсечка: все привязки кандидата истекают в этот момент,
+     * независимо от того, когда были созданы и когда использовались.
+     * Например, для плановой переразметки плательщиков по актуальным весам
+     * начиная с заданной даты.
+     */
+    1: base.Timestamp deadline
+    /**
+     * Срок с момента создания привязки: истекает через since_bound секунд
+     * после bound_at, независимо от того, платит ли плательщик.
+     * Подходит для периодической переразметки по актуальным весам.
+     */
+    2: base.Timeout since_bound
+    /**
+     * Скользящий срок: истекает, если через привязку не было успешных платежей
+     * дольше since_last_use секунд (считая от last_used_at). Каждый успешный
+     * платёж продлевает срок.
+     */
+    3: base.Timeout since_last_use
+}
+
 struct RoutingCandidate {
     1: optional string description
     2: required Predicate allowed
@@ -2593,6 +2644,7 @@ struct RoutingCandidate {
     4: optional i32 priority = CANDIDATE_PRIORITY
     5: optional RoutingPin pin
     6: optional i32 weight = CANDIDATE_WEIGHT
+    7: optional RoutingAffinity affinity
 }
 
 /* Root config */
