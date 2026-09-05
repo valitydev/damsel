@@ -65,6 +65,59 @@ namespace erlang dmsl.payproc_error
   * }
   * ```
   *
+  * ### Произвольный код ошибки общего назначения в разном представлении
+  *
+  * Статическая ошибка общего назначения GeneralFailure всегда выступает
+  * конечным типом и не имеет дочерних типов, но может быть использована для
+  * указания динамических кодов в конце цепочки статического представления
+  * ошибок.
+  *
+  * Для этого используется опциональное поле reason_code.
+  * При трансляции из статического в динамический формат, этот произвольный код
+  * будет представлени как SubFailure с соответствущим значением кода.
+  *
+  * Далее пример ошибки переполнения лимита при выборе маршрута процессинга
+  * платежа - конечным типом ошибки с кодом limit_overflow является
+  * GeneralFailure, а значит можно кодировать произвольный код в качестве его
+  * атрибута.
+  *
+  * ```
+  * PaymentFailure{
+  *     no_route_found = NoRouteFoundFailure{
+  *         rejected = RoutesRejected{
+  *             limit_overflow = GeneralFailure{
+  *                 reason_code = "over9000"
+  *             }
+  *         }
+  *     }
+  * }
+  * ```
+  *
+  * При обратной трансляции, из динамического в статическое представление,
+  * значение произвольного кода в конце набора кодов ошибки следует представлять
+  * в качестве значения reason_code у GeneralFailure только тогда когда в
+  * протоколе нет соответствующего статического кода со своим типом.
+  *
+  * ```
+  * domain.Failure{
+  *     code = "no_route_found",
+  *     reason = "Limits overflow (over9000, 42, mylimit67)",
+  *     sub = domain.SubFailure{
+  *         code = "rejected",
+  *         sub = domain.SubFailure{
+  *             code = "limit_overflow",
+  *             sub = domain.SubFailure{
+  *                 code = "over9000"
+  *             }
+  *         }
+  *     }
+  * }
+  * ```
+  *
+  * Что соответствует строковому представлению:
+  *
+  *     no_route_found:rejected:limit_overflow:over9000
+  *
   */
 
 union PaymentFailure {
@@ -166,4 +219,6 @@ union TermsViolated {
     1: GeneralFailure insufficient_merchant_funds
 }
 
-struct GeneralFailure {}
+struct GeneralFailure {
+    1: optional string reason_code
+}
