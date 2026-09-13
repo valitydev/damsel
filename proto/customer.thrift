@@ -102,7 +102,8 @@ struct TerminalAffinity {
 
 /**
  * Параметры привязки Customer к терминалу.
- * Операция идемпотентна: повторный вызов не меняет bind_seq, только last_used_at.
+ * Операция идемпотентна по платежу: повтор с тем же payment ничего не меняет, а вызов
+ * по новому платежу обновляет last_used_at (подробнее — у BindTerminalAffinity).
  */
 struct TerminalAffinityParams {
     1: required CustomerID customer_id
