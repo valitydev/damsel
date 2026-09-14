@@ -915,6 +915,10 @@ struct RouteDecisionContext {
      * (domain.RoutingAffinity): при успешном платеже привязка будет создана.
      */
     2:  optional bool terminal_affinity
+    /**
+     * Время жизни привязки, взятое с выбранного кандидата
+     */
+    3:  optional domain.RoutingAffinityTtl affinity_ttl
 }
 
 // Exceptions
