@@ -1873,6 +1873,12 @@ enum ProviderCashFlowAccount {
      */
     settlement
 
+    /**
+     * Счёт гарантийного депозита:
+     *  - учёт средств для погашения реализовавшихся рисков по провайдеру.
+     */
+    guarantee
+
 }
 
 enum SystemCashFlowAccount {
@@ -2258,6 +2264,7 @@ struct CashValueDecision {
 
 struct ProviderAccount {
     1: required AccountID settlement
+    2: optional AccountID guarantee
 }
 
 union PaymentSystemSelector {
