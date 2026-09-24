@@ -139,7 +139,7 @@ struct PaymentInfo {
 }
 
 struct Shop {
-    1: required domain.ShopID       id
+    1: required base.ID             id
     2: required domain.Category     category
     3: required string              name
     4: optional string              description
