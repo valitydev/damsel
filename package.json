@@ -2,7 +2,7 @@
   "name": "@vality/domain-proto",
   "version": "2.0.1",
   "scripts": {
-    "codegen": "thrift-codegen --i ./proto --n domain_config_v2 domain payment_processing accounter webhooker api_extensions proxy_provider"
+    "codegen": "npx @vality/tsthrift-cli --i64 number --input ../damsel/proto --bundle --lower-case-methods"
   },
   "publishConfig": {
     "access": "public",
@@ -12,34 +12,21 @@
     "type": "git",
     "url": "git+https://github.com/valitydev/damsel.git"
   },
+  "type": "module",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/index.d.mts",
-        "default": "./dist/index.mjs"
-      },
-      "require": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      }
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
     },
     "./*": {
-      "import": {
-        "types": "./dist/*.d.mts",
-        "default": "./dist/*.mjs"
-      },
-      "require": {
-        "types": "./dist/*.d.ts",
-        "default": "./dist/*.js"
-      }
-    }
-  },
-  "typesVersions": {
-    "*": {
-      "*": [
-        "dist/*"
-      ]
-    }
+      "types": "./dist/*/index.d.mts",
+      "import": "./dist/*/index.mjs"
+    },
+    "./proto/*": "./proto/*",
+    "./package.json": "./package.json"
   },
   "files": [
     "dist",
@@ -47,7 +34,10 @@
   ],
   "license": "Apache-2.0",
   "homepage": "https://github.com/valitydev/damsel#readme",
+  "dependencies": {
+    "@vality/tsthrift": "^0.1.0"
+  },
   "devDependencies": {
-    "@vality/thrift-codegen": "^3.0.0"
+    "@vality/tsthrift-cli": "^0.1.0"
   }
 }

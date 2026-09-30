@@ -16,5 +16,5 @@
 
 # frontend
 node_modules
-clients
+generated
 dist
