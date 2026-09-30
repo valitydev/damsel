@@ -2,7 +2,7 @@
   "name": "@vality/domain-proto",
   "version": "2.0.1",
   "scripts": {
-    "codegen": "npx @vality/tsthrift-cli --i64 number --input ../damsel/proto --bundle --lower-case-methods"
+    "codegen": "tsthrift-cli --i64 number --input proto --bundle --lower-case-methods"
   },
   "publishConfig": {
     "access": "public",
