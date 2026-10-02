@@ -8,4 +8,4 @@ permissions:
 
 jobs:
   check:
-    uses: valitydev/action-frontend/.github/workflows/proto-check.yml@v3
+    uses: valitydev/action-frontend/.github/workflows/proto-check.yml@v4
