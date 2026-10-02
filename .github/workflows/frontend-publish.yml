@@ -10,4 +10,4 @@ permissions:
 
 jobs:
   publish:
-    uses: valitydev/action-frontend/.github/workflows/proto-publish.yml@v3
+    uses: valitydev/action-frontend/.github/workflows/proto-publish.yml@v4
