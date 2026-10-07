@@ -25,6 +25,10 @@
       "types": "./dist/*/index.d.mts",
       "import": "./dist/*/index.mjs"
     },
+    "./*/metadata": {
+      "types": "./dist/*/load-metadata.d.mts",
+      "import": "./dist/*/load-metadata.mjs"
+    },
     "./proto/*": "./proto/*",
     "./package.json": "./package.json"
   },
@@ -38,6 +42,6 @@
     "@vality/tsthrift": "^0.2.0"
   },
   "devDependencies": {
-    "@vality/tsthrift-cli": "^0.2.0"
+    "@vality/tsthrift-cli": "^0.3.0"
   }
 }
