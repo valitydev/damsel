@@ -102,6 +102,7 @@ struct Withdrawal {
     6: optional Quote quote
     9: optional withdrawals_domain.AuthData auth_data
     10: optional withdrawals_domain.ContactInfo contact_info
+    11: optional withdrawals_domain.ClientInfo client_info
 }
 
 typedef withdrawals_domain.Destination Destination
