@@ -546,6 +546,7 @@ struct InvoiceParams {
     9: optional domain.InvoiceClientInfo client_info
     10: optional domain.AllocationPrototype allocation
     11: optional list<InvoiceMutationParams> mutations
+    12: optional domain.ClientIdentity client_identity
 }
 
 struct InvoiceWithTemplateParams {
@@ -588,12 +589,9 @@ struct InvoicePaymentParams {
     5: optional string external_id
     6: optional domain.InvoicePaymentContext context
     7: optional base.Timestamp processing_deadline
-    /**
-     * Customer to associate this payment with.
-     * When set alongside make_recurrent=true, hellgate persists the resulting recurrent token
-     * to BankCardStorage under this customer after a successful payment.
-     */
-    9: optional customer.CustomerID customer_id
+
+    // Reserved
+    // 9
 }
 
 struct RegisterInvoicePaymentParams {

@@ -156,6 +156,7 @@ struct Invoice {
     13: optional InvoiceClientInfo client_info
     14: optional Allocation allocation
     15: optional list<InvoiceMutation> mutations
+    16: optional ClientIdentity client_identity
 }
 
 union InvoiceMutation {
@@ -329,7 +330,7 @@ struct InvoicePayment {
     17: optional InvoicePaymentRegistrationOrigin registration_origin
     /**
      * Customer ID associated with this payment.
-     * Set when the payment is created with a customer context (via InvoicePaymentParams.customer_id).
+     * Set when the invoice is created with a customer context (via Invoice.client_identity).
      * Used by hellgate for recurrent cascade: looking up BankCard tokens and persisting
      * new recurrent tokens after make_recurrent payments.
      * Type matches customer.CustomerID (typedef base.ID).
@@ -444,6 +445,25 @@ union InvoicePaymentStatus {
  */
 struct InvoiceClientInfo {
     1: optional ClientTrustLevel trust_level
+}
+
+/**
+ * Идентификация плательщика, которую передал мерчант.
+ * Определяет Customer, с которым связываются платежи по инвойсу.
+ */
+struct ClientIdentity {
+    /**
+     * Customer, с которым связываются платежи по инвойсу.
+     * Передан мерчантом либо найден или создан по user_id до создания инвойса.
+     * Тип совпадает с customer.CustomerID (typedef base.ID).
+     */
+    1: required base.ID customer_id
+    /**
+     * Идентификатор пользователя в системе мерчанта.
+     * Задан, если Customer определён по нему: в рамках Party инвойса это
+     * Customer, у которого external_id равен user_id.
+     */
+    2: optional string user_id
 }
 
 enum ClientTrustLevel {
