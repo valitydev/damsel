@@ -1,7 +1,7 @@
 /**
  * Определения и сервисы для работы с Customer и каскадированием рекуррентных платежей.
  *
- * Customer — агрегатор информации о плательщике в рамках конкретной Party.
+ * Customer — агрегатор информации о плательщике.
  * BankCard — самостоятельная сущность банковской карты, которая может быть связана с несколькими Customer'ами.
  */
 
@@ -148,8 +148,7 @@ struct BankCard {
     2: required domain.Token bank_card_token
     /**
      * Массив Party, которые могут использовать эту запись.
-     * По умолчанию содержит одну Party — владельца.
-     * Расшаривание между Party возможно только через ручную миграцию.
+     * Карта, привязанная к Customer, доступна всем Party, к которым он привязан.
      */
     3: required list<domain.PartyConfigRef> party_refs
     /** Маска карты (первые 6 и последние 4 цифры), например "424242******4242" */
@@ -183,17 +182,20 @@ struct CustomerPayment {
 }
 
 /**
- * Customer — агрегатор информации о плательщике в рамках конкретной Party.
+ * Customer — агрегатор информации о плательщике.
+ *
+ * Customer может быть привязан к нескольким Party: к той, в которой он создан, и к тем,
+ * в которых ему назначен external_id. Customer всегда возвращается в контексте одной из них.
  *
  * Customer связывает:
- * - Party (мерчант, которому принадлежит Customer)
+ * - Party (мерчанты, к которым привязан Customer)
  * - Список проведённых платежей
  * - Банковские карты (через many-to-many связь с BankCard)
  */
 struct Customer {
     /** Уникальный идентификатор Customer */
     1: required CustomerID id
-    /** Party, которой принадлежит Customer */
+    /** Party, в контексте которой возвращён Customer */
     2: required domain.PartyConfigRef party_ref
     /** Время создания Customer */
     3: required base.Timestamp created_at
@@ -203,7 +205,7 @@ struct Customer {
     5: optional domain.ContactInfo contact_info
     /** Метаданные Customer (произвольные данные мерчанта) */
     6: optional domain.Metadata metadata
-    /** Внешний идентификатор Customer */
+    /** Внешний идентификатор Customer в рамках party_ref */
     7: optional string external_id
     /**
      * Email плательщика в нормализованном виде (нижний регистр, без пробелов
@@ -245,13 +247,13 @@ struct CustomerState {
  * Параметры создания Customer.
  */
 struct CustomerParams {
-    /** Party, которой будет принадлежать Customer */
+    /** Party, в которой создаётся Customer */
     1: required domain.PartyConfigRef party_ref
     /** Контактная информация плательщика */
     2: optional domain.ContactInfo contact_info
     /** Метаданные Customer */
     3: optional domain.Metadata metadata
-    /** Внешний идентификатор Customer */
+    /** Внешний идентификатор Customer в рамках party_ref */
     4: optional string external_id
     /** Email плательщика; нормализуется сервисом. Уникален в рамках party_ref */
     5: optional string email
@@ -321,6 +323,18 @@ exception CustomerEmailConflict {
     1: required CustomerID id
 }
 
+/**
+ * Невозможно назначить external_id: в party уже есть конфликтующая привязка —
+ * этот external_id занят другим Customer, либо у Customer в этой party уже есть
+ * другой external_id.
+ */
+exception CustomerExternalIDConflict {
+    /** Customer из существующей привязки */
+    1: required CustomerID id
+    /** external_id из существующей привязки */
+    2: required string external_id
+}
+
 exception BankCardNotFound {}
 
 exception InvalidRecurrentParent {
@@ -362,17 +376,21 @@ service CustomerManagement {
         )
 
     /**
-     * Получить Customer по ID.
+     * Получить Customer по ID в контексте party.
+     * Если Customer не привязан к party, возвращается CustomerNotFound.
      */
-    CustomerState Get(1: CustomerID customer_id)
+    CustomerState Get(1: CustomerID customer_id, 2: domain.PartyConfigRef party_ref)
         throws (1: CustomerNotFound not_found)
 
     /**
-     * Найти Customer по parent invoice/payment (для рекуррентных платежей).
+     * Найти Customer по parent invoice/payment (для рекуррентных платежей) в контексте party.
+     * Если Customer, которому принадлежит платёж, не привязан к party,
+     * возвращается CustomerNotFound.
      */
     CustomerState GetByParentPayment(
         1: domain.InvoiceID invoice_id,
-        2: domain.InvoicePaymentID payment_id
+        2: domain.InvoicePaymentID payment_id,
+        3: domain.PartyConfigRef party_ref
     )
         throws (
             1: CustomerNotFound not_found
@@ -381,12 +399,42 @@ service CustomerManagement {
 
     /**
      * Получить Customer по external_id и party.
+     * Находит также Customer, созданный в другой party, если в данной party ему назначен
+     * этот external_id.
      */
     CustomerState GetByExternalID(
         1: string external_id,
         2: domain.PartyConfigRef party_ref
     )
         throws (1: CustomerNotFound not_found)
+
+    /**
+     * Найти Customer по external_id в рамках party или создать его в ней, если он не найден.
+     * Операция идемпотентна и безопасна при конкурентных вызовах: единственность
+     * Customer гарантируется уникальностью external_id в рамках party.
+     */
+    Customer FindOrCreateByExternalID(
+        1: domain.PartyConfigRef party_ref,
+        2: string external_id
+    )
+        throws (1: base.InvalidRequest invalid_request)
+
+    /**
+     * Назначить Customer внешний идентификатор в party.
+     * Если Customer ещё не привязан к party, он привязывается к ней, и его карты
+     * становятся доступны в этой party. Операция идемпотентна: повторный вызов
+     * с тем же external_id ничего не меняет.
+     */
+    void AddExternalID(
+        1: CustomerID customer_id,
+        2: domain.PartyConfigRef party_ref,
+        3: string external_id
+    )
+        throws (
+            1: CustomerNotFound not_found
+            2: base.InvalidRequest invalid_request
+            3: CustomerExternalIDConflict external_id_conflict
+        )
 
     /**
      * Удалить Customer (soft delete).
@@ -460,7 +508,7 @@ service CustomerManagement {
     /**
      * Найти Customer по email в рамках party или создать, если его нет.
      * Операция идемпотентна и безопасна при конкурентных вызовах: единственность
-     * Customer гарантирует уникальность email в рамках party. Email нормализуется
+     * Customer гарантируется уникальностью email в рамках party. Email нормализуется
      * сервисом. CustomerEmailConflict не бросает.
      */
     Customer FindOrCreateByEmail(
