@@ -16,6 +16,8 @@ namespace erlang dmsl.customer
 typedef base.ID CustomerID
 typedef base.ID BankCardID
 typedef base.ID RecurrentTokenID
+/** Идентификатор вывода в fistful */
+typedef base.ID WithdrawalID
 
 /* BankCard — самостоятельная сущность банковской карты */
 
@@ -182,6 +184,21 @@ struct CustomerPayment {
 }
 
 /**
+ * Ссылка на вывод
+ */
+struct WithdrawalRef {
+    1: required WithdrawalID withdrawal_id
+}
+
+/**
+ * Информация о выводе Customer.
+ */
+struct CustomerWithdrawal {
+    1: required WithdrawalID withdrawal_id
+    2: required base.Timestamp created_at
+}
+
+/**
  * Customer — агрегатор информации о плательщике.
  *
  * Customer может быть привязан к нескольким Party: к той, в которой он создан, и к тем,
@@ -231,7 +248,7 @@ struct CustomerDeleted {
 }
 
 /**
- * Полное состояние Customer с связанными данными.
+ * Полное состояние Customer со связанными данными.
  */
 struct CustomerState {
     1: required Customer customer
@@ -239,6 +256,8 @@ struct CustomerState {
     2: required list<BankCardRef> bank_card_refs
     /** Список ссылок на платежи */
     3: required list<PaymentRef> payment_refs
+    /** Список ссылок на выводы */
+    4: required list<WithdrawalRef> withdrawal_refs
 }
 
 /* Параметры создания и поиска */
@@ -352,6 +371,11 @@ struct CustomerPaymentsResponse {
     2: optional ContinuationToken continuation_token
 }
 
+struct CustomerWithdrawalsResponse {
+    1: required list<CustomerWithdrawal> withdrawals
+    2: optional ContinuationToken continuation_token
+}
+
 struct CustomerBankCardsResponse {
     1: required list<BankCardInfo> bank_cards
     2: optional ContinuationToken continuation_token
@@ -396,6 +420,17 @@ service CustomerManagement {
             1: CustomerNotFound not_found
             2: InvalidRecurrentParent invalid_parent
         )
+
+    /**
+     * Найти Customer по выводу в контексте party.
+     * Если вывод не найден или Customer, которому он принадлежит, не привязан
+     * к party, возвращается CustomerNotFound.
+     */
+    CustomerState GetByWithdrawal(
+        1: WithdrawalID withdrawal_id,
+        2: domain.PartyConfigRef party_ref
+    )
+        throws (1: CustomerNotFound not_found)
 
     /**
      * Получить Customer по external_id и party.
@@ -489,6 +524,30 @@ service CustomerManagement {
      * Получить список платежей Customer.
      */
     CustomerPaymentsResponse GetPayments(
+        1: CustomerID customer_id,
+        2: i32 limit,
+        3: optional ContinuationToken continuation_token
+    )
+        throws (1: CustomerNotFound not_found)
+
+    /**
+     * Добавить вывод к Customer.
+     * Операция идемпотентна: повторный вызов с тем же withdrawal_id ничего не меняет.
+     * Если вывод уже привязан к другому Customer, возвращается InvalidRequest.
+     */
+    void AddWithdrawal(
+        1: CustomerID customer_id,
+        2: WithdrawalID withdrawal_id
+    )
+        throws (
+            1: CustomerNotFound not_found
+            2: base.InvalidRequest invalid_request
+        )
+
+    /**
+     * Получить список выводов Customer.
+     */
+    CustomerWithdrawalsResponse GetWithdrawals(
         1: CustomerID customer_id,
         2: i32 limit,
         3: optional ContinuationToken continuation_token
