@@ -1,7 +1,7 @@
 /**
  * Определения и сервисы для работы с Customer и каскадированием рекуррентных платежей.
  *
- * Customer — агрегатор информации о плательщике в рамках конкретной Party.
+ * Customer — агрегатор информации о плательщике.
  * BankCard — самостоятельная сущность банковской карты, которая может быть связана с несколькими Customer'ами.
  */
 
@@ -16,6 +16,8 @@ namespace erlang dmsl.customer
 typedef base.ID CustomerID
 typedef base.ID BankCardID
 typedef base.ID RecurrentTokenID
+/** Идентификатор вывода в fistful */
+typedef base.ID WithdrawalID
 
 /* BankCard — самостоятельная сущность банковской карты */
 
@@ -127,6 +129,10 @@ struct TerminalAffinityParams {
      * AddPayment для него не нужен.
      */
     5: required PaymentRef payment
+    /**
+     * Party, в которой проведён платёж. Customer должен быть к ней привязан.
+     */
+    6: required domain.PartyConfigRef party_ref
 }
 
 /**
@@ -148,8 +154,7 @@ struct BankCard {
     2: required domain.Token bank_card_token
     /**
      * Массив Party, которые могут использовать эту запись.
-     * По умолчанию содержит одну Party — владельца.
-     * Расшаривание между Party возможно только через ручную миграцию.
+     * Карта, привязанная к Customer, доступна всем Party, к которым он привязан.
      */
     3: required list<domain.PartyConfigRef> party_refs
     /** Маска карты (первые 6 и последние 4 цифры), например "424242******4242" */
@@ -183,17 +188,35 @@ struct CustomerPayment {
 }
 
 /**
- * Customer — агрегатор информации о плательщике в рамках конкретной Party.
+ * Ссылка на вывод
+ */
+struct WithdrawalRef {
+    1: required WithdrawalID withdrawal_id
+}
+
+/**
+ * Информация о выводе Customer.
+ */
+struct CustomerWithdrawal {
+    1: required WithdrawalID withdrawal_id
+    2: required base.Timestamp created_at
+}
+
+/**
+ * Customer — агрегатор информации о плательщике.
+ *
+ * Customer может быть привязан к нескольким Party: к той, в которой он создан, и к тем,
+ * в которых ему назначен external_id. Customer всегда возвращается в контексте одной из них.
  *
  * Customer связывает:
- * - Party (мерчант, которому принадлежит Customer)
+ * - Party (мерчанты, к которым привязан Customer)
  * - Список проведённых платежей
  * - Банковские карты (через many-to-many связь с BankCard)
  */
 struct Customer {
     /** Уникальный идентификатор Customer */
     1: required CustomerID id
-    /** Party, которой принадлежит Customer */
+    /** Party, в контексте которой возвращён Customer */
     2: required domain.PartyConfigRef party_ref
     /** Время создания Customer */
     3: required base.Timestamp created_at
@@ -203,7 +226,7 @@ struct Customer {
     5: optional domain.ContactInfo contact_info
     /** Метаданные Customer (произвольные данные мерчанта) */
     6: optional domain.Metadata metadata
-    /** Внешний идентификатор Customer */
+    /** Внешний идентификатор Customer в рамках party_ref */
     7: optional string external_id
     /**
      * Email плательщика в нормализованном виде (нижний регистр, без пробелов
@@ -229,14 +252,16 @@ struct CustomerDeleted {
 }
 
 /**
- * Полное состояние Customer с связанными данными.
+ * Полное состояние Customer со связанными данными.
  */
 struct CustomerState {
     1: required Customer customer
     /** Список ссылок на банковские карты Customer */
     2: required list<BankCardRef> bank_card_refs
-    /** Список ссылок на платежи */
+    /** Список ссылок на платежи Customer, проведённые в party_ref Customer */
     3: required list<PaymentRef> payment_refs
+    /** Список ссылок на выводы Customer, проведённые в party_ref Customer */
+    4: required list<WithdrawalRef> withdrawal_refs
 }
 
 /* Параметры создания и поиска */
@@ -245,13 +270,13 @@ struct CustomerState {
  * Параметры создания Customer.
  */
 struct CustomerParams {
-    /** Party, которой будет принадлежать Customer */
+    /** Party, в которой создаётся Customer */
     1: required domain.PartyConfigRef party_ref
     /** Контактная информация плательщика */
     2: optional domain.ContactInfo contact_info
     /** Метаданные Customer */
     3: optional domain.Metadata metadata
-    /** Внешний идентификатор Customer */
+    /** Внешний идентификатор Customer в рамках party_ref */
     4: optional string external_id
     /** Email плательщика; нормализуется сервисом. Уникален в рамках party_ref */
     5: optional string email
@@ -321,6 +346,18 @@ exception CustomerEmailConflict {
     1: required CustomerID id
 }
 
+/**
+ * Невозможно назначить external_id: в party уже есть конфликтующая привязка —
+ * этот external_id занят другим Customer, либо у Customer в этой party уже есть
+ * другой external_id.
+ */
+exception CustomerExternalIDConflict {
+    /** Customer из существующей привязки */
+    1: required CustomerID id
+    /** external_id из существующей привязки */
+    2: required string external_id
+}
+
 exception BankCardNotFound {}
 
 exception InvalidRecurrentParent {
@@ -335,6 +372,11 @@ typedef string ContinuationToken
 
 struct CustomerPaymentsResponse {
     1: required list<CustomerPayment> payments
+    2: optional ContinuationToken continuation_token
+}
+
+struct CustomerWithdrawalsResponse {
+    1: required list<CustomerWithdrawal> withdrawals
     2: optional ContinuationToken continuation_token
 }
 
@@ -362,17 +404,22 @@ service CustomerManagement {
         )
 
     /**
-     * Получить Customer по ID.
+     * Получить Customer по ID в контексте party.
+     * Если Customer не привязан к party, возвращается CustomerNotFound.
      */
-    CustomerState Get(1: CustomerID customer_id)
+    CustomerState Get(1: CustomerID customer_id, 2: domain.PartyConfigRef party_ref)
         throws (1: CustomerNotFound not_found)
 
     /**
-     * Найти Customer по parent invoice/payment (для рекуррентных платежей).
+     * Найти Customer по parent invoice/payment (для рекуррентных платежей) в контексте party.
+     * Если Customer, которому принадлежит платёж, не привязан к party,
+     * возвращается CustomerNotFound. Если привязан, но платёж проведён в другой party,
+     * возвращается InvalidRecurrentParent.
      */
     CustomerState GetByParentPayment(
         1: domain.InvoiceID invoice_id,
-        2: domain.InvoicePaymentID payment_id
+        2: domain.InvoicePaymentID payment_id,
+        3: domain.PartyConfigRef party_ref
     )
         throws (
             1: CustomerNotFound not_found
@@ -380,13 +427,54 @@ service CustomerManagement {
         )
 
     /**
+     * Найти Customer по выводу в контексте party.
+     * Если вывод не найден, проведён в другой party или Customer, которому он
+     * принадлежит, не привязан к party, возвращается CustomerNotFound.
+     */
+    CustomerState GetByWithdrawal(
+        1: WithdrawalID withdrawal_id,
+        2: domain.PartyConfigRef party_ref
+    )
+        throws (1: CustomerNotFound not_found)
+
+    /**
      * Получить Customer по external_id и party.
+     * Находит также Customer, созданный в другой party, если в данной party ему назначен
+     * этот external_id.
      */
     CustomerState GetByExternalID(
         1: string external_id,
         2: domain.PartyConfigRef party_ref
     )
         throws (1: CustomerNotFound not_found)
+
+    /**
+     * Найти Customer по external_id в рамках party или создать его в ней, если он не найден.
+     * Операция идемпотентна и безопасна при конкурентных вызовах: единственность
+     * Customer гарантируется уникальностью external_id в рамках party.
+     */
+    Customer FindOrCreateByExternalID(
+        1: domain.PartyConfigRef party_ref,
+        2: string external_id
+    )
+        throws (1: base.InvalidRequest invalid_request)
+
+    /**
+     * Назначить Customer внешний идентификатор в party.
+     * Если Customer ещё не привязан к party, он привязывается к ней, и его карты
+     * становятся доступны в этой party. Операция идемпотентна: повторный вызов
+     * с тем же external_id ничего не меняет.
+     */
+    void AddExternalID(
+        1: CustomerID customer_id,
+        2: domain.PartyConfigRef party_ref,
+        3: string external_id
+    )
+        throws (
+            1: CustomerNotFound not_found
+            2: base.InvalidRequest invalid_request
+            3: CustomerExternalIDConflict external_id_conflict
+        )
 
     /**
      * Удалить Customer (soft delete).
@@ -422,7 +510,9 @@ service CustomerManagement {
         )
 
     /**
-     * Добавить платёж к Customer.
+     * Добавить платёж, проведённый в party, к Customer.
+     * Если Customer не привязан к party, возвращается CustomerNotFound.
+     * Party платежа фиксируется при первом добавлении.
      *
      * Для платежей, по которым создаётся привязка к терминалу, вызывать не нужно:
      * BindTerminalAffinity запоминает платёж сам.
@@ -430,7 +520,8 @@ service CustomerManagement {
     void AddPayment(
         1: CustomerID customer_id,
         2: domain.InvoiceID invoice_id,
-        3: domain.InvoicePaymentID payment_id
+        3: domain.InvoicePaymentID payment_id,
+        4: domain.PartyConfigRef party_ref
     )
         throws (
             1: CustomerNotFound not_found
@@ -438,10 +529,41 @@ service CustomerManagement {
         )
 
     /**
-     * Получить список платежей Customer.
+     * Получить список платежей Customer, проведённых в party.
+     * Если Customer не привязан к party, возвращается CustomerNotFound.
      */
     CustomerPaymentsResponse GetPayments(
         1: CustomerID customer_id,
+        4: domain.PartyConfigRef party_ref,
+        2: i32 limit,
+        3: optional ContinuationToken continuation_token
+    )
+        throws (1: CustomerNotFound not_found)
+
+    /**
+     * Добавить вывод, проведённый в party, к Customer.
+     * Если Customer не привязан к party, возвращается CustomerNotFound.
+     * Операция идемпотентна: повторный вызов с тем же withdrawal_id ничего не меняет,
+     * party вывода фиксируется при первом добавлении.
+     * Если вывод уже привязан к другому Customer, возвращается InvalidRequest.
+     */
+    void AddWithdrawal(
+        1: CustomerID customer_id,
+        2: WithdrawalID withdrawal_id,
+        3: domain.PartyConfigRef party_ref
+    )
+        throws (
+            1: CustomerNotFound not_found
+            2: base.InvalidRequest invalid_request
+        )
+
+    /**
+     * Получить список выводов Customer, проведённых в party.
+     * Если Customer не привязан к party, возвращается CustomerNotFound.
+     */
+    CustomerWithdrawalsResponse GetWithdrawals(
+        1: CustomerID customer_id,
+        4: domain.PartyConfigRef party_ref,
         2: i32 limit,
         3: optional ContinuationToken continuation_token
     )
@@ -460,7 +582,7 @@ service CustomerManagement {
     /**
      * Найти Customer по email в рамках party или создать, если его нет.
      * Операция идемпотентна и безопасна при конкурентных вызовах: единственность
-     * Customer гарантирует уникальность email в рамках party. Email нормализуется
+     * Customer гарантируется уникальностью email в рамках party. Email нормализуется
      * сервисом. CustomerEmailConflict не бросает.
      */
     Customer FindOrCreateByEmail(
@@ -496,6 +618,7 @@ service CustomerManagement {
      *
      * Платёж запоминается за Customer в том же вызове, поэтому отдельно звать
      * AddPayment для него не требуется.
+     * Если Customer не привязан к party_ref, возвращается CustomerNotFound.
      */
     TerminalAffinity BindTerminalAffinity(1: TerminalAffinityParams params)
         throws (
