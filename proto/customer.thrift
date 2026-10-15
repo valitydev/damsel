@@ -129,6 +129,10 @@ struct TerminalAffinityParams {
      * AddPayment для него не нужен.
      */
     5: required PaymentRef payment
+    /**
+     * Party, в которой проведён платёж. Customer должен быть к ней привязан.
+     */
+    6: required domain.PartyConfigRef party_ref
 }
 
 /**
@@ -254,9 +258,9 @@ struct CustomerState {
     1: required Customer customer
     /** Список ссылок на банковские карты Customer */
     2: required list<BankCardRef> bank_card_refs
-    /** Список ссылок на платежи */
+    /** Список ссылок на платежи Customer, проведённые в party_ref Customer */
     3: required list<PaymentRef> payment_refs
-    /** Список ссылок на выводы */
+    /** Список ссылок на выводы Customer, проведённые в party_ref Customer */
     4: required list<WithdrawalRef> withdrawal_refs
 }
 
@@ -409,7 +413,8 @@ service CustomerManagement {
     /**
      * Найти Customer по parent invoice/payment (для рекуррентных платежей) в контексте party.
      * Если Customer, которому принадлежит платёж, не привязан к party,
-     * возвращается CustomerNotFound.
+     * возвращается CustomerNotFound. Если привязан, но платёж проведён в другой party,
+     * возвращается InvalidRecurrentParent.
      */
     CustomerState GetByParentPayment(
         1: domain.InvoiceID invoice_id,
@@ -423,8 +428,8 @@ service CustomerManagement {
 
     /**
      * Найти Customer по выводу в контексте party.
-     * Если вывод не найден или Customer, которому он принадлежит, не привязан
-     * к party, возвращается CustomerNotFound.
+     * Если вывод не найден, проведён в другой party или Customer, которому он
+     * принадлежит, не привязан к party, возвращается CustomerNotFound.
      */
     CustomerState GetByWithdrawal(
         1: WithdrawalID withdrawal_id,
@@ -505,7 +510,9 @@ service CustomerManagement {
         )
 
     /**
-     * Добавить платёж к Customer.
+     * Добавить платёж, проведённый в party, к Customer.
+     * Если Customer не привязан к party, возвращается CustomerNotFound.
+     * Party платежа фиксируется при первом добавлении.
      *
      * Для платежей, по которым создаётся привязка к терминалу, вызывать не нужно:
      * BindTerminalAffinity запоминает платёж сам.
@@ -513,7 +520,8 @@ service CustomerManagement {
     void AddPayment(
         1: CustomerID customer_id,
         2: domain.InvoiceID invoice_id,
-        3: domain.InvoicePaymentID payment_id
+        3: domain.InvoicePaymentID payment_id,
+        4: domain.PartyConfigRef party_ref
     )
         throws (
             1: CustomerNotFound not_found
@@ -521,23 +529,28 @@ service CustomerManagement {
         )
 
     /**
-     * Получить список платежей Customer.
+     * Получить список платежей Customer, проведённых в party.
+     * Если Customer не привязан к party, возвращается CustomerNotFound.
      */
     CustomerPaymentsResponse GetPayments(
         1: CustomerID customer_id,
         2: i32 limit,
-        3: optional ContinuationToken continuation_token
+        3: optional ContinuationToken continuation_token,
+        4: domain.PartyConfigRef party_ref
     )
         throws (1: CustomerNotFound not_found)
 
     /**
-     * Добавить вывод к Customer.
-     * Операция идемпотентна: повторный вызов с тем же withdrawal_id ничего не меняет.
+     * Добавить вывод, проведённый в party, к Customer.
+     * Если Customer не привязан к party, возвращается CustomerNotFound.
+     * Операция идемпотентна: повторный вызов с тем же withdrawal_id ничего не меняет,
+     * party вывода фиксируется при первом добавлении.
      * Если вывод уже привязан к другому Customer, возвращается InvalidRequest.
      */
     void AddWithdrawal(
         1: CustomerID customer_id,
-        2: WithdrawalID withdrawal_id
+        2: WithdrawalID withdrawal_id,
+        3: domain.PartyConfigRef party_ref
     )
         throws (
             1: CustomerNotFound not_found
@@ -545,12 +558,14 @@ service CustomerManagement {
         )
 
     /**
-     * Получить список выводов Customer.
+     * Получить список выводов Customer, проведённых в party.
+     * Если Customer не привязан к party, возвращается CustomerNotFound.
      */
     CustomerWithdrawalsResponse GetWithdrawals(
         1: CustomerID customer_id,
         2: i32 limit,
-        3: optional ContinuationToken continuation_token
+        3: optional ContinuationToken continuation_token,
+        4: domain.PartyConfigRef party_ref
     )
         throws (1: CustomerNotFound not_found)
 
@@ -603,6 +618,7 @@ service CustomerManagement {
      *
      * Платёж запоминается за Customer в том же вызове, поэтому отдельно звать
      * AddPayment для него не требуется.
+     * Если Customer не привязан к party_ref, возвращается CustomerNotFound.
      */
     TerminalAffinity BindTerminalAffinity(1: TerminalAffinityParams params)
         throws (
