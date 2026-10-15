@@ -534,9 +534,9 @@ service CustomerManagement {
      */
     CustomerPaymentsResponse GetPayments(
         1: CustomerID customer_id,
+        4: domain.PartyConfigRef party_ref,
         2: i32 limit,
-        3: optional ContinuationToken continuation_token,
-        4: domain.PartyConfigRef party_ref
+        3: optional ContinuationToken continuation_token
     )
         throws (1: CustomerNotFound not_found)
 
@@ -563,9 +563,9 @@ service CustomerManagement {
      */
     CustomerWithdrawalsResponse GetWithdrawals(
         1: CustomerID customer_id,
+        4: domain.PartyConfigRef party_ref,
         2: i32 limit,
-        3: optional ContinuationToken continuation_token,
-        4: domain.PartyConfigRef party_ref
+        3: optional ContinuationToken continuation_token
     )
         throws (1: CustomerNotFound not_found)
 
