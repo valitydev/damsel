@@ -23,15 +23,12 @@ typedef i64 TimestampMicroseconds
 typedef string Namespace
 typedef string TaskType
 typedef string TaskStatus
+typedef string TaskMetadata
 
 struct HistoryRange {
     1: optional i64 offset
     2: optional i64 limit
     3: optional string direction
-}
-
-struct TaskMetadata {
-    1: optional HistoryRange range
 }
 
 struct TraceTaskHeader {
