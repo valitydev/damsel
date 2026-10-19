@@ -80,7 +80,7 @@ service MessageSender {
     /**
     * Получить список исключений
     **/
-    list<MessageExclusionObject> getExclusionRules(1: optional ExclusionType type)
+    list<MessageExclusionObject> getExclusionRules(1: ExclusionType type)
 
     /**
     * Удалить исключение
