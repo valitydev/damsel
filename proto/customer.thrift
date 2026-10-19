@@ -536,7 +536,7 @@ service CustomerManagement {
         1: CustomerID customer_id,
         4: domain.PartyConfigRef party_ref,
         2: i32 limit,
-        3: optional ContinuationToken continuation_token
+        3: ContinuationToken continuation_token
     )
         throws (1: CustomerNotFound not_found)
 
@@ -565,7 +565,7 @@ service CustomerManagement {
         1: CustomerID customer_id,
         4: domain.PartyConfigRef party_ref,
         2: i32 limit,
-        3: optional ContinuationToken continuation_token
+        3: ContinuationToken continuation_token
     )
         throws (1: CustomerNotFound not_found)
 
@@ -575,7 +575,7 @@ service CustomerManagement {
     CustomerBankCardsResponse GetBankCards(
         1: CustomerID customer_id,
         2: i32 limit,
-        3: optional ContinuationToken continuation_token
+        3: ContinuationToken continuation_token
     )
         throws (1: CustomerNotFound not_found)
 
@@ -638,7 +638,7 @@ service CustomerManagement {
      */
     void ReleaseTerminalAffinitiesByTerminal(
         1: ProviderTerminalKey key,
-        2: optional string reason
+        2: string reason
     )
 }
 
