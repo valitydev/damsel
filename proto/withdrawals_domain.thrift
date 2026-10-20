@@ -16,6 +16,7 @@ struct Withdrawal {
     6: optional AuthData auth_data
     7: optional ContactInfo contact_info
     8: optional ClientInfo client_info
+    9: optional domain.ClientIdentity client_identity
 }
 
 struct ContactInfo {
