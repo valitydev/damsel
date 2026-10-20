@@ -76,6 +76,7 @@ struct ShopContext {
 struct InspectUserContext {
     1: required domain.ContactInfo user_info
     2: required list<ShopContext> shop_list
+    3: optional domain.ClientIdentity client_identity
 }
 
 struct BlockedShops {
