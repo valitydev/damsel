@@ -135,6 +135,11 @@ union LimitScopeType {
      * and it's example with generic payment tool https://github.com/valitydev/damsel/blob/ad715bd647bc5cfa822e2b09b1329dab6a2bf295/proto/domain.thrift#L1816-L1836
      */
     11: LimitScopeDestinationFieldDetails destination_field
+
+    /**
+     * Scope over entities with client identity's user id values.
+     */
+    12: LimitScopeEmptyDetails user
 }
 
 struct LimitScopeEmptyDetails {}
