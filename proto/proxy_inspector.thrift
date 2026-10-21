@@ -66,6 +66,7 @@ struct Invoice {
     3: required base.Timestamp due
     4: required domain.InvoiceDetails details
     5: optional domain.InvoiceClientInfo client_info
+    6: optional domain.ClientIdentity client_identity
 }
 
 struct ShopContext {
