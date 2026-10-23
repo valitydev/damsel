@@ -1,5 +1,6 @@
 include "base.thrift"
 include "domain.thrift"
+include "withdrawals_domain.thrift"
 
 namespace java dev.vality.damsel.proxy_inspector
 namespace erlang dmsl.proxy_inspector
@@ -13,6 +14,18 @@ typedef string Value
 struct Context {
     1: required PaymentInfo payment
     2: optional domain.ProxyOptions options = {}
+}
+
+/**
+ * Данные для инспекции выплаты до выбора маршрута.
+ * Провайдер и терминал на этом этапе ещё не определены.
+ */
+struct WithdrawalContext {
+    1: required Party party
+    2: required domain.WalletConfigRef wallet_ref
+    3: required ID withdrawal_id
+    4: required withdrawals_domain.Withdrawal withdrawal
+    5: optional domain.ProxyOptions options = {}
 }
 
 /**
@@ -97,5 +110,17 @@ service InspectorProxy {
     * Проверяет существование в черном списке
     **/
     bool IsBlacklisted(1: BlackListContext context)
+        throws (1: base.InvalidRequest ex1)
+
+    /**
+     * Проверяет выплату перед withdrawal routing, не запуская её исполнение.
+     *
+     * Результаты правил: trust -> trusted;
+     * accept, acceptAndNotify, notify -> low;
+     * highRisk или отсутствие решения -> high;
+     * decline, declineAndNotify -> fatal.
+     * Для выплат 3ds не применяется
+     */
+    domain.RiskScore InspectWithdrawal(1: WithdrawalContext context)
         throws (1: base.InvalidRequest ex1)
 }
