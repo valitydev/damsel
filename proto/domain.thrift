@@ -2270,6 +2270,7 @@ struct WithdrawalProvisionTerms {
     4: optional CashLimitSelector cash_limit
     5: optional CashFlowSelector cash_flow
     6: optional TurnoverLimitSelector turnover_limit
+    7: optional RiskScoreSelector risk_coverage
 }
 
 union CashValueSelector {
