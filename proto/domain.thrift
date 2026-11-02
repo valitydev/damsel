@@ -2590,6 +2590,11 @@ enum PaymentInstitutionRealm {
 
 struct RoutingRules {
     1: required RoutingRulesetRef policies
+    /**
+     * Запрещённые терминалы. Набор можно задать и через members: тогда
+     * запрещаются терминалы всех кандидатов, достижимых из списка, а приоритет,
+     * вес, пин и привязка не учитываются.
+     */
     2: required RoutingRulesetRef prohibitions
 }
 
@@ -2603,7 +2608,16 @@ struct RoutingRuleset {
 
 union RoutingDecisions {
     1: list<RoutingDelegate> delegates
+    /** Плоский список кандидатов; устаревший вариант, заменяется на members. */
     2: list<RoutingCandidate> candidates
+    /**
+     * Список участников — кандидатов и групп, см. RoutingPlacement.
+     *
+     * В отличие от candidates, приоритет учитывается раньше привязки
+     * плательщика (RoutingAffinity), а привязка — только среди соседей
+     * по одному списку. Подробнее — у RoutingGroup.
+     */
+    3: list<RoutingPlacement> members
 }
 
 struct RoutingDelegate {
@@ -2627,15 +2641,37 @@ struct RoutingPin {
 /**
  * Привязка плательщика к терминалу.
  *
- * Плательщик идентифицируется по email через Customer. Терминал, через который
- * прошёл первый успешный платёж, запоминается, и в последующих платежах имеет
- * преимущество перед приоритетом и весом кандидатов, пока доступен.
- * Настройка действует только на кандидатов, у которых она задана: остальные
- * не участвуют в привязке ни при выборе роута, ни при её создании.
+ * Плательщик идентифицируется по email через Customer. Настройка действует
+ * только на кандидатов, у которых она задана: остальные не участвуют в привязке
+ * ни при выборе роута, ни при её создании.
+ *
+ * Поведение зависит от варианта RoutingDecisions, в котором задан кандидат.
+ *
+ * candidates (устаревший): привязка создаётся к терминалу, через который прошёл
+ * успешный платёж, и в последующих платежах имеет преимущество перед приоритетом
+ * и весом кандидатов, пока доступна.
+ *
+ * members: плательщик привязывается к кандидату (RoutingCandidateRef), как
+ * только через кандидата начата попытка провести операцию, независимо от её
+ * исхода; если привязка уже есть, она сохраняет своё место. Попытка успешна,
+ * только если вся операция (платёж или вывод) завершилась успешно именно через
+ * неё; отмена считается неуспехом. Привязки упорядочены по времени создания,
+ * поэтому последующие операции плательщика повторяют ту же последовательность
+ * попыток, включая неуспешные. При выборе маршрута привязка учитывается после
+ * приоритета и только среди соседей по одному списку; группа учитывается
+ * по привязке кандидата, выбранного внутри неё (см. RoutingGroup).
  */
 struct RoutingAffinity {
     /** Время жизни привязки; если не задано — бессрочно. */
     1: optional RoutingAffinityTtl ttl
+    /**
+     * Число неуспешных попыток подряд, после которого привязка снимается.
+     * Успешная попытка обнуляет счётчик. Если кандидат снова будет выбран,
+     * привязка создаётся заново и встаёт в конец последовательности.
+     * Если не задано — привязка не снимается из-за неуспехов.
+     * Действует только в варианте members.
+     */
+    2: optional i32 max_failures
 }
 
 /**
@@ -2672,6 +2708,95 @@ struct RoutingCandidate {
     5: optional RoutingPin pin
     6: optional i32 weight = CANDIDATE_WEIGHT
     7: optional RoutingAffinity affinity
+}
+
+/**
+ * Ссылка на участника списка: кандидата или группу.
+ */
+union RoutingMemberRef {
+    1: RoutingCandidateRef candidate
+    2: RoutingGroupRef group
+}
+
+/**
+ * Размещение участника в списке.
+ *
+ * Содержит атрибуты, которые имеют смысл только в конкретном списке: условие,
+ * приоритет, вес и пин. Сам участник — самостоятельный объект домена, и его
+ * можно разместить в нескольких списках.
+ */
+struct RoutingPlacement {
+    1: required RoutingMemberRef member
+    2: optional string description
+    3: required Predicate allowed
+    4: optional i32 priority = CANDIDATE_PRIORITY
+    5: optional i32 weight = CANDIDATE_WEIGHT
+    /**
+     * Пин действует только среди соседей по одному списку. Для группы выбор
+     * среди соседей с тем же пином зависит от идентификатора группы, а не от
+     * терминала выбранного в ней кандидата, поэтому не меняется от выбора
+     * внутри группы.
+     * В правилах маршрутизации выводов не поддерживается: набор с пином на
+     * любом уровне вложенности считается ошибкой конфигурации.
+     */
+    6: optional RoutingPin pin
+}
+
+struct RoutingCandidateRef {
+    1: required base.ID id
+}
+
+/**
+ * Кандидат — терминал вместе с настройками, не зависящими от списка, в котором
+ * он размещён.
+ *
+ * Идентификатор кандидата — ключ привязки плательщика (RoutingAffinity):
+ * привязка относится к кандидату, а не к паре провайдер + терминал. Если
+ * у кандидата сменили терминал, существующие привязки к нему перестают
+ * учитываться и снимаются при следующей попытке.
+ */
+struct RoutingCandidateDefinition {
+    1: required string name
+    2: optional string description
+    3: required TerminalRef terminal
+    4: optional RoutingAffinity affinity
+}
+
+struct RoutingCandidateObject {
+    1: required RoutingCandidateRef ref
+    2: required RoutingCandidateDefinition data
+}
+
+struct RoutingGroupRef {
+    1: required base.ID id
+}
+
+/**
+ * Группа — вложенный список участников, который занимает одно место в
+ * родительском списке.
+ *
+ * Маршрут выбирается снизу вверх: сначала внутри группы выбирается лучший
+ * участник, затем группа сравнивается с соседями как этот участник, но
+ * с приоритетом, весом и пином своего размещения (RoutingPlacement)
+ * в родительском списке. Если к выбранному участнику привязан плательщик,
+ * группа сравнивается с соседями по этой привязке.
+ *
+ * При каскаде группа остаётся на своём месте, пока в ней есть ещё не
+ * опробованные участники: все они будут опробованы раньше, чем участники
+ * родительского списка с меньшим приоритетом.
+ *
+ * Группы можно вкладывать друг в друга; циклы невозможны, так как домен
+ * не допускает циклических ссылок между объектами.
+ */
+struct RoutingGroup {
+    1: required string name
+    2: optional string description
+    3: required list<RoutingPlacement> members
+}
+
+struct RoutingGroupObject {
+    1: required RoutingGroupRef ref
+    2: required RoutingGroup data
 }
 
 /* Root config */
@@ -3014,6 +3139,8 @@ union Reference {
     34: WalletConfigRef wallet_config
     35: PartnerRef partner
     36: ExternalPartyRoutesRef external_party_routes
+    37: RoutingCandidateRef routing_candidate
+    38: RoutingGroupRef routing_group
 }
 
 union DomainObject {
@@ -3053,6 +3180,8 @@ union DomainObject {
     34: WalletConfigObject wallet_config
     35: PartnerObject partner
     36: ExternalPartyRoutesObject external_party_routes
+    37: RoutingCandidateObject routing_candidate
+    38: RoutingGroupObject routing_group
 }
 
 union ReflessDomainObject {
@@ -3092,6 +3221,8 @@ union ReflessDomainObject {
     34: WalletConfig wallet_config
     35: Partner partner
     36: ExternalPartyRoutes external_party_routes
+    37: RoutingCandidateDefinition routing_candidate
+    38: RoutingGroup routing_group
 }
 
 enum DomainObjectType {
@@ -3131,6 +3262,8 @@ enum DomainObjectType {
     wallet_config = 34
     partner = 35
     external_party_routes = 36
+    routing_candidate = 37
+    routing_group = 38
 }
 
 /* Domain */
