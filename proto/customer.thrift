@@ -84,6 +84,12 @@ struct ProviderTerminalKey {
  * У Customer может быть несколько активных привязок. При выборе роута среди
  * доступных кандидатов предпочитается привязка, созданная раньше
  * (с меньшим bind_seq). См. domain.RoutingAffinity.
+ *
+ * Привязка, созданная через RecordAttempt, относится к кандидату (candidate),
+ * а provider_ref и terminal_ref — снимок его терминала на момент создания
+ * привязки.
+ * Привязка, созданная через BindTerminalAffinity, относится к паре
+ * провайдер + терминал, и candidate у неё не задан.
  */
 struct TerminalAffinity {
     1: required domain.ProviderRef provider_ref
@@ -97,9 +103,18 @@ struct TerminalAffinity {
     4: required base.Timestamp bound_at
     /**
      * Время последнего успешного платежа через привязку;
-     * точка отсчёта для TTL since_last_use.
+     * точка отсчёта для TTL since_last_use. Для привязки, созданной через
+     * RecordAttempt, до первого успеха совпадает с bound_at.
      */
     5: required base.Timestamp last_used_at
+    /** Кандидат, к которому относится привязка. */
+    6: optional domain.RoutingCandidateRef candidate
+    /**
+     * Число неуспешных попыток подряд через кандидата; успешная попытка
+     * обнуляет его. Когда оно достигает max_failures, сохранённого в привязке
+     * при последней попытке, привязка снимается.
+     */
+    7: optional i32 consecutive_failures
 }
 
 /**
@@ -185,6 +200,7 @@ struct CustomerPayment {
     1: required domain.InvoiceID invoice_id
     2: required domain.InvoicePaymentID payment_id
     3: required base.Timestamp created_at
+    4: optional OperationStatus status
 }
 
 /**
@@ -200,6 +216,61 @@ struct WithdrawalRef {
 struct CustomerWithdrawal {
     1: required WithdrawalID withdrawal_id
     2: required base.Timestamp created_at
+    3: optional OperationStatus status
+}
+
+/**
+ * Ссылка на операцию Customer: платёж или вывод.
+ */
+union OperationRef {
+    1: PaymentRef payment
+    2: WithdrawalRef withdrawal
+}
+
+/**
+ * Статус операции Customer.
+ *
+ * Операция добавляется к Customer сразу после своего создания, в статусе
+ * pending. Итоговый статус выставляется по событиям операции из Kafka и больше
+ * не меняется.
+ * Отмена (в том числе отмена холда) считается неуспехом.
+ */
+enum OperationStatus {
+    pending
+    succeeded
+    failed
+}
+
+/**
+ * Параметры записи попытки провести операцию через кандидата.
+ */
+struct RecordAttemptParams {
+    1: required CustomerID customer_id
+    /** Party, в которой проводится операция. Customer должен быть к ней привязан. */
+    2: required domain.PartyConfigRef party_ref
+    3: required OperationRef operation
+    /**
+     * Порядковый номер попытки маршрутизации в рамках операции, начиная с 1.
+     * Вместе с operation служит ключом идемпотентности.
+     */
+    4: required i32 attempt
+    5: required domain.RoutingCandidateRef candidate
+    /** Терминал кандидата на момент попытки. */
+    6: required domain.ProviderRef provider_ref
+    7: required domain.TerminalRef terminal_ref
+    /**
+     * Настройка привязки кандидата. Если не задана, попытка записывается,
+     * но привязка не создаётся и не обновляется.
+     */
+    8: optional domain.RoutingAffinity affinity
+}
+
+/**
+ * Результат записи попытки.
+ */
+struct RecordedAttempt {
+    /** Привязка, к которой отнесена попытка; не задана, если в параметрах не было affinity. */
+    1: optional TerminalAffinity affinity
 }
 
 /**
@@ -514,8 +585,9 @@ service CustomerManagement {
      * Если Customer не привязан к party, возвращается CustomerNotFound.
      * Party платежа фиксируется при первом добавлении.
      *
-     * Для платежей, по которым создаётся привязка к терминалу, вызывать не нужно:
-     * BindTerminalAffinity запоминает платёж сам.
+     * Вызывается при создании платежа, независимо от его исхода: платёж
+     * добавляется в статусе pending, итоговый статус выставляется по событиям
+     * из Kafka (см. OperationStatus).
      */
     void AddPayment(
         1: CustomerID customer_id,
@@ -546,6 +618,10 @@ service CustomerManagement {
      * Операция идемпотентна: повторный вызов с тем же withdrawal_id ничего не меняет,
      * party вывода фиксируется при первом добавлении.
      * Если вывод уже привязан к другому Customer, возвращается InvalidRequest.
+     *
+     * Вызывается при создании вывода, независимо от его исхода: вывод
+     * добавляется в статусе pending, итоговый статус выставляется по событиям
+     * из Kafka (см. OperationStatus).
      */
     void AddWithdrawal(
         1: CustomerID customer_id,
@@ -609,6 +685,35 @@ service CustomerManagement {
         throws (1: CustomerNotFound not_found)
 
     /**
+     * Записать попытку провести операцию через кандидата и привязать к нему
+     * Customer. Для правил маршрутизации с members вызывается при запуске
+     * сессии каждой попытки (см. domain.RoutingAffinity).
+     *
+     * Идемпотентно по (operation, attempt): повторный вызов ничего не меняет
+     * и возвращает текущее состояние привязки. Повтор с тем же ключом, но
+     * другим кандидатом или терминалом возвращает InvalidRequest.
+     *
+     * Если affinity задан и привязки к кандидату нет, она создаётся. Если
+     * существующая привязка истекла по ttl или указывает на другой терминал,
+     * она снимается и создаётся заново в конце истории. Настройки affinity
+     * запоминаются в привязке: исход попытки становится известен позже,
+     * из событий операции в Kafka, и учитывается по сохранённому max_failures.
+     * Попытка успешна, только если вся операция завершилась успешно именно
+     * через неё; остальные попытки операции неуспешны.
+     *
+     * Операция добавляется к Customer, если ещё не была добавлена. Если она уже
+     * добавлена к другому Customer, возвращается InvalidRequest.
+     * Если Customer не привязан к party_ref, возвращается CustomerNotFound.
+     */
+    RecordedAttempt RecordAttempt(1: RecordAttemptParams params)
+        throws (
+            1: CustomerNotFound not_found
+            2: base.InvalidRequest invalid_request
+        )
+
+    /**
+     * Устаревший: для правил маршрутизации с members используется RecordAttempt.
+     *
      * Привязать Customer к терминалу по итогам успешного платежа.
      *
      * Идемпотентно по платежу: повторный вызов с тем же PaymentRef возвращает
@@ -628,6 +733,8 @@ service CustomerManagement {
 
     /**
      * Снять привязку Customer к терминалу.
+     * Снимаются все привязки к терминалу, в том числе привязки кандидатов,
+     * чей снимок терминала совпадает с key.
      */
     void ReleaseTerminalAffinity(1: ReleaseTerminalAffinityParams params)
         throws (1: CustomerNotFound not_found)
@@ -635,6 +742,7 @@ service CustomerManagement {
     /**
      * Снять привязки всех Customer к терминалу.
      * Административная операция, например при выводе терминала из эксплуатации.
+     * Как и ReleaseTerminalAffinity, снимает в том числе привязки кандидатов.
      */
     void ReleaseTerminalAffinitiesByTerminal(
         1: ProviderTerminalKey key,

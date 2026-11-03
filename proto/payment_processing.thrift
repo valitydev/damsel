@@ -204,6 +204,19 @@ struct InvoicePaymentRouteChanged {
     3: optional map<domain.PaymentRoute, domain.PaymentRouteScores> scores
     4: optional RouteLimitContext limits
     5: optional RouteDecisionContext decision
+    /**
+     * Если true, маршрут на самом деле не выбран: подходящих кандидатов
+     * не осталось. Событие нужно только для отката удержанных лимитов,
+     * за ним следует начало отката платежа. Сессия по route не запускается,
+     * и попыткой событие не считается.
+     */
+    6: optional bool placeholder
+    /**
+     * Порядковый номер попытки маршрутизации в рамках платежа, начиная с 1.
+     * Вместе с платежом идентифицирует попытку; тот же номер передаётся
+     * в customer.RecordAttempt.
+     */
+    7: optional i32 attempt
 }
 
 /**
@@ -910,13 +923,16 @@ struct RouteDecisionContext {
     1:  optional bool skip_recurrent
     /**
      * У выбранного кандидата задана настройка привязки к терминалу
-     * (domain.RoutingAffinity): при успешном платеже привязка будет создана.
+     * (domain.RoutingAffinity). Если маршрут выбран из candidates, привязка
+     * будет создана при успешном платеже, если из members — при запуске сессии.
      */
     2:  optional bool terminal_affinity
     /**
      * Время жизни привязки, взятое с выбранного кандидата
      */
     3:  optional domain.RoutingAffinityTtl affinity_ttl
+    /** Выбранный кандидат, если маршрут выбран из members. */
+    4:  optional domain.RoutingCandidateRef candidate
 }
 
 // Exceptions
@@ -1591,6 +1607,21 @@ struct ProviderTerminal {
     6: optional domain.ProvisionTermSet terms
 }
 
+/**
+ * Вычисленный набор правил маршрутизации вместе с объектами, на которые
+ * ссылаются его участники.
+ *
+ * На всех уровнях вложенности делегаты раскрыты, а участники с ложным условием
+ * отброшены. Набор содержит candidates или members, но не delegates.
+ * Для members словари groups и candidates содержат ровно те объекты, которые
+ * достижимы из набора; для candidates они пусты.
+ */
+struct ComputedRouting {
+    1: required domain.RoutingRuleset ruleset
+    2: required map<domain.RoutingGroupRef, domain.RoutingGroup> groups
+    3: required map<domain.RoutingCandidateRef, domain.RoutingCandidateDefinition> candidates
+}
+
 // Exceptions
 
 exception PartyExists {}
@@ -1747,7 +1778,20 @@ service PartyManagement {
 
     /* RuleSet */
 
+    /**
+     * Устаревший: не раскрывает группы и кандидатов, на которые ссылаются
+     * members. См. ComputeRouting.
+     */
     domain.RoutingRuleset ComputeRoutingRuleset (
+        1: domain.RoutingRulesetRef ruleset_ref,
+        2: domain.DataRevision domain_revision,
+        3: Varset varset
+    )
+        throws (
+            1: RuleSetNotFound ex1
+        )
+
+    ComputedRouting ComputeRouting (
         1: domain.RoutingRulesetRef ruleset_ref,
         2: domain.DataRevision domain_revision,
         3: Varset varset
