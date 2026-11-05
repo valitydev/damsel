@@ -923,16 +923,20 @@ struct RouteDecisionContext {
     1:  optional bool skip_recurrent
     /**
      * У выбранного кандидата задана настройка привязки к терминалу
-     * (domain.RoutingAffinity). Если маршрут выбран из candidates, привязка
-     * будет создана при успешном платеже, если из members — при запуске сессии.
+     * (domain.RoutingAffinity). Сохраняется для совместимости со старыми
+     * событиями; полная настройка привязки передаётся в affinity.
      */
     2:  optional bool terminal_affinity
     /**
      * Время жизни привязки, взятое с выбранного кандидата
      */
     3:  optional domain.RoutingAffinityTtl affinity_ttl
-    /** Выбранный кандидат, если маршрут выбран из members. */
-    4:  optional domain.RoutingCandidateRef candidate
+    /**
+     * Полная настройка привязки выбранного кандидата на момент выбора маршрута.
+     * При наличии используется вместо terminal_affinity и affinity_ttl;
+     * если старые поля тоже заданы, они должны соответствовать affinity.
+     */
+    5:  optional domain.RoutingAffinity affinity
 }
 
 // Exceptions
@@ -1607,21 +1611,6 @@ struct ProviderTerminal {
     6: optional domain.ProvisionTermSet terms
 }
 
-/**
- * Вычисленный набор правил маршрутизации вместе с объектами, на которые
- * ссылаются его участники.
- *
- * На всех уровнях вложенности делегаты раскрыты, а участники с ложным условием
- * отброшены. Набор содержит candidates или members, но не delegates.
- * Для members словари groups и candidates содержат ровно те объекты, которые
- * достижимы из набора; для candidates они пусты.
- */
-struct ComputedRouting {
-    1: required domain.RoutingRuleset ruleset
-    2: required map<domain.RoutingGroupRef, domain.RoutingGroup> groups
-    3: required map<domain.RoutingCandidateRef, domain.RoutingCandidateDefinition> candidates
-}
-
 // Exceptions
 
 exception PartyExists {}
@@ -1778,20 +1767,7 @@ service PartyManagement {
 
     /* RuleSet */
 
-    /**
-     * Устаревший: не раскрывает группы и кандидатов, на которые ссылаются
-     * members. См. ComputeRouting.
-     */
     domain.RoutingRuleset ComputeRoutingRuleset (
-        1: domain.RoutingRulesetRef ruleset_ref,
-        2: domain.DataRevision domain_revision,
-        3: Varset varset
-    )
-        throws (
-            1: RuleSetNotFound ex1
-        )
-
-    ComputedRouting ComputeRouting (
         1: domain.RoutingRulesetRef ruleset_ref,
         2: domain.DataRevision domain_revision,
         3: Varset varset
