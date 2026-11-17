@@ -923,16 +923,18 @@ struct RouteDecisionContext {
     1:  optional bool skip_recurrent
     /**
      * У выбранного кандидата задана настройка привязки к терминалу
-     * (domain.RoutingAffinity). Если маршрут выбран из candidates, привязка
-     * будет создана при успешном платеже, если из members — при запуске сессии.
+     * (domain.RoutingAffinity): привязка будет создана при запуске сессии.
      */
     2:  optional bool terminal_affinity
     /**
      * Время жизни привязки, взятое с выбранного кандидата
      */
     3:  optional domain.RoutingAffinityTtl affinity_ttl
-    /** Выбранный кандидат, если маршрут выбран из members. */
-    4:  optional domain.RoutingCandidateRef candidate
+    /**
+     * Порог неуспешных попыток подряд для снятия привязки
+     * (domain.RoutingAffinity.max_failures), взятый с выбранного кандидата
+     */
+    4:  optional i32 affinity_max_failures
 }
 
 // Exceptions
@@ -1608,18 +1610,16 @@ struct ProviderTerminal {
 }
 
 /**
- * Вычисленный набор правил маршрутизации вместе с объектами, на которые
- * ссылаются его участники.
+ * Вычисленный набор правил маршрутизации вместе с наборами, на которые
+ * ссылаются его делегаты.
  *
- * На всех уровнях вложенности делегаты раскрыты, а участники с ложным условием
- * отброшены. Набор содержит candidates или members, но не delegates.
- * Для members словари groups и candidates содержат ровно те объекты, которые
- * достижимы из набора; для candidates они пусты.
+ * На всех уровнях вложенности решения с ложным условием отброшены.
+ * Словарь rulesets содержит вычисленные наборы ровно тех делегатов, которые
+ * достижимы из ruleset.
  */
 struct ComputedRouting {
     1: required domain.RoutingRuleset ruleset
-    2: required map<domain.RoutingGroupRef, domain.RoutingGroup> groups
-    3: required map<domain.RoutingCandidateRef, domain.RoutingCandidateDefinition> candidates
+    2: required map<domain.RoutingRulesetRef, domain.RoutingRuleset> rulesets
 }
 
 // Exceptions
@@ -1779,8 +1779,8 @@ service PartyManagement {
     /* RuleSet */
 
     /**
-     * Устаревший: не раскрывает группы и кандидатов, на которые ссылаются
-     * members. См. ComputeRouting.
+     * Устаревший: не вычисляет наборы, на которые ссылаются делегаты.
+     * См. ComputeRouting.
      */
     domain.RoutingRuleset ComputeRoutingRuleset (
         1: domain.RoutingRulesetRef ruleset_ref,

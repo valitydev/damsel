@@ -84,12 +84,6 @@ struct ProviderTerminalKey {
  * У Customer может быть несколько активных привязок. При выборе роута среди
  * доступных кандидатов предпочитается привязка, созданная раньше
  * (с меньшим bind_seq). См. domain.RoutingAffinity.
- *
- * Привязка, созданная через RecordAttempt, относится к кандидату (candidate),
- * а provider_ref и terminal_ref — снимок его терминала на момент создания
- * привязки.
- * Привязка, созданная через BindTerminalAffinity, относится к паре
- * провайдер + терминал, и candidate у неё не задан.
  */
 struct TerminalAffinity {
     1: required domain.ProviderRef provider_ref
@@ -107,14 +101,12 @@ struct TerminalAffinity {
      * RecordAttempt, до первого успеха совпадает с bound_at.
      */
     5: required base.Timestamp last_used_at
-    /** Кандидат, к которому относится привязка. */
-    6: optional domain.RoutingCandidateRef candidate
     /**
-     * Число неуспешных попыток подряд через кандидата; успешная попытка
+     * Число неуспешных попыток подряд через терминал; успешная попытка
      * обнуляет его. Когда оно достигает max_failures, сохранённого в привязке
      * при последней попытке, привязка снимается.
      */
-    7: optional i32 consecutive_failures
+    6: optional i32 consecutive_failures
 }
 
 /**
@@ -242,7 +234,7 @@ enum OperationStatus {
 }
 
 /**
- * Параметры записи попытки провести операцию через кандидата.
+ * Параметры записи попытки провести операцию через терминал.
  */
 struct RecordAttemptParams {
     1: required CustomerID customer_id
@@ -254,15 +246,13 @@ struct RecordAttemptParams {
      * Вместе с operation служит ключом идемпотентности.
      */
     4: required i32 attempt
-    5: required domain.RoutingCandidateRef candidate
-    /** Терминал кандидата на момент попытки. */
-    6: required domain.ProviderRef provider_ref
-    7: required domain.TerminalRef terminal_ref
+    5: required domain.ProviderRef provider_ref
+    6: required domain.TerminalRef terminal_ref
     /**
-     * Настройка привязки кандидата. Если не задана, попытка записывается,
-     * но привязка не создаётся и не обновляется.
+     * Настройка привязки выбранного кандидата. Если не задана, попытка
+     * записывается, но привязка не создаётся и не обновляется.
      */
-    8: optional domain.RoutingAffinity affinity
+    7: optional domain.RoutingAffinity affinity
 }
 
 /**
@@ -685,19 +675,19 @@ service CustomerManagement {
         throws (1: CustomerNotFound not_found)
 
     /**
-     * Записать попытку провести операцию через кандидата и привязать к нему
-     * Customer. Для правил маршрутизации с members вызывается при запуске
-     * сессии каждой попытки (см. domain.RoutingAffinity).
+     * Записать попытку провести операцию через терминал и привязать к нему
+     * Customer. Вызывается при запуске сессии каждой попытки
+     * (см. domain.RoutingAffinity).
      *
      * Идемпотентно по (operation, attempt): повторный вызов ничего не меняет
      * и возвращает текущее состояние привязки. Повтор с тем же ключом, но
-     * другим кандидатом или терминалом возвращает InvalidRequest.
+     * другим терминалом возвращает InvalidRequest.
      *
-     * Если affinity задан и привязки к кандидату нет, она создаётся. Если
-     * существующая привязка истекла по ttl или указывает на другой терминал,
-     * она снимается и создаётся заново в конце истории. Настройки affinity
-     * запоминаются в привязке: исход попытки становится известен позже,
-     * из событий операции в Kafka, и учитывается по сохранённому max_failures.
+     * Если affinity задан и привязки к терминалу нет, она создаётся. Если
+     * существующая привязка истекла по ttl, она снимается и создаётся заново
+     * в конце истории. Настройки affinity запоминаются в привязке: исход
+     * попытки становится известен позже, из событий операции в Kafka,
+     * и учитывается по сохранённому max_failures.
      * Попытка успешна, только если вся операция завершилась успешно именно
      * через неё; остальные попытки операции неуспешны.
      *
@@ -712,7 +702,7 @@ service CustomerManagement {
         )
 
     /**
-     * Устаревший: для правил маршрутизации с members используется RecordAttempt.
+     * Устаревший: используется RecordAttempt.
      *
      * Привязать Customer к терминалу по итогам успешного платежа.
      *
@@ -733,8 +723,6 @@ service CustomerManagement {
 
     /**
      * Снять привязку Customer к терминалу.
-     * Снимаются все привязки к терминалу, в том числе привязки кандидатов,
-     * чей снимок терминала совпадает с key.
      */
     void ReleaseTerminalAffinity(1: ReleaseTerminalAffinityParams params)
         throws (1: CustomerNotFound not_found)
@@ -742,7 +730,6 @@ service CustomerManagement {
     /**
      * Снять привязки всех Customer к терминалу.
      * Административная операция, например при выводе терминала из эксплуатации.
-     * Как и ReleaseTerminalAffinity, снимает в том числе привязки кандидатов.
      */
     void ReleaseTerminalAffinitiesByTerminal(
         1: ProviderTerminalKey key,
