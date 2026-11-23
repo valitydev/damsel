@@ -205,15 +205,13 @@ struct InvoicePaymentRouteChanged {
     4: optional RouteLimitContext limits
     5: optional RouteDecisionContext decision
     /**
-     * Если true, маршрут на самом деле не выбран: подходящих кандидатов
-     * не осталось. Событие нужно только для отката удержанных лимитов,
-     * за ним следует начало отката платежа. Сессия по route не запускается,
-     * и попыткой событие не считается.
+     * Если true, подходящих кандидатов не осталось и маршрут не выбран. Событие
+     * нужно только для отката удержанных лимитов: сессия не запускается,
+     * попыткой событие не считается.
      */
-    6: optional bool placeholder
+    6: optional bool candidates_exhausted
     /**
-     * Порядковый номер попытки маршрутизации в рамках платежа, начиная с 1.
-     * Вместе с платежом идентифицирует попытку; тот же номер передаётся
+     * Номер попытки маршрутизации в платеже, начиная с 1. Передаётся
      * в customer.RecordAttempt.
      */
     7: optional i32 attempt
@@ -930,10 +928,7 @@ struct RouteDecisionContext {
      * Время жизни привязки, взятое с выбранного кандидата
      */
     3:  optional domain.RoutingAffinityTtl affinity_ttl
-    /**
-     * Порог неуспешных попыток подряд для снятия привязки
-     * (domain.RoutingAffinity.max_failures), взятый с выбранного кандидата
-     */
+    /** domain.RoutingAffinity.max_failures выбранного кандидата. */
     4:  optional i32 affinity_max_failures
 }
 
@@ -1610,15 +1605,15 @@ struct ProviderTerminal {
 }
 
 /**
- * Вычисленный набор правил маршрутизации вместе с наборами, на которые
- * ссылаются его делегаты.
- *
- * На всех уровнях вложенности решения с ложным условием отброшены.
- * Словарь rulesets содержит вычисленные наборы ровно тех делегатов, которые
- * достижимы из ruleset.
+ * Вычисленный RoutingRuleset вместе с вычисленными RoutingRuleset его делегатов.
+ * Во всех них решения с ложным условием (allowed) отброшены.
  */
 struct ComputedRouting {
     1: required domain.RoutingRuleset ruleset
+    /**
+     * RoutingRuleset, на которые ссылаются делегаты (RoutingDelegate.ruleset)
+     * в ruleset и, на любой глубине, в самих этих RoutingRuleset.
+     */
     2: required map<domain.RoutingRulesetRef, domain.RoutingRuleset> rulesets
 }
 
@@ -1779,8 +1774,8 @@ service PartyManagement {
     /* RuleSet */
 
     /**
-     * Устаревший: не вычисляет наборы, на которые ссылаются делегаты.
-     * См. ComputeRouting.
+     * Deprecated: используется ComputeRouting. Не вычисляет RoutingRuleset,
+     * на которые ссылаются делегаты (RoutingDelegate.ruleset).
      */
     domain.RoutingRuleset ComputeRoutingRuleset (
         1: domain.RoutingRulesetRef ruleset_ref,
@@ -1791,6 +1786,10 @@ service PartyManagement {
             1: RuleSetNotFound ex1
         )
 
+    /**
+     * Вычислить RoutingRuleset вместе с RoutingRuleset его делегатов
+     * (см. ComputedRouting).
+     */
     ComputedRouting ComputeRouting (
         1: domain.RoutingRulesetRef ruleset_ref,
         2: domain.DataRevision domain_revision,
