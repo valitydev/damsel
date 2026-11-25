@@ -1605,16 +1605,31 @@ struct ProviderTerminal {
 }
 
 /**
- * Вычисленный RoutingRuleset вместе с вычисленными RoutingRuleset его делегатов.
- * Во всех них решения с ложным условием (allowed) отброшены.
+ * Вычисленный domain.RoutingRuleset: элементы entries с ложным условием (allowed)
+ * отброшены, у оставшихся кандидатов условие вычислено в константу.
  */
-struct ComputedRouting {
-    1: required domain.RoutingRuleset ruleset
-    /**
-     * RoutingRuleset, на которые ссылаются делегаты (RoutingDelegate.ruleset)
-     * в ruleset и, на любой глубине, в самих этих RoutingRuleset.
-     */
-    2: required map<domain.RoutingRulesetRef, domain.RoutingRuleset> rulesets
+struct ComputedRoutingRuleset {
+    1: required string name
+    2: optional string description
+    3: required list<ComputedRoutingEntry> entries
+}
+
+/** Вычисленный domain.RoutingEntry. */
+union ComputedRoutingEntry {
+    1: domain.RoutingCandidate candidate
+    2: ComputedRoutingDelegate delegate
+}
+
+/** Вычисленный domain.RoutingDelegate. */
+struct ComputedRoutingDelegate {
+    1: optional string description
+    /** domain.RoutingDelegate.ruleset. По нему делегат идентифицируется при выборе по пину. */
+    2: required domain.RoutingRulesetRef ref
+    /** Вычисленный RoutingRuleset, на который ссылается ref. */
+    3: required ComputedRoutingRuleset ruleset
+    4: optional i32 priority = domain.CANDIDATE_PRIORITY
+    5: optional i32 weight = domain.CANDIDATE_WEIGHT
+    6: optional domain.RoutingPin pin
 }
 
 // Exceptions
@@ -1787,10 +1802,10 @@ service PartyManagement {
         )
 
     /**
-     * Вычислить RoutingRuleset вместе с RoutingRuleset его делегатов
-     * (см. ComputedRouting).
+     * Вычислить RoutingRuleset вместе с RoutingRuleset его делегатов на любой глубине.
+     * RoutingRuleset в entries, заданный через decisions, приводится к entries.
      */
-    ComputedRouting ComputeRouting (
+    ComputedRoutingRuleset ComputeRouting (
         1: domain.RoutingRulesetRef ruleset_ref,
         2: domain.DataRevision domain_revision,
         3: Varset varset
