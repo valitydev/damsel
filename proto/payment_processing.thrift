@@ -1629,11 +1629,9 @@ union ComputedRoutingEntryValue {
     2: ComputedRoutingDelegate delegate
 }
 
-/** Вычисленный domain.RoutingDelegate. */
 struct ComputedRoutingDelegate {
     /** Идентификатор исходного набора правил, в том числе для выбора по пину. */
     1: required domain.RoutingRulesetRef ref
-    /** Вычисленный RoutingRuleset, на который ссылается ref. */
     2: required ComputedRoutingRuleset ruleset
 }
 
