@@ -2636,20 +2636,24 @@ union RoutingDecisions {
  * При каскаде опробованные кандидаты исключаются из выбора. Делегат участвует
  * в выборе, пока в его RoutingRuleset остаются неопробованные кандидаты.
  */
-union RoutingEntry {
-    1: RoutingCandidate candidate
-    2: RoutingDelegate delegate
+struct RoutingEntry {
+    1: optional string description
+    2: required Predicate allowed
+    3: optional i32 priority = CANDIDATE_PRIORITY
+    4: optional i32 weight = CANDIDATE_WEIGHT
+    5: optional RoutingPin pin
+    6: required RoutingEntryRef entry_ref
 }
 
-/** Элемент RoutingEntry, который передаёт выбор маршрута в RoutingRuleset ruleset. */
+union RoutingEntryRef {
+    1: TerminalRef candidate
+    2: RoutingRulesetRef delegate
+}
+
 struct RoutingDelegate {
     1: optional string description
     2: required Predicate allowed
     3: required RoutingRulesetRef ruleset
-    4: optional i32 priority = CANDIDATE_PRIORITY
-    5: optional i32 weight = CANDIDATE_WEIGHT
-    /** При выборе по пину делегат идентифицируется по ruleset. */
-    6: optional RoutingPin pin
 }
 
 enum RoutingPinFeature {

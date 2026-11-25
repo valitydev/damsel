@@ -1606,7 +1606,7 @@ struct ProviderTerminal {
 
 /**
  * Вычисленный domain.RoutingRuleset: элементы entries с ложным условием (allowed)
- * отброшены, у оставшихся кандидатов условие вычислено в константу.
+ * отброшены, а ссылки на наборы правил делегатов рекурсивно раскрыты.
  */
 struct ComputedRoutingRuleset {
     1: required string name
@@ -1615,21 +1615,25 @@ struct ComputedRoutingRuleset {
 }
 
 /** Вычисленный domain.RoutingEntry. */
-union ComputedRoutingEntry {
-    1: domain.RoutingCandidate candidate
+struct ComputedRoutingEntry {
+    1: optional string description
+    2: optional i32 priority = domain.CANDIDATE_PRIORITY
+    3: optional i32 weight = domain.CANDIDATE_WEIGHT
+    4: optional domain.RoutingPin pin
+    5: required ComputedRoutingEntryValue value
+}
+
+union ComputedRoutingEntryValue {
+    1: domain.TerminalRef candidate
     2: ComputedRoutingDelegate delegate
 }
 
 /** Вычисленный domain.RoutingDelegate. */
 struct ComputedRoutingDelegate {
-    1: optional string description
-    /** domain.RoutingDelegate.ruleset. По нему делегат идентифицируется при выборе по пину. */
-    2: required domain.RoutingRulesetRef ref
+    /** Идентификатор исходного набора правил, в том числе для выбора по пину. */
+    1: required domain.RoutingRulesetRef ref
     /** Вычисленный RoutingRuleset, на который ссылается ref. */
-    3: required ComputedRoutingRuleset ruleset
-    4: optional i32 priority = domain.CANDIDATE_PRIORITY
-    5: optional i32 weight = domain.CANDIDATE_WEIGHT
-    6: optional domain.RoutingPin pin
+    2: required ComputedRoutingRuleset ruleset
 }
 
 // Exceptions
