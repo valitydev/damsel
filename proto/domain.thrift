@@ -2643,6 +2643,8 @@ struct RoutingEntry {
     4: optional i32 weight = CANDIDATE_WEIGHT
     5: optional RoutingPin pin
     6: required RoutingEntryRef entry_ref
+    /** Настройка привязки к терминалу; задаётся только для candidate. */
+    7: optional RoutingAffinity affinity
 }
 
 union RoutingEntryRef {

@@ -1621,6 +1621,7 @@ struct ComputedRoutingEntry {
     3: optional i32 weight = domain.CANDIDATE_WEIGHT
     4: optional domain.RoutingPin pin
     5: required ComputedRoutingEntryValue value
+    6: optional domain.RoutingAffinity affinity
 }
 
 union ComputedRoutingEntryValue {
