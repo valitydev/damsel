@@ -2591,20 +2591,66 @@ enum PaymentInstitutionRealm {
 
 struct RoutingRules {
     1: required RoutingRulesetRef policies
+    /**
+     * Запрещены терминалы всех кандидатов этого RoutingRuleset, включая
+     * кандидатов в RoutingRuleset его делегатов (RoutingDelegate.ruleset)
+     * на любой глубине. Приоритет, вес, пин и привязка не учитываются.
+     */
     2: required RoutingRulesetRef prohibitions
 }
 
 struct RoutingRulesetRef { 1: required ObjectID id }
 
+/**
+ * Набор правил маршрутизации. Задаётся ровно одно из полей entries и decisions.
+ *
+ * После отбрасывания решений с ложным условием (allowed) каждый терминал
+ * встречается не больше одного раза среди кандидатов этого RoutingRuleset
+ * и RoutingRuleset его делегатов (RoutingDelegate.ruleset) на любой глубине:
+ * кандидат идентифицируется по терминалу, в том числе в привязке плательщика.
+ */
 struct RoutingRuleset {
     1: required string name
     2: optional string description
-    3: required RoutingDecisions decisions
+    4: optional list<RoutingEntry> entries
+
+    // Deprecated: используется entries
+    3: optional RoutingDecisions decisions
 }
 
+/** Deprecated: используется RoutingEntry. */
 union RoutingDecisions {
     1: list<RoutingDelegate> delegates
     2: list<RoutingCandidate> candidates
+}
+
+/**
+ * Элемент RoutingRuleset.entries: кандидат или делегат.
+ *
+ * Маршрут выбирается среди элементов одного списка entries с истинным условием
+ * (allowed): по приоритету, затем по привязке плательщика (см. RoutingAffinity),
+ * затем по пину или весу. Делегат участвует в выборе со своими приоритетом,
+ * весом и пином. Если выбран делегат, маршрут выбирается по тем же правилам
+ * среди элементов RoutingRuleset, на который он ссылается
+ * (RoutingDelegate.ruleset).
+ *
+ * При каскаде опробованные кандидаты исключаются из выбора. Делегат участвует
+ * в выборе, пока в его RoutingRuleset остаются неопробованные кандидаты.
+ */
+struct RoutingEntry {
+    1: optional string description
+    2: required Predicate allowed
+    3: optional i32 priority = CANDIDATE_PRIORITY
+    4: optional i32 weight = CANDIDATE_WEIGHT
+    5: optional RoutingPin pin
+    6: required RoutingEntryRef entry_ref
+    /** Настройка привязки к терминалу; задаётся только для candidate. */
+    7: optional RoutingAffinity affinity
+}
+
+union RoutingEntryRef {
+    1: TerminalRef candidate
+    2: RoutingRulesetRef delegate
 }
 
 struct RoutingDelegate {
@@ -2628,15 +2674,30 @@ struct RoutingPin {
 /**
  * Привязка плательщика к терминалу.
  *
- * Плательщик идентифицируется по email через Customer. Терминал, через который
- * прошёл первый успешный платёж, запоминается, и в последующих платежах имеет
- * преимущество перед приоритетом и весом кандидатов, пока доступен.
- * Настройка действует только на кандидатов, у которых она задана: остальные
- * не участвуют в привязке ни при выборе роута, ни при её создании.
+ * Плательщик идентифицируется по email через Customer. Настройка действует
+ * только на кандидатов, у которых она задана.
+ *
+ * Привязка к терминалу кандидата создаётся при начале попытки через него,
+ * независимо от исхода попытки; существующая привязка сохраняет место
+ * в порядке. Привязки упорядочены по времени создания. Среди элементов одного
+ * списка RoutingRuleset.entries с одинаковым приоритетом выбирается элемент
+ * с самой ранней привязкой, поэтому следующие операции плательщика повторяют
+ * ту же последовательность попыток. Привязка делегата — привязка кандидата,
+ * который был бы выбран в его RoutingDelegate.ruleset.
+ *
+ * Попытка успешна, только если через неё успешно завершилась вся операция
+ * (платёж или вывод); отмена считается неуспехом.
  */
 struct RoutingAffinity {
     /** Время жизни привязки; если не задано — бессрочно. */
     1: optional RoutingAffinityTtl ttl
+    /**
+     * Число неуспешных попыток подряд, после которого привязка снимается;
+     * успешная попытка обнуляет счётчик. При следующей попытке через кандидата
+     * привязка создаётся заново, последней в порядке. Если не задано, неуспехи
+     * привязку не снимают.
+     */
+    2: optional i32 max_failures
 }
 
 /**
@@ -2645,8 +2706,8 @@ struct RoutingAffinity {
  */
 union RoutingAffinityTtl {
     /**
-     * Абсолютная отсечка: все привязки кандидата истекают в этот момент,
-     * независимо от того, когда были созданы и когда использовались.
+     * Абсолютная отсечка: все привязки к терминалу кандидата истекают в этот
+     * момент, независимо от того, когда были созданы и когда использовались.
      * Например, для плановой переразметки плательщиков по актуальным весам
      * начиная с заданной даты.
      */
@@ -2658,9 +2719,9 @@ union RoutingAffinityTtl {
      */
     2: base.Timeout since_bound
     /**
-     * Скользящий срок: истекает, если через привязку не было успешных платежей
-     * дольше since_last_use секунд (считая от last_used_at). Каждый успешный
-     * платёж продлевает срок.
+     * Скользящий срок: истекает, если через привязку не было успешных операций
+     * дольше since_last_use секунд (считая от last_used_at). Каждая успешная
+     * операция продлевает срок.
      */
     3: base.Timeout since_last_use
 }
@@ -2670,6 +2731,10 @@ struct RoutingCandidate {
     2: required Predicate allowed
     3: required TerminalRef terminal
     4: optional i32 priority = CANDIDATE_PRIORITY
+    /**
+     * Пин учитывается при выборе среди элементов одного списка
+     * RoutingRuleset.entries.
+     */
     5: optional RoutingPin pin
     6: optional i32 weight = CANDIDATE_WEIGHT
     7: optional RoutingAffinity affinity

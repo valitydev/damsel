@@ -204,6 +204,17 @@ struct InvoicePaymentRouteChanged {
     3: optional map<domain.PaymentRoute, domain.PaymentRouteScores> scores
     4: optional RouteLimitContext limits
     5: optional RouteDecisionContext decision
+    /**
+     * Если true, подходящих кандидатов не осталось и маршрут не выбран. Событие
+     * нужно только для отката удержанных лимитов: сессия не запускается,
+     * попыткой событие не считается.
+     */
+    6: optional bool candidates_exhausted
+    /**
+     * Номер попытки маршрутизации в платеже, начиная с 1. Передаётся
+     * в customer.RecordAttempt.
+     */
+    7: optional i32 attempt
 }
 
 /**
@@ -910,13 +921,15 @@ struct RouteDecisionContext {
     1:  optional bool skip_recurrent
     /**
      * У выбранного кандидата задана настройка привязки к терминалу
-     * (domain.RoutingAffinity): при успешном платеже привязка будет создана.
+     * (domain.RoutingAffinity): привязка будет создана при запуске сессии.
      */
     2:  optional bool terminal_affinity
     /**
      * Время жизни привязки, взятое с выбранного кандидата
      */
     3:  optional domain.RoutingAffinityTtl affinity_ttl
+    /** domain.RoutingAffinity.max_failures выбранного кандидата. */
+    4:  optional i32 affinity_max_failures
 }
 
 // Exceptions
@@ -1591,6 +1604,37 @@ struct ProviderTerminal {
     6: optional domain.ProvisionTermSet terms
 }
 
+/**
+ * Вычисленный domain.RoutingRuleset: элементы entries с ложным условием (allowed)
+ * отброшены, а ссылки на наборы правил делегатов рекурсивно раскрыты.
+ */
+struct ComputedRoutingRuleset {
+    1: required string name
+    2: optional string description
+    3: required list<ComputedRoutingEntry> entries
+}
+
+/** Вычисленный domain.RoutingEntry. */
+struct ComputedRoutingEntry {
+    1: optional string description
+    2: optional i32 priority = domain.CANDIDATE_PRIORITY
+    3: optional i32 weight = domain.CANDIDATE_WEIGHT
+    4: optional domain.RoutingPin pin
+    5: required ComputedRoutingEntryValue value
+    6: optional domain.RoutingAffinity affinity
+}
+
+union ComputedRoutingEntryValue {
+    1: domain.TerminalRef candidate
+    2: ComputedRoutingDelegate delegate
+}
+
+struct ComputedRoutingDelegate {
+    /** Идентификатор исходного набора правил, в том числе для выбора по пину. */
+    1: required domain.RoutingRulesetRef ref
+    2: required ComputedRoutingRuleset ruleset
+}
+
 // Exceptions
 
 exception PartyExists {}
@@ -1747,7 +1791,24 @@ service PartyManagement {
 
     /* RuleSet */
 
+    /**
+     * Deprecated: используется ComputeRouting. Не вычисляет RoutingRuleset,
+     * на которые ссылаются делегаты (RoutingDelegate.ruleset).
+     */
     domain.RoutingRuleset ComputeRoutingRuleset (
+        1: domain.RoutingRulesetRef ruleset_ref,
+        2: domain.DataRevision domain_revision,
+        3: Varset varset
+    )
+        throws (
+            1: RuleSetNotFound ex1
+        )
+
+    /**
+     * Вычислить RoutingRuleset вместе с RoutingRuleset его делегатов на любой глубине.
+     * RoutingRuleset в entries, заданный через decisions, приводится к entries.
+     */
+    ComputedRoutingRuleset ComputeRouting (
         1: domain.RoutingRulesetRef ruleset_ref,
         2: domain.DataRevision domain_revision,
         3: Varset varset
